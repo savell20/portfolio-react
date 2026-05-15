@@ -13,7 +13,7 @@ const photos = [
   { id: 6, src: 'https://images.unsplash.com/photo-1527430253228-e93688616381?w=600&q=80', caption: 'Forest' },
   { id: 7, src: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=600&q=80', caption: 'Desert' },
   { id: 8, src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=600&q=80', caption: 'Coast' },
-  { id: 9, src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80', caption: 'Town' },
+  { id: 9, src: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80', caption: 'Town' },
   { id: 10, src: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80', caption: 'Falls' },
   { id: 11, src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80', caption: 'Summit' },
   { id: 12, src: 'https://images.unsplash.com/photo-1500259571355-332da5cb07aa?w=600&q=80', caption: 'Lake' },

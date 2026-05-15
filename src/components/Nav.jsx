@@ -55,7 +55,7 @@ export default function Nav() {
 
         {/* Hamburger */}
         <button className="flex md:hidden" onClick={() => setOpen(!open)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 5, padding: 4 }}>
+          style={{ background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: 5, padding: 4 }}>
           {[0,1,2].map(i => (
             <motion.span key={i} style={{ display: 'block', width: 22, height: 1.5, background: '#fff', borderRadius: 1 }}
               animate={open ? {
