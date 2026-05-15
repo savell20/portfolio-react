@@ -32,7 +32,7 @@ export default function Hero() {
 
       {/* Big title */}
       <h1 style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.92, paddingBottom: '2.5rem', margin: 0 }}>
-        {['a product designer that', <>acts <em style={{ fontStyle: 'italic', fontWeight: 300 }}>AI first</em></>].map((line, i) => (
+        {['this is', 'santiago avella.'].map((line, i) => (
           <div key={i} style={{ overflow: 'hidden' }}>
             <motion.span
               initial={{ y: '110%', opacity: 0 }}
