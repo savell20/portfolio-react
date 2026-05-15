@@ -1,5 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,700;0,800;1,300&family=JetBrains+Mono:wght@300;400&family=DM+Serif+Display:ital@0;1&display=swap');
 @import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: oklch(0 0 0);
+  --foreground: oklch(1 0 0);
+  --border: oklch(1 0 0 / 0.2);
+  --input: oklch(1 0 0 / 0.1);
+  --ring: oklch(1 0 0 / 0.3);
+  --radius: 0.5rem;
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0 0 0);
+  --muted: oklch(1 0 0 / 0.5);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.65 0.25 25);
+  --accent-foreground: oklch(1 0 0);
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
