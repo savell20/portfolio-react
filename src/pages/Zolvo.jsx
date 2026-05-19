@@ -38,36 +38,37 @@ const modules = [
 
 const stats = [
   { value: '5', label: 'Core modules' },
-  { value: '8', label: 'Weeks to ship' },
-  { value: '1', label: 'Designer (me)' },
-  { value: 'YC', label: 'Spring \'26' },
+  { value: '8wk', label: 'Shipped in' },
+  { value: '1', label: 'Designer' },
+  { value: 'YC', label: "Spring '26" },
 ]
 
 function ModuleRow({ mod, index: i }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
   return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 16 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.05 * i, ease: [0.16, 1, 0.3, 1] }}
       style={{
-        display: 'grid', gridTemplateColumns: '60px 1fr',
+        display: 'grid', gridTemplateColumns: '52px 1fr',
         gap: '2rem', padding: '2.5rem 0',
         borderBottom: '1px solid rgba(255,255,255,0.07)',
       }}
     >
-      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-        color: '#333', paddingTop: '0.2rem' }}>
+      <span style={{
+        fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
+        color: '#444', paddingTop: '0.25rem', letterSpacing: '0.04em',
+      }}>
         {mod.number}
       </span>
       <div>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, letterSpacing: '-0.01em',
-          marginBottom: '0.75rem' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '0.75rem' }}>
           {mod.title}
         </h3>
-        <p style={{ fontSize: '0.9rem', color: '#888', lineHeight: 1.75,
-          marginBottom: '1rem' }}>
+        <p style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8, marginBottom: '1rem' }}>
           {mod.description}
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -87,12 +88,13 @@ function ModuleRow({ mod, index: i }) {
   )
 }
 
-function Section({ children, delay = 0 }) {
+function FadeIn({ children, delay = 0 }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, y: 24 }}
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
@@ -106,6 +108,7 @@ export default function Zolvo() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+
       {/* Nav */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
@@ -116,23 +119,28 @@ export default function Zolvo() {
       }}>
         <button
           onClick={() => navigate('/')}
-          style={{ background: 'none', border: 'none', cursor: 'none',
+          style={{
+            background: 'none', border: 'none', cursor: 'none',
             display: 'flex', alignItems: 'center', gap: '0.5rem',
-            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem',
-            color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em' }}
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem',
+            color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em',
+            transition: 'color 0.2s',
+          }}
           onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
         >
-          <ArrowLeft size={12} /> back
+          <ArrowLeft size={11} /> back
         </button>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem',
-          color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
+          color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em',
+        }}>
           case study
         </span>
         <div style={{ width: 60 }} />
       </nav>
 
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '8rem 2rem 6rem' }}>
+      <main style={{ maxWidth: 800, margin: '0 auto', padding: '8rem 2rem 8rem' }}>
 
         {/* Hero */}
         <div style={{ marginBottom: '5rem' }}>
@@ -140,15 +148,20 @@ export default function Zolvo() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}
           >
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-              color: '#e8442a', border: '1px solid rgba(232,68,42,0.3)',
-              padding: '0.2rem 0.6rem', borderRadius: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
+              color: '#e8442a', border: '1px solid rgba(232,68,42,0.25)',
+              padding: '0.2rem 0.55rem', borderRadius: 2,
+              textTransform: 'uppercase', letterSpacing: '0.08em',
+            }}>
               YC Spring '26
             </span>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-              color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
+              color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em',
+            }}>
               Mar 2026 — Present
             </span>
           </motion.div>
@@ -157,8 +170,10 @@ export default function Zolvo() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            style={{ fontSize: 'clamp(2.8rem, 7vw, 6rem)', fontWeight: 800,
-              letterSpacing: '-0.03em', lineHeight: 0.92, marginBottom: '1.5rem' }}
+            style={{
+              fontSize: 'clamp(2.8rem, 7vw, 6rem)', fontWeight: 800,
+              letterSpacing: '-0.03em', lineHeight: 0.92, marginBottom: '1.75rem',
+            }}
           >
             Zolvo
           </motion.h1>
@@ -167,8 +182,7 @@ export default function Zolvo() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: '#888',
-              lineHeight: 1.7, maxWidth: 580 }}
+            style={{ fontSize: '1rem', color: '#888', lineHeight: 1.8, maxWidth: 540 }}
           >
             Founding designer at a YC-backed fintech. Built 5 core product modules
             in 8 weeks — AI-driven invoice verification, real-time reconciliation,
@@ -177,108 +191,122 @@ export default function Zolvo() {
         </div>
 
         {/* Stats */}
-        <Section delay={0.1}>
+        <FadeIn delay={0.1}>
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '1px', background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 4, overflow: 'hidden',
-            marginBottom: '5rem',
+            borderRadius: 4, overflow: 'hidden', marginBottom: '5rem',
           }}>
             {stats.map(s => (
-              <div key={s.label} style={{
-                background: '#0a0a0a', padding: '2rem 1.5rem',
-                textAlign: 'center',
-              }}>
-                <p style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800,
-                  letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
+              <div key={s.label} style={{ background: '#0a0a0a', padding: '2rem 1rem', textAlign: 'center' }}>
+                <p style={{
+                  fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800,
+                  letterSpacing: '-0.03em', marginBottom: '0.35rem',
+                }}>
                   {s.value}
                 </p>
-                <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
-                  color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <p style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: '0.6rem',
+                  color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em',
+                }}>
                   {s.label}
                 </p>
               </div>
             ))}
           </div>
-        </Section>
+        </FadeIn>
 
         {/* Context */}
-        <Section delay={0}>
-          <div style={{ marginBottom: '5rem', paddingBottom: '3rem',
-            borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-            <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-              color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem' }}>
+        <FadeIn>
+          <div style={{ marginBottom: '5rem', paddingBottom: '3rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <p style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
+              color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem',
+            }}>
               context
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-              <p style={{ fontSize: '0.95rem', color: '#888', lineHeight: 1.8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
+              <p style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8 }}>
                 Zolvo is building the financial operating system for Latin American SMEs —
                 starting with invoice financing and collections. I joined as the founding
                 designer when the product was still a deck.
               </p>
-              <p style={{ fontSize: '0.95rem', color: '#888', lineHeight: 1.8 }}>
+              <p style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8 }}>
                 My mandate: design the entire product surface from zero, ship fast enough
-                to keep up with engineering, and establish a design foundation that can scale
+                to keep up with engineering, and establish a design foundation that scales
                 post-YC Demo Day.
               </p>
             </div>
           </div>
-        </Section>
+        </FadeIn>
 
         {/* Modules */}
-        <Section delay={0}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-            color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2rem' }}>
+        <FadeIn>
+          <p style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
+            color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem',
+          }}>
             what I built
           </p>
-        </Section>
+        </FadeIn>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-          {modules.map((mod, i) => (
-            <ModuleRow key={mod.number} mod={mod} index={i} />
-          ))}
+        <div>
+          {modules.map((mod, i) => <ModuleRow key={mod.number} mod={mod} index={i} />)}
         </div>
 
-        {/* Reflection */}
-        <Section delay={0}>
-          <div style={{ marginTop: '5rem', padding: '2.5rem',
+        {/* Key learning */}
+        <FadeIn>
+          <div style={{
+            marginTop: '5rem', padding: '2rem',
             border: '1px solid rgba(255,255,255,0.07)', borderRadius: 4,
-            background: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <Zap size={13} style={{ color: '#14b8a6' }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
-                color: '#14b8a6', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            background: 'rgba(255,255,255,0.02)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <Zap size={12} style={{ color: '#14b8a6' }} />
+              <span style={{
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '0.6rem',
+                color: '#14b8a6', textTransform: 'uppercase', letterSpacing: '0.08em',
+              }}>
                 key learning
               </span>
             </div>
-            <p style={{ fontSize: '1rem', lineHeight: 1.75, color: '#ccc', maxWidth: 600 }}>
+            <p style={{ fontSize: '0.92rem', lineHeight: 1.8, color: '#888', maxWidth: 560 }}>
               Shipping at startup speed forces clarity. When you have 8 weeks and 5 modules,
               every design decision has to be defensible in 30 seconds. I learned to cut
               ruthlessly, prototype fast, and trust engineering as a creative partner.
             </p>
           </div>
-        </Section>
+        </FadeIn>
 
         {/* CTA */}
-        <Section delay={0}>
-          <div style={{ marginTop: '5rem', textAlign: 'center' }}>
-            <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-              color: '#555', marginBottom: '1rem', letterSpacing: '0.06em' }}>
+        <FadeIn>
+          <div style={{ marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <p style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
+              color: '#555', marginBottom: '1.25rem', letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+            }}>
               want to see the actual work?
             </p>
-            <a href="mailto:santiagoavellad@gmail.com"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                color: '#fff', textDecoration: 'none', fontSize: '0.9rem',
-                border: '1px solid rgba(255,255,255,0.2)', padding: '0.75rem 1.5rem',
-                borderRadius: 2, transition: 'all 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}
+            <a
+              href="mailto:santiagoavellad@gmail.com"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                color: '#fff', textDecoration: 'none',
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem',
+                letterSpacing: '0.04em',
+                border: '1px solid rgba(255,255,255,0.15)', padding: '0.75rem 1.25rem',
+                borderRadius: 2, transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
             >
-              get in touch <ArrowUpRight size={14} />
+              get in touch <ArrowUpRight size={13} />
             </a>
           </div>
-        </Section>
+        </FadeIn>
+
       </main>
     </div>
   )

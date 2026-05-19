@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { motion } from 'framer-motion'
 
 const GRID_LINES = 5
@@ -22,17 +22,30 @@ export default function Hero() {
       {/* Meta row */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#888', fontWeight: 300 }}>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem', color: '#555', fontWeight: 300 }}>
           Hey, I'm Santiago
         </span>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.78rem', color: '#888', fontWeight: 300 }}>
-          🇺🇸 American / 🇨🇴 Colombian
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
+            color: '#e8442a', border: '1px solid rgba(232,68,42,0.25)',
+            padding: '0.2rem 0.6rem', borderRadius: 2,
+            textTransform: 'uppercase', letterSpacing: '0.08em',
+          }}>
+            Zolvo · YC S26
+          </span>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem', color: '#555', fontWeight: 300 }}>
+            🇺🇸 / 🇨🇴
+          </span>
+        </div>
       </motion.div>
 
       {/* Big title */}
       <h1 style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.92, paddingBottom: '2.5rem', margin: 0 }}>
-        {['this is', 'santiago avella.'].map((line, i) => (
+        {[
+          'a product designer',
+          <>that acts <em style={{ fontStyle: 'italic', fontWeight: 300 }}>AI first</em></>,
+        ].map((line, i) => (
           <div key={i} style={{ overflow: 'hidden' }}>
             <motion.span
               initial={{ y: '110%', opacity: 0 }}
@@ -48,14 +61,14 @@ export default function Hero() {
       </h1>
 
       {/* Scroll hint */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
         style={{ position: 'absolute', bottom: '3rem', left: '2rem',
           display: 'flex', alignItems: 'center', gap: '1rem',
-          fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem',
+          fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
           letterSpacing: '0.1em', textTransform: 'uppercase', color: '#555' }}>
         <span>Scroll</span>
         <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
+          transition={{ delay: 1.3, duration: 1 }}
           style={{ width: 40, height: 1, background: '#c8b99a', transformOrigin: 'left' }} />
       </motion.div>
     </section>
