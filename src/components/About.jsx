@@ -16,106 +16,119 @@ export default function About() {
   return (
     <section id="about" ref={ref} style={{
       borderTop: '1px solid rgba(255,255,255,0.07)',
-      padding: '5rem 2rem',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-      gap: '4rem',
-      alignItems: 'center',
-      position: 'relative',
-      zIndex: 1,
+      position: 'relative', zIndex: 1,
     }}>
-      {/* Left — text */}
-      <div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.4 }}
-          style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem',
-            color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem' }}
-        >
-          about
-        </motion.p>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.6rem, 4vw, 2.6rem)', fontWeight: 800,
-            letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1.5rem' }}
-        >
-          An optimist who finds<br />order in chaos.
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8,
-            maxWidth: 480, marginBottom: '2.5rem' }}
-        >
-          I'm a product designer obsessed with making AI feel human. I've designed
-          at a YC-backed startup, shipped at HubSpot, and built my own company from scratch.
-          I believe the best interfaces disappear — leaving only the outcome.
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8,
-            maxWidth: 480, marginBottom: '2.5rem' }}
-        >
-          Outside the screen I'm chasing light with a camera, thinking about craft,
-          and endlessly curious about how things work.
-        </motion.p>
-
-        {/* Traits */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}
-        >
-          {traits.map(t => (
-            <div key={t.label} style={{
-              border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: 4, padding: '0.75rem 1rem',
-              background: 'rgba(255,255,255,0.02)',
-            }}>
-              <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.58rem',
-                color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.3rem' }}>
-                {t.label}
-              </p>
-              <p style={{ fontSize: '0.85rem', fontWeight: 500 }}>{t.value}</p>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Right — photo */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={inView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        style={{ display: 'flex', justifyContent: 'center' }}
+      {/* Top label strip */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.4 }}
+        style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem',
+          color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em',
+          padding: '2rem 2rem 0',
+        }}
       >
-        <div style={{ position: 'relative', maxWidth: 380, width: '100%' }}>
-          {/* Decorative border offset */}
+        about
+      </motion.p>
+
+      {/* Content grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '0',
+        alignItems: 'stretch',
+      }}>
+
+        {/* Left — text */}
+        <div style={{ padding: '3rem 2rem 4rem' }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800,
+              letterSpacing: '-0.025em', lineHeight: 1.08, marginBottom: '1.75rem',
+            }}
+          >
+            An optimist who finds<br />order in chaos.
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8, marginBottom: '1.25rem' }}
+          >
+            I'm a product designer obsessed with making AI feel human. I've designed
+            at a YC-backed startup, shipped at HubSpot, and built my own company from scratch.
+            I believe the best interfaces disappear — leaving only the outcome.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.19, ease: [0.16, 1, 0.3, 1] }}
+            style={{ fontSize: '0.92rem', color: '#888', lineHeight: 1.8, marginBottom: '2.5rem' }}
+          >
+            Outside the screen I'm chasing light with a camera, thinking about craft,
+            and endlessly curious about how things work.
+          </motion.p>
+
+          {/* Traits */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.32 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: 'rgba(255,255,255,0.07)' }}
+          >
+            {traits.map(t => (
+              <div key={t.label} style={{
+                background: '#0a0a0a',
+                padding: '1rem',
+              }}>
+                <p style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: '0.58rem',
+                  color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem',
+                }}>
+                  {t.label}
+                </p>
+                <p style={{ fontSize: '0.88rem', fontWeight: 600, letterSpacing: '-0.01em' }}>{t.value}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Right — photo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            borderLeft: '1px solid rgba(255,255,255,0.07)',
+            position: 'relative', display: 'flex', alignItems: 'stretch',
+            minHeight: 480,
+          }}
+        >
+          {/* Decorative offset border */}
           <div style={{
-            position: 'absolute', inset: 0,
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 4,
-            transform: 'translate(10px, 10px)',
-            pointerEvents: 'none',
+            position: 'absolute', inset: '1.5rem',
+            border: '1px solid rgba(255,255,255,0.08)',
+            pointerEvents: 'none', zIndex: 1,
           }} />
           <img
             src={fotoPersonal}
             alt="Santiago Avella"
-            style={{ width: '100%', borderRadius: 4, display: 'block',
-              filter: 'grayscale(20%)', objectFit: 'cover', aspectRatio: '4/5' }}
+            style={{
+              width: '100%', height: '100%', display: 'block',
+              objectFit: 'cover', objectPosition: 'center top',
+              filter: 'grayscale(15%)',
+              minHeight: 400,
+            }}
           />
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </section>
   )
 }
