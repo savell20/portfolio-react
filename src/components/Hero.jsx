@@ -67,7 +67,7 @@ export default function Hero() {
       />
 
       {/* Big title */}
-      <h1 style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.92, margin: 0 }}>
+      <h1 data-cursor-invert style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.92, margin: 0 }}>
         {[
           'a product designer',
           <>that acts <em style={{ fontStyle: 'italic', fontWeight: 300 }}>AI first</em></>,
