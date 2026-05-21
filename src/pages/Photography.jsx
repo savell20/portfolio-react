@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react' // useRef kept for containerRef
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, ArrowLeft, Maximize2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -40,6 +40,7 @@ function getInitialPos(index) {
 function PhotoCard({ photo, index, onOpen, bringToFront, containerRef }) {
   const [isDragging, setIsDragging] = useState(false)
   const [zIdx, setZIdx] = useState(index + 2)
+  const wasDragging = useRef(false)
 
   const rot = (sr(index) - 0.5) * 13
   const floatDuration = 3.5 + sr(index + 50) * 2.5
@@ -78,15 +79,18 @@ function PhotoCard({ photo, index, onOpen, bringToFront, containerRef }) {
             opacity: { duration: 0.45, delay: index * 0.055 },
             scale: { duration: 0.7, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] },
           }}
+          onPointerDown={() => { wasDragging.current = false }}
           onDragStart={() => {
+            wasDragging.current = true
             setIsDragging(true)
-            const z = bringToFront()
-            setZIdx(z)
+            setZIdx(bringToFront())
           }}
           onDragEnd={() => {
             setIsDragging(false)
           }}
-          onTap={() => onOpen(photo)}
+          onPointerUp={() => {
+            if (!wasDragging.current) onOpen(photo)
+          }}
           style={{
             cursor: isDragging ? 'grabbing' : 'none',
             touchAction: 'none',
