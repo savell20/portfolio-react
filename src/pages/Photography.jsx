@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, ArrowLeft } from 'lucide-react'
+import { X, ArrowLeft, Maximize2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const photos = [
@@ -18,64 +18,142 @@ const photos = [
   { id: 12, src: 'https://images.unsplash.com/photo-1500259571355-332da5cb07aa?w=600&q=80', caption: 'Lake' },
 ]
 
-function seededRandom(seed) {
+function sr(seed) {
   const x = Math.sin(seed + 1) * 10000
   return x - Math.floor(x)
 }
 
-function PhotoCard({ photo, index, onClick }) {
-  const rot = (seededRandom(index) - 0.5) * 10
-  const floatDuration = 3.5 + seededRandom(index + 50) * 2
-  const floatDelay = seededRandom(index + 100) * 2
-  const floatY = 5 + seededRandom(index + 200) * 7
+// Scatter positions — spread across canvas, avoid header area
+function getInitialPos(index) {
+  // Use a grid-ish layout with randomness so they don't all clump
+  const cols = 4
+  const col = index % cols
+  const row = Math.floor(index / cols)
+  const baseX = (col / cols) * 75 + 4
+  const baseY = (row / 3) * 60 + 12
+  return {
+    left: baseX + (sr(index * 11 + 7) - 0.5) * 14,
+    top: baseY + (sr(index * 13 + 3) - 0.5) * 16,
+  }
+}
+
+function PhotoCard({ photo, index, onOpen, bringToFront, containerRef }) {
+  const [isDragging, setIsDragging] = useState(false)
+  const [zIdx, setZIdx] = useState(index + 2)
+  const didDrag = useRef(false)
+
+  const rot = (sr(index) - 0.5) * 13
+  const floatDuration = 3.5 + sr(index + 50) * 2.5
+  const floatDelay = sr(index + 100) * 3
+  const floatY = 7 + sr(index + 200) * 9
+  const pos = getInitialPos(index)
 
   return (
-    <motion.div
-      onClick={() => onClick(photo)}
-      initial={{ opacity: 0, scale: 0.85, rotate: rot }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        rotate: rot,
-        y: [0, -floatY, 0],
-      }}
-      transition={{
-        opacity: { duration: 0.5, delay: index * 0.045 },
-        scale: { duration: 0.65, delay: index * 0.045, ease: [0.16, 1, 0.3, 1] },
-        y: { duration: floatDuration, delay: floatDelay, repeat: Infinity, ease: 'easeInOut' },
-      }}
-      whileHover={{ scale: 1.07, rotate: 0, zIndex: 50 }}
+    <div
       style={{
-        cursor: 'none',
-        background: '#111',
-        padding: '10px 10px 40px',
-        boxShadow: '0 12px 48px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.5)',
-        position: 'relative',
-        zIndex: 1,
-        willChange: 'transform',
+        position: 'absolute',
+        left: `${pos.left}%`,
+        top: `${pos.top}%`,
+        zIndex: zIdx,
       }}
     >
-      <img
-        src={photo.src}
-        alt={photo.caption}
-        style={{ display: 'block', width: '100%', height: 190, objectFit: 'cover' }}
-        loading="lazy"
-      />
-      <p style={{
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: '0.58rem', color: '#444',
-        textAlign: 'center', marginTop: '0.65rem',
-        letterSpacing: '0.08em', textTransform: 'uppercase',
-      }}>
-        {photo.caption}
-      </p>
-    </motion.div>
+      {/* Float layer — only animates when not dragging */}
+      <motion.div
+        animate={isDragging ? { y: 0 } : { y: [0, -floatY, 0] }}
+        transition={
+          isDragging
+            ? { duration: 0.25, ease: 'easeOut' }
+            : { duration: floatDuration, delay: floatDelay, repeat: Infinity, ease: 'easeInOut' }
+        }
+      >
+        {/* Drag layer */}
+        <motion.div
+          drag
+          dragConstraints={containerRef}
+          dragMomentum={false}
+          dragElastic={0.04}
+          initial={{ opacity: 0, scale: 0.75, rotate: rot }}
+          animate={{ opacity: 1, scale: 1, rotate: rot }}
+          whileDrag={{ scale: 1.07, rotate: rot * 0.35 }}
+          transition={{
+            opacity: { duration: 0.45, delay: index * 0.055 },
+            scale: { duration: 0.7, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] },
+          }}
+          onPointerDown={() => {
+            didDrag.current = false
+          }}
+          onDragStart={() => {
+            setIsDragging(true)
+            const z = bringToFront()
+            setZIdx(z)
+          }}
+          onDragEnd={(_, info) => {
+            setIsDragging(false)
+            const moved = Math.sqrt(info.offset.x ** 2 + info.offset.y ** 2)
+            if (moved > 6) didDrag.current = true
+          }}
+          onClick={() => {
+            if (!didDrag.current) onOpen(photo)
+          }}
+          style={{
+            cursor: isDragging ? 'grabbing' : 'none',
+            touchAction: 'none',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+          }}
+        >
+          {/* Polaroid card */}
+          <div
+            style={{
+              background: '#0f0f0f',
+              padding: '9px 9px 44px',
+              width: 188,
+              boxShadow: isDragging
+                ? '0 32px 80px rgba(0,0,0,0.95), 0 8px 20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)'
+                : '0 8px 32px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)',
+              transition: 'box-shadow 0.35s ease',
+              border: '1px solid rgba(255,255,255,0.05)',
+            }}
+          >
+            <img
+              src={photo.src}
+              alt={photo.caption}
+              draggable={false}
+              style={{ display: 'block', width: '100%', height: 158, objectFit: 'cover' }}
+              loading="lazy"
+            />
+            <p
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.56rem',
+                color: '#3a3a3a',
+                textAlign: 'center',
+                marginTop: '0.7rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                userSelect: 'none',
+              }}
+            >
+              {photo.caption}
+            </p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
   )
 }
 
 export default function Photography() {
   const [lightbox, setLightbox] = useState(null)
+  const [topZ, setTopZ] = useState(photos.length + 2)
   const navigate = useNavigate()
+  const containerRef = useRef(null)
+
+  const bringToFront = () => {
+    const next = topZ + 1
+    setTopZ(next)
+    return next
+  }
 
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') setLightbox(null) }
@@ -84,88 +162,110 @@ export default function Photography() {
   }, [])
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+    <div style={{ width: '100vw', height: '100vh', background: '#080808', overflow: 'hidden', position: 'fixed', inset: 0 }}>
 
       {/* Fixed header */}
       <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 9990,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '1.4rem 2rem',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        background: 'rgba(10,10,10,0.88)', backdropFilter: 'blur(14px)',
+        padding: '1.3rem 2rem',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(16px)',
       }}>
         <motion.button
           onClick={() => navigate('/')}
-          initial={{ opacity: 0, x: -12 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
           style={{
             background: 'none', border: 'none', cursor: 'none',
             display: 'flex', alignItems: 'center', gap: '0.5rem',
-            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.72rem',
-            color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em',
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.7rem',
+            color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em',
             transition: 'color 0.2s',
           }}
           onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
         >
           <ArrowLeft size={12} /> back
         </motion.button>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          style={{
-            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem',
-            color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em',
-          }}
+          transition={{ delay: 0.2 }}
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
         >
-          travel photography
-        </motion.p>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.62rem',
+            color: '#333', textTransform: 'uppercase', letterSpacing: '0.1em',
+          }}>
+            travel photography
+          </span>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '0.58rem',
+            color: '#252525', letterSpacing: '0.06em',
+          }}>
+            — drag to arrange
+          </span>
+        </motion.div>
 
         <div style={{ width: 60 }} />
       </div>
 
-      {/* Editorial page title */}
+      {/* Ghost title — deep background */}
       <div style={{
-        paddingTop: '6rem',
-        paddingLeft: '2rem',
-        paddingRight: '2rem',
-        overflow: 'hidden',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        paddingBottom: '0',
+        position: 'absolute', bottom: '-2rem', right: '-1rem',
+        fontFamily: "'Manrope', sans-serif",
+        fontSize: 'clamp(6rem, 22vw, 20rem)',
+        fontWeight: 800,
+        letterSpacing: '-0.05em',
+        color: 'rgba(255,255,255,0.018)',
+        userSelect: 'none',
+        pointerEvents: 'none',
+        lineHeight: 1,
+        zIndex: 0,
       }}>
-        <motion.h1
-          initial={{ y: '110%', opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontSize: 'clamp(4rem, 16vw, 14rem)',
-            fontWeight: 800,
-            letterSpacing: '-0.04em',
-            lineHeight: 0.88,
-            color: 'rgba(255,255,255,0.06)',
-            userSelect: 'none',
-            paddingBottom: '1rem',
-          }}
-        >
-          Travel
-        </motion.h1>
+        TRAVEL
       </div>
 
-      {/* Polaroid grid */}
-      <div style={{
-        padding: '4rem 3rem 6rem',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
-        gap: '3rem 2.5rem',
-        alignItems: 'start',
-      }}>
+      {/* Canvas */}
+      <div
+        ref={containerRef}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          paddingTop: '60px',
+          zIndex: 1,
+        }}
+      >
         {photos.map((photo, i) => (
-          <PhotoCard key={photo.id} photo={photo} index={i} onClick={setLightbox} />
+          <PhotoCard
+            key={photo.id}
+            photo={photo}
+            index={i}
+            onOpen={setLightbox}
+            bringToFront={bringToFront}
+            containerRef={containerRef}
+          />
         ))}
       </div>
+
+      {/* Hint — fades out after 4s */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 4.5, times: [0, 0.15, 0.7, 1], delay: 1.5 }}
+        style={{
+          position: 'absolute', bottom: '2.5rem', left: '50%',
+          transform: 'translateX(-50%)',
+          fontFamily: "'JetBrains Mono', monospace", fontSize: '0.6rem',
+          color: '#2a2a2a', textTransform: 'uppercase', letterSpacing: '0.1em',
+          zIndex: 9980, pointerEvents: 'none', whiteSpace: 'nowrap',
+        }}
+      >
+        drag · rearrange · click to expand
+      </motion.div>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -174,36 +274,39 @@ export default function Photography() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
             onClick={() => setLightbox(null)}
             style={{
-              position: 'fixed', inset: 0, zIndex: 999,
-              background: 'rgba(0,0,0,0.94)', backdropFilter: 'blur(16px)',
+              position: 'fixed', inset: 0, zIndex: 99999,
+              background: 'rgba(0,0,0,0.96)', backdropFilter: 'blur(20px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               padding: '2rem',
             }}
           >
             <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
+              initial={{ scale: 0.88, opacity: 0, rotate: (sr(lightbox.id) - 0.5) * 8 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.5 }}
               onClick={e => e.stopPropagation()}
               style={{
-                background: '#111', padding: '12px 12px 52px',
-                boxShadow: '0 32px 100px rgba(0,0,0,0.9)',
-                maxWidth: 720, width: '100%', position: 'relative',
+                background: '#0f0f0f',
+                padding: '12px 12px 56px',
+                boxShadow: '0 48px 120px rgba(0,0,0,1), 0 8px 32px rgba(0,0,0,0.8)',
+                maxWidth: 740, width: '100%', position: 'relative',
+                border: '1px solid rgba(255,255,255,0.04)',
               }}
             >
               <img
-                src={lightbox.src.replace('w=600', 'w=1200')}
+                src={lightbox.src.replace('w=600', 'w=1400')}
                 alt={lightbox.caption}
-                style={{ width: '100%', display: 'block', maxHeight: '80vh', objectFit: 'contain' }}
+                style={{ width: '100%', display: 'block', maxHeight: '78vh', objectFit: 'contain' }}
               />
               <p style={{
                 fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.62rem', color: '#444',
-                textAlign: 'center', marginTop: '0.85rem',
-                letterSpacing: '0.08em', textTransform: 'uppercase',
+                fontSize: '0.6rem', color: '#333',
+                textAlign: 'center', marginTop: '0.9rem',
+                letterSpacing: '0.1em', textTransform: 'uppercase',
               }}>
                 {lightbox.caption}
               </p>
@@ -211,15 +314,22 @@ export default function Photography() {
                 onClick={() => setLightbox(null)}
                 style={{
                   position: 'absolute', top: 14, right: 14,
-                  background: 'rgba(255,255,255,0.08)', border: 'none',
-                  borderRadius: '50%', width: 32, height: 32,
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
+                  width: 30, height: 30, borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'none', color: '#fff', transition: 'background 0.2s',
+                  cursor: 'none', color: 'rgba(255,255,255,0.6)',
+                  transition: 'all 0.2s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
+                  e.currentTarget.style.color = '#fff'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                }}
               >
-                <X size={13} />
+                <X size={12} />
               </button>
             </motion.div>
           </motion.div>
