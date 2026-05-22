@@ -25,6 +25,20 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+:root[data-theme="dark"] {
+  --canvas: #17171A;
+  --surface: #232327;
+  --ink: #ECECEE;
+  --ink-soft: #9B9BA2;
+  --ink-faint: #66666D;
+  --line: #323237;
+  --line-strong: #41414A;
+  --accent: #5B7CFF;
+  --accent-soft: #20233E;
+}
+
+html { color-scheme: light dark; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }

@@ -6,6 +6,14 @@ import Toolbar from './Toolbar'
 const MIN = 0.4
 const MAX = 2.2
 
+// Figma-style grid: quantize spacing so on-screen dot density stays consistent.
+function gridStep(scale) {
+  let s = 24 * scale
+  while (s < 16) s *= 4
+  while (s > 64) s /= 4
+  return s
+}
+
 // Point where the line from a box center toward a target crosses the box edge.
 function edgePoint(cx, cy, hw, hh, tx, ty) {
   const dx = tx - cx
@@ -86,6 +94,8 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
 
+  const g = gridStep(view.scale)
+
   return (
     <div
       ref={rootRef}
@@ -94,7 +104,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         position: 'fixed', inset: 0, overflow: 'hidden',
         background: 'var(--canvas)',
         backgroundImage: 'radial-gradient(circle, var(--line-strong) 1.1px, transparent 1.1px)',
-        backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
+        backgroundSize: `${g}px ${g}px`,
         backgroundPosition: `${view.x}px ${view.y}px`,
         touchAction: 'none',
       }}
