@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { X } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import RoomShell from '../components/RoomShell'
-
-const EASE = [0.16, 1, 0.3, 1]
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const photos = [
   { id: 1, src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=620&q=80', caption: 'Peaks' },
@@ -25,15 +23,13 @@ function sr(seed) {
   return x - Math.floor(x)
 }
 
-function getInitialPos(index) {
+function getPos(index) {
   const cols = 4
   const col = index % cols
   const row = Math.floor(index / cols)
-  const baseX = (col / cols) * 74 + 4
-  const baseY = (row / 3) * 58 + 6
   return {
-    left: baseX + (sr(index * 11 + 7) - 0.5) * 13,
-    top: baseY + (sr(index * 13 + 3) - 0.5) * 14,
+    left: (col / cols) * 72 + 5 + (sr(index * 11 + 7) - 0.5) * 12,
+    top: (row / 3) * 60 + 8 + (sr(index * 13 + 3) - 0.5) * 12,
   }
 }
 
@@ -42,83 +38,62 @@ function Print({ photo, index, onOpen, bringToFront, containerRef }) {
   const [zIdx, setZIdx] = useState(index + 2)
   const wasDragging = useRef(false)
 
-  const rot = (sr(index) - 0.5) * 12
-  const floatDuration = 3.5 + sr(index + 50) * 2.5
-  const floatDelay = sr(index + 100) * 3
-  const floatY = 6 + sr(index + 200) * 8
-  const pos = getInitialPos(index)
+  const rot = (sr(index) - 0.5) * 10
+  const fDur = 4 + sr(index + 50) * 2.5
+  const fDelay = sr(index + 100) * 3
+  const pos = getPos(index)
 
   return (
     <div style={{ position: 'absolute', left: `${pos.left}%`, top: `${pos.top}%`, zIndex: zIdx }}>
-      {/* Float layer */}
-      <motion.div
-        animate={isDragging ? { y: 0 } : { y: [0, -floatY, 0] }}
-        transition={
-          isDragging
-            ? { duration: 0.25, ease: 'easeOut' }
-            : { duration: floatDuration, delay: floatDelay, repeat: Infinity, ease: 'easeInOut' }
-        }
-      >
-        {/* Drag layer */}
+      {/* Float layer — CSS keyframe */}
+      <div style={{
+        animation: isDragging ? 'none' : `float-y ${fDur}s ease-in-out ${fDelay}s infinite`,
+      }}>
+        {/* Drag layer — framer-motion */}
         <motion.div
           drag
           dragConstraints={containerRef}
           dragMomentum={false}
           dragElastic={0.04}
-          initial={{ opacity: 0, scale: 0.78, rotate: rot }}
-          animate={{ opacity: 1, scale: 1, rotate: rot }}
-          whileDrag={{ scale: 1.07, rotate: rot * 0.35 }}
-          transition={{
-            opacity: { duration: 0.5, delay: index * 0.05 },
-            scale: { duration: 0.7, delay: index * 0.05, ease: EASE },
-          }}
+          whileDrag={{ scale: 1.06 }}
+          style={{ rotate: rot, touchAction: 'none', userSelect: 'none' }}
           onPointerDown={() => { wasDragging.current = false }}
-          onDragStart={() => {
-            wasDragging.current = true
-            setIsDragging(true)
-            setZIdx(bringToFront())
-          }}
+          onDragStart={() => { wasDragging.current = true; setIsDragging(true); setZIdx(bringToFront()) }}
           onDragEnd={() => setIsDragging(false)}
           onPointerUp={() => { if (!wasDragging.current) onOpen(photo) }}
-          style={{
-            cursor: isDragging ? 'grabbing' : 'none',
-            touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none',
-          }}
         >
-          {/* Photographic print */}
+          {/* Print */}
           <div style={{
-            background: '#FBFAF5',
-            padding: '9px 9px 32px',
-            width: 184,
-            border: '1px solid rgba(22,19,16,0.07)',
+            background: 'var(--surface)', padding: '8px 8px 26px',
+            width: 178, border: '1px solid var(--line)',
             boxShadow: isDragging
-              ? '0 34px 64px rgba(22,19,16,0.34), 0 6px 16px rgba(22,19,16,0.22)'
-              : '0 8px 26px rgba(22,19,16,0.18), 0 2px 6px rgba(22,19,16,0.1)',
-            transition: 'box-shadow 0.35s ease',
+              ? '0 28px 54px rgba(24,24,26,0.26)'
+              : '0 8px 24px rgba(24,24,26,0.13)',
+            transition: 'box-shadow 0.3s ease',
+            animation: 'pop-in 0.5s var(--ease) both',
+            animationDelay: `${index * 0.05}s`,
           }}>
             <img
-              src={photo.src}
-              alt={photo.caption}
-              data-loupe
-              draggable={false}
-              style={{ display: 'block', width: '100%', height: 152, objectFit: 'cover' }}
+              src={photo.src} alt={photo.caption} draggable={false}
+              style={{ display: 'block', width: '100%', height: 144, objectFit: 'cover' }}
               loading="lazy"
             />
             <p style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-              color: 'var(--ink-faint)', textAlign: 'center', marginTop: '0.6rem',
-              letterSpacing: '0.1em', textTransform: 'uppercase',
+              fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+              color: 'var(--ink-faint)', textAlign: 'center', marginTop: '0.5rem',
+              letterSpacing: '0.08em', textTransform: 'uppercase',
             }}>
               {photo.caption}
             </p>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   )
 }
 
 export default function Photography() {
+  const navigate = useNavigate()
   const [lightbox, setLightbox] = useState(null)
   const [topZ, setTopZ] = useState(photos.length + 2)
   const containerRef = useRef(null)
@@ -136,26 +111,46 @@ export default function Photography() {
   }, [])
 
   return (
-    <RoomShell number="05" name="Photography">
-      <div
-        ref={containerRef}
-        style={{
-          position: 'relative',
-          height: 'calc(100vh - 4.8rem)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Ghost title */}
-        <div style={{
-          position: 'absolute', bottom: '-1.5rem', right: '0.5rem',
-          fontFamily: 'var(--font-display)', fontWeight: 500,
-          fontSize: 'clamp(5rem, 20vw, 17rem)', fontStyle: 'italic',
-          letterSpacing: '-0.04em', color: 'rgba(28,26,22,0.045)',
-          userSelect: 'none', pointerEvents: 'none', lineHeight: 1, zIndex: 0,
-        }}>
-          Roll 02
-        </div>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'fixed', inset: 0, background: 'var(--canvas)' }}>
 
+      {/* Back */}
+      <button
+        onClick={() => navigate('/')}
+        style={{
+          position: 'absolute', top: 16, left: 16, zIndex: 9000,
+          display: 'flex', alignItems: 'center', gap: '0.45rem',
+          background: 'var(--surface)', border: '1px solid var(--line)',
+          borderRadius: 10, padding: '0.5rem 0.8rem', cursor: 'none',
+          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
+          color: 'var(--ink-soft)', boxShadow: '0 4px 16px rgba(24,24,26,0.06)',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink-soft)')}
+      >
+        <ArrowLeft size={13} /> back to canvas
+      </button>
+
+      {/* Header label */}
+      <div style={{
+        position: 'absolute', top: 20, left: '50%', transform: 'translateX(-50%)',
+        zIndex: 9000, textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem',
+          color: 'var(--ink)', letterSpacing: '-0.01em',
+        }}>
+          Off the clock
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+          color: 'var(--ink-faint)', letterSpacing: '0.08em', marginTop: 2,
+        }}>
+          35MM — DRAG THE PRINTS, CLICK TO ENLARGE
+        </p>
+      </div>
+
+      {/* Print board */}
+      <div ref={containerRef} style={{ position: 'absolute', inset: 0, paddingTop: '4rem' }}>
         {photos.map((photo, i) => (
           <Print
             key={photo.id}
@@ -166,80 +161,55 @@ export default function Photography() {
             containerRef={containerRef}
           />
         ))}
-
-        {/* Hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 1, 1, 0] }}
-          transition={{ duration: 5, times: [0, 0.12, 0.72, 1], delay: 1.2 }}
-          style={{
-            position: 'absolute', bottom: '1.6rem', left: '50%',
-            transform: 'translateX(-50%)',
-            fontFamily: 'var(--font-hand)', fontSize: '1.5rem',
-            color: 'var(--grease)', zIndex: 9970, pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          drag the prints around · click one to enlarge
-        </motion.div>
       </div>
 
       {/* Lightbox */}
-      <AnimatePresence>
-        {lightbox && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => setLightbox(null)}
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 99990,
+            background: 'rgba(24,24,26,0.78)', backdropFilter: 'blur(12px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem',
+            animation: 'fade-in 0.2s ease both',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
             style={{
-              position: 'fixed', inset: 0, zIndex: 99990,
-              background: 'rgba(22,19,16,0.86)', backdropFilter: 'blur(14px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '2rem',
+              background: 'var(--surface)', padding: '12px 12px 44px',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.5)',
+              maxWidth: 720, width: '100%', position: 'relative',
+              animation: 'pop-in 0.35s var(--ease) both',
             }}
           >
-            <motion.div
-              initial={{ scale: 0.88, opacity: 0, rotate: (sr(lightbox.id) - 0.5) * 7 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ ease: EASE, duration: 0.5 }}
-              onClick={e => e.stopPropagation()}
+            <img
+              src={lightbox.src.replace('w=620', 'w=1400')}
+              alt={lightbox.caption}
+              style={{ width: '100%', display: 'block', maxHeight: '76vh', objectFit: 'contain' }}
+            />
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+              color: 'var(--ink-faint)', textAlign: 'center', marginTop: '0.8rem',
+              letterSpacing: '0.08em', textTransform: 'uppercase',
+            }}>
+              {lightbox.caption}
+            </p>
+            <button
+              onClick={() => setLightbox(null)}
               style={{
-                background: '#FBFAF5', padding: '13px 13px 50px',
-                boxShadow: '0 48px 120px rgba(0,0,0,0.7)',
-                maxWidth: 720, width: '100%', position: 'relative',
+                position: 'absolute', top: 13, right: 13,
+                background: 'var(--ink)', border: 'none',
+                width: 30, height: 30, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'none', color: '#fff',
               }}
             >
-              <img
-                src={lightbox.src.replace('w=620', 'w=1400')}
-                alt={lightbox.caption}
-                style={{ width: '100%', display: 'block', maxHeight: '76vh', objectFit: 'contain' }}
-              />
-              <p style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-                color: 'var(--ink-faint)', textAlign: 'center', marginTop: '0.85rem',
-                letterSpacing: '0.1em', textTransform: 'uppercase',
-              }}>
-                {lightbox.caption}
-              </p>
-              <button
-                onClick={() => setLightbox(null)}
-                style={{
-                  position: 'absolute', top: 13, right: 13,
-                  background: 'var(--rebate)', border: 'none',
-                  width: 30, height: 30, borderRadius: '50%',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'none', color: 'var(--paper)',
-                }}
-              >
-                <X size={12} />
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </RoomShell>
+              <X size={12} />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

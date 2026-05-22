@@ -1,18 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Caveat:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --paper: #EDEAE1;
-  --paper-dim: #E3DFD3;
-  --ink: #1C1A16;
-  --ink-soft: #6B6659;
-  --ink-faint: #A8A294;
-  --rebate: #161310;
-  --grease: #D23B22;
-  --line: rgba(28,26,22,0.14);
+  --canvas: #F1F0ED;
+  --surface: #FFFFFF;
+  --ink: #18181A;
+  --ink-soft: #6A6A70;
+  --ink-faint: #9C9CA2;
+  --line: #E2E1DD;
+  --line-strong: #D2D1CC;
+  --accent: #2F5CFF;
+  --accent-soft: #EAEEFF;
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Manrope', sans-serif;
+  --sticky-yellow: #FFE9A8;
+  --sticky-pink: #FFD3DA;
+  --sticky-blue: #C9DDFF;
+  --sticky-mint: #C5EBD6;
+
+  --font-display: 'Schibsted Grotesk', system-ui, sans-serif;
+  --font-body: 'Schibsted Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-hand: 'Caveat', cursive;
 
@@ -24,36 +30,48 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--paper);
+  background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-body);
   font-weight: 400;
-  cursor: none;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-@media (max-width: 768px) {
-  body { cursor: auto; }
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
 }
 
 #root { min-height: 100vh; }
 
-/* Paper-fiber grain overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
-  background-repeat: repeat;
+::selection {
+  background: var(--accent);
+  color: #fff;
 }
 
-::selection {
-  background: var(--grease);
-  color: var(--paper);
+button { font-family: inherit; }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes lift-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
 }
