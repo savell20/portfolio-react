@@ -1,31 +1,36 @@
 import { useRef } from 'react'
 
-// Draggable wrapper for anything living on the canvas.
-// Handles drag (updates position) vs click (activates) and bring-to-front.
-export default function CanvasObject({ obj, scale, index, onMove, onFront, onActivate, children }) {
+// Wrapper for objects on the canvas.
+// locked  → fixed in place, only detects clicks (used for content cards)
+// !locked → draggable, bring-to-front (used for sticky notes)
+export default function CanvasObject({ obj, scale, index, locked, onMove, onFront, onActivate, children }) {
   const start = useRef(null)
   const moved = useRef(false)
 
   const handleDown = (e) => {
-    e.stopPropagation()
-    try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
     start.current = { sx: e.clientX, sy: e.clientY, ox: obj.x, oy: obj.y }
     moved.current = false
-    onFront(obj.id)
+    if (!locked) {
+      e.stopPropagation()
+      try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
+      onFront(obj.id)
+    }
   }
 
   const handleMove = (e) => {
     if (!start.current) return
     const dx = (e.clientX - start.current.sx) / scale
     const dy = (e.clientY - start.current.sy) / scale
-    if (!moved.current && Math.abs(dx) + Math.abs(dy) > 3) moved.current = true
-    if (moved.current) onMove(obj.id, start.current.ox + dx, start.current.oy + dy)
+    if (!moved.current && Math.abs(dx) + Math.abs(dy) > 5) moved.current = true
+    if (!locked && moved.current) onMove(obj.id, start.current.ox + dx, start.current.oy + dy)
   }
 
   const handleUp = (e) => {
     if (start.current && !moved.current) onActivate?.(obj.id)
     start.current = null
-    try { e.currentTarget.releasePointerCapture(e.pointerId) } catch { /* noop */ }
+    if (!locked) {
+      try { e.currentTarget.releasePointerCapture(e.pointerId) } catch { /* noop */ }
+    }
   }
 
   return (

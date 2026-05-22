@@ -275,10 +275,10 @@ export function ContactCard() {
           style={{
             display: 'flex', alignItems: 'center', gap: '0.4rem',
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: '1.18rem', letterSpacing: '-0.02em',
+            fontSize: '1rem', letterSpacing: '-0.02em',
             color: hover ? 'var(--accent)' : 'var(--ink)',
             textDecoration: 'none', marginBottom: '1rem',
-            transition: 'color 0.2s', wordBreak: 'break-all',
+            transition: 'color 0.2s', whiteSpace: 'nowrap',
           }}
         >
           santiagoavellad@gmail.com

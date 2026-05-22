@@ -27,21 +27,23 @@ const projects = {
   },
 }
 
-// id, type, position, size (h is approximate — used for connector anchoring)
+// A tidy, aligned composition. Content cards are locked in place;
+// only the sticky notes are draggable.
 const OBJECTS = [
-  { id: 'title', type: 'title', x: 560, y: 210, w: 430, h: 252, z: 5 },
-  { id: 'sticky-drag', type: 'sticky', x: 250, y: 250, w: 185, h: 150, z: 3,
-    data: { text: 'drag me around — this whole board is yours ✦', color: 'var(--sticky-yellow)', rotate: -7, tall: true } },
-  { id: 'zolvo', type: 'project', x: 430, y: 560, w: 296, h: 380, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 790, y: 645, w: 296, h: 380, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1150, y: 560, w: 296, h: 380, z: 6, to: '/work/captura', data: projects.captura },
-  { id: 'about', type: 'about', x: 1120, y: 195, w: 350, h: 330, z: 5 },
-  { id: 'contact', type: 'contact', x: 1540, y: 560, w: 320, h: 250, z: 5 },
-  { id: 'sticky-ai', type: 'sticky', x: 1545, y: 235, w: 195, h: 150, z: 3,
+  { id: 'title', type: 'title', x: 480, y: 188, w: 430, h: 252, z: 5 },
+  { id: 'about', type: 'about', x: 1114, y: 188, w: 350, h: 330, z: 5 },
+  { id: 'zolvo', type: 'project', x: 480, y: 560, w: 296, h: 380, z: 6, to: '/work/zolvo', data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 824, y: 560, w: 296, h: 380, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1168, y: 560, w: 296, h: 380, z: 6, to: '/work/captura', data: projects.captura },
+  { id: 'contact', type: 'contact', x: 797, y: 980, w: 350, h: 250, z: 5 },
+
+  { id: 'sticky-1', type: 'sticky', x: 150, y: 255, w: 185, h: 150, z: 3, draggable: true,
+    data: { text: 'psst — the sticky notes still move ✎', color: 'var(--sticky-yellow)', rotate: -7, tall: true } },
+  { id: 'sticky-2', type: 'sticky', x: 1512, y: 235, w: 195, h: 150, z: 3, draggable: true,
     data: { text: 'AI that feels human — not a magic trick', color: 'var(--sticky-blue)', rotate: 6, tall: true } },
-  { id: 'sticky-photo', type: 'sticky', x: 470, y: 1000, w: 205, h: 160, z: 3, to: '/photography',
+  { id: 'sticky-photo', type: 'sticky', x: 268, y: 905, w: 205, h: 160, z: 3, draggable: true, to: '/photography',
     data: { text: 'off the clock, I shoot film 📷', color: 'var(--sticky-pink)', rotate: -5, tall: true, link: '→ open the roll' } },
-  { id: 'sticky-process', type: 'sticky', x: 905, y: 1075, w: 185, h: 150, z: 3,
+  { id: 'sticky-process', type: 'sticky', x: 1205, y: 1015, w: 185, h: 150, z: 3, draggable: true,
     data: { text: 'process > pixels. always.', color: 'var(--sticky-mint)', rotate: 5, tall: true } },
 ]
 
@@ -50,7 +52,6 @@ const CONNECTORS = [
   { from: 'title', to: 'hubspot', label: '02' },
   { from: 'title', to: 'captura', label: '03' },
   { from: 'title', to: 'about', label: 'who?' },
-  { from: 'about', to: 'contact', label: 'say hi' },
 ]
 
 function renderObject(obj) {
@@ -67,10 +68,10 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  const scale = w < 1200 ? 0.6 : 0.76
+  const scale = w < 1200 ? 0.58 : 0.74
   return {
     scale,
-    x: w / 2 - 1050 * scale,
+    x: w / 2 - 970 * scale,
     y: h / 2 - 700 * scale,
   }
 }
@@ -137,7 +138,7 @@ export default function Home() {
           animation: 'fade-in 0.6s ease both', animationDelay: '0.8s',
         }}
       >
-        drag cards · scroll to zoom · drag empty space to pan
+        click a card to open it · scroll to zoom · drag to pan
       </div>
     </>
   )

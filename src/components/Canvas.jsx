@@ -22,7 +22,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const rootRef = useRef(null)
   const pan = useRef(null)
 
-  // Wheel zoom — toward cursor. Native listener so preventDefault works.
+  // Wheel zoom — toward cursor.
   useEffect(() => {
     const el = rootRef.current
     if (!el) return
@@ -43,16 +43,25 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     return () => el.removeEventListener('wheel', onWheel)
   }, [])
 
-  const onBgDown = (e) => {
+  // Pan — window-level so the gesture survives leaving any element.
+  useEffect(() => {
+    const onMove = (e) => {
+      if (!pan.current) return
+      const p = pan.current
+      setView(v => ({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
+    }
+    const onUp = () => { pan.current = null }
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+    }
+  }, [])
+
+  const onRootDown = (e) => {
     pan.current = { sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y }
-    try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
   }
-  const onBgMove = (e) => {
-    if (!pan.current) return
-    const p = pan.current
-    setView(v => ({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
-  }
-  const onBgUp = () => { pan.current = null }
 
   const moveObj = useCallback((id, x, y) => {
     setObjects(objs => objs.map(o => (o.id === id ? { ...o, x, y } : o)))
@@ -79,9 +88,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   return (
     <div
       ref={rootRef}
-      onPointerDown={onBgDown}
-      onPointerMove={onBgMove}
-      onPointerUp={onBgUp}
+      onPointerDown={onRootDown}
       style={{
         position: 'fixed', inset: 0, overflow: 'hidden',
         background: 'var(--canvas)',
@@ -123,6 +130,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
             obj={obj}
             index={i}
             scale={view.scale}
+            locked={!obj.draggable}
             onMove={moveObj}
             onFront={bringFront}
             onActivate={onActivate}
