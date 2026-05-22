@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 // Wrapper for objects on the canvas.
 // In 'select' mode: locked objects detect clicks; unlocked objects drag.
@@ -6,8 +6,10 @@ import { useRef } from 'react'
 export default function CanvasObject({ obj, scale, index, locked, mode = 'select', onMove, onFront, onActivate, children }) {
   const start = useRef(null)
   const moved = useRef(false)
+  const [dragging, setDragging] = useState(false)
 
   const active = mode === 'select'
+  const grabbable = active && !locked
 
   const handleDown = (e) => {
     if (!active) return
@@ -17,6 +19,7 @@ export default function CanvasObject({ obj, scale, index, locked, mode = 'select
       e.stopPropagation()
       try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
       onFront(obj.id)
+      setDragging(true)
     }
   }
 
@@ -32,6 +35,7 @@ export default function CanvasObject({ obj, scale, index, locked, mode = 'select
     if (!active) return
     if (start.current && !moved.current) onActivate?.(obj.id)
     start.current = null
+    setDragging(false)
     if (!locked) {
       try { e.currentTarget.releasePointerCapture(e.pointerId) } catch { /* noop */ }
     }
@@ -42,11 +46,13 @@ export default function CanvasObject({ obj, scale, index, locked, mode = 'select
       onPointerDown={handleDown}
       onPointerMove={handleMove}
       onPointerUp={handleUp}
+      {...(grabbable ? { 'data-grab': '' } : {})}
       style={{
         position: 'absolute',
         left: obj.x, top: obj.y, width: obj.w,
         zIndex: obj.z || 1,
         touchAction: 'none',
+        cursor: grabbable ? (dragging ? 'grabbing' : 'grab') : undefined,
         animation: 'rise-in 0.5s var(--ease) both',
         animationDelay: `${0.1 + Math.min(index, 8) * 0.05}s`,
       }}

@@ -56,7 +56,11 @@ function Print({ photo, index, onOpen, bringToFront, containerRef }) {
           dragMomentum={false}
           dragElastic={0.04}
           whileDrag={{ scale: 1.06 }}
-          style={{ rotate: rot, touchAction: 'none', userSelect: 'none' }}
+          data-grab=""
+          style={{
+            rotate: rot, touchAction: 'none', userSelect: 'none',
+            cursor: isDragging ? 'grabbing' : 'grab',
+          }}
           onPointerDown={() => { wasDragging.current = false }}
           onDragStart={() => { wasDragging.current = true; setIsDragging(true); setZIdx(bringToFront()) }}
           onDragEnd={() => setIsDragging(false)}

@@ -47,6 +47,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
   const [mode, setMode] = useState('select') // select | sticky | draw
   const [drawColor, setDrawColor] = useState(DRAW_COLORS[0])
+  const [editingId, setEditingId] = useState(null)
 
   const topZ = useRef(initialObjects.length + 50)
   const rootRef = useRef(null)
@@ -138,10 +139,15 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         color: STICKY_COLORS[Math.floor(Math.random() * STICKY_COLORS.length)],
         rotate: (Math.random() - 0.5) * 10,
       },
-      fresh: true,
     }
     setStickies(prev => { const next = [...prev, s]; save(STICKY_KEY, next); return next })
+    setEditingId(s.id)
     playPop()
+  }
+
+  const deleteSticky = (id) => {
+    setStickies(prev => { const next = prev.filter(o => o.id !== id); save(STICKY_KEY, next); return next })
+    setEditingId(eid => (eid === id ? null : eid))
   }
 
   const moveObj = useCallback((id, x, y) => {
@@ -164,7 +170,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
 
   const editSticky = (id, text) => {
     setStickies(prev => {
-      const next = prev.map(o => o.id === id ? { ...o, fresh: false, data: { ...o.data, text } } : o)
+      const next = prev.map(o => o.id === id ? { ...o, data: { ...o.data, text } } : o)
       save(STICKY_KEY, next)
       return next
     })
@@ -240,14 +246,16 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         {stickies.map((obj, i) => (
           <CanvasObject key={obj.id} obj={obj} index={i} scale={view.scale}
             locked={false} mode={mode}
-            onMove={moveObj} onFront={bringFront} onActivate={() => {}}>
+            onMove={moveObj} onFront={bringFront} onActivate={setEditingId}>
             <EditableSticky
               text={obj.data.text}
               color={obj.data.color}
               rotate={obj.data.rotate}
-              defaultEditing={obj.fresh}
-              placeholder="write a note…"
+              editing={editingId === obj.id}
+              placeholder="click to write…"
               onChange={(t) => editSticky(obj.id, t)}
+              onBlur={() => setEditingId(null)}
+              onDelete={() => deleteSticky(obj.id)}
             />
           </CanvasObject>
         ))}
