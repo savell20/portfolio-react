@@ -5,14 +5,7 @@ import Toolbar from './Toolbar'
 
 const MIN = 0.4
 const MAX = 2.2
-
-// Figma-style grid: quantize spacing so on-screen dot density stays consistent.
-function gridStep(scale) {
-  let s = 24 * scale
-  while (s < 16) s *= 4
-  while (s > 64) s /= 4
-  return s
-}
+const GRID_UNIT = 26 // canvas-space dot spacing
 
 // Point where the line from a box center toward a target crosses the box edge.
 function edgePoint(cx, cy, hw, hh, tx, ty) {
@@ -94,7 +87,9 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
 
-  const g = gridStep(view.scale)
+  // Grid scales 1:1 with the content so it stays glued to the canvas
+  // (no popping) — exactly like FigJam / Miro.
+  const g = GRID_UNIT * view.scale
 
   return (
     <div
@@ -103,7 +98,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
       style={{
         position: 'fixed', inset: 0, overflow: 'hidden',
         background: 'var(--canvas)',
-        backgroundImage: 'radial-gradient(circle, var(--line-strong) 1.1px, transparent 1.1px)',
+        backgroundImage: `radial-gradient(circle, var(--line-strong) ${1.1 * view.scale}px, transparent ${1.1 * view.scale}px)`,
         backgroundSize: `${g}px ${g}px`,
         backgroundPosition: `${view.x}px ${view.y}px`,
         touchAction: 'none',
