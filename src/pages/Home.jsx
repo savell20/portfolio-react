@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Canvas from '../components/Canvas'
+import ContactDock from '../components/ContactDock'
+import MusicPlayer from '../components/MusicPlayer'
 import { TitleCard, ProjectCard, StickyNote, AboutCard, ContactCard } from '../components/CanvasCards'
 
 const projects = {
@@ -127,6 +129,8 @@ export default function Home() {
         renderObject={renderObject}
         onActivate={onActivate}
       />
+      <ContactDock />
+      <MusicPlayer />
       {/* hint */}
       <div
         style={{

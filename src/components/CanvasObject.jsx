@@ -1,13 +1,16 @@
 import { useRef } from 'react'
 
 // Wrapper for objects on the canvas.
-// locked  → fixed in place, only detects clicks (used for content cards)
-// !locked → draggable, bring-to-front (used for sticky notes)
-export default function CanvasObject({ obj, scale, index, locked, onMove, onFront, onActivate, children }) {
+// In 'select' mode: locked objects detect clicks; unlocked objects drag.
+// In any other mode (sticky/draw): fully inert so events reach the canvas.
+export default function CanvasObject({ obj, scale, index, locked, mode = 'select', onMove, onFront, onActivate, children }) {
   const start = useRef(null)
   const moved = useRef(false)
 
+  const active = mode === 'select'
+
   const handleDown = (e) => {
+    if (!active) return
     start.current = { sx: e.clientX, sy: e.clientY, ox: obj.x, oy: obj.y }
     moved.current = false
     if (!locked) {
@@ -18,7 +21,7 @@ export default function CanvasObject({ obj, scale, index, locked, onMove, onFron
   }
 
   const handleMove = (e) => {
-    if (!start.current) return
+    if (!active || !start.current) return
     const dx = (e.clientX - start.current.sx) / scale
     const dy = (e.clientY - start.current.sy) / scale
     if (!moved.current && Math.abs(dx) + Math.abs(dy) > 5) moved.current = true
@@ -26,6 +29,7 @@ export default function CanvasObject({ obj, scale, index, locked, onMove, onFron
   }
 
   const handleUp = (e) => {
+    if (!active) return
     if (start.current && !moved.current) onActivate?.(obj.id)
     start.current = null
     if (!locked) {
@@ -44,7 +48,7 @@ export default function CanvasObject({ obj, scale, index, locked, onMove, onFron
         zIndex: obj.z || 1,
         touchAction: 'none',
         animation: 'rise-in 0.5s var(--ease) both',
-        animationDelay: `${0.1 + index * 0.05}s`,
+        animationDelay: `${0.1 + Math.min(index, 8) * 0.05}s`,
       }}
     >
       {children}
