@@ -29,7 +29,8 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const onWheel = (e) => {
       e.preventDefault()
       setView(v => {
-        const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12
+        // Gentle, proportional zoom — damped so trackpads don't fly.
+        const factor = Math.min(1.25, Math.max(0.8, Math.exp(-e.deltaY * 0.001)))
         const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
         const k = ns / v.scale
         return {

@@ -32,11 +32,14 @@ const barBase = {
   animation: 'fade-in 0.5s var(--ease) both',
 }
 
+// Keep toolbar presses from leaking into the canvas (pan).
+const stopPan = (e) => e.stopPropagation()
+
 export default function Toolbar({ scale, onZoomIn, onZoomOut, onReset }) {
   return (
     <>
       {/* Top-left — file identity */}
-      <div style={{
+      <div onPointerDown={stopPan} style={{
         ...barBase, top: 16, left: 16,
         display: 'flex', alignItems: 'center', gap: '0.6rem',
         padding: '0.45rem 0.7rem',
@@ -63,7 +66,7 @@ export default function Toolbar({ scale, onZoomIn, onZoomOut, onReset }) {
       </div>
 
       {/* Top-right — presence */}
-      <div style={{
+      <div onPointerDown={stopPan} style={{
         ...barBase, top: 16, right: 16,
         display: 'flex', alignItems: 'center', gap: '0.45rem',
         padding: '0.5rem 0.75rem',
@@ -77,7 +80,7 @@ export default function Toolbar({ scale, onZoomIn, onZoomOut, onReset }) {
       </div>
 
       {/* Bottom-right — zoom controls */}
-      <div style={{
+      <div onPointerDown={stopPan} style={{
         ...barBase, bottom: 16, right: 16,
         display: 'flex', alignItems: 'center', gap: '0.1rem', padding: '0.25rem',
       }}>
