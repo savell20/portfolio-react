@@ -1,9 +1,12 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Home from './pages/Home'
-import Photography from './pages/Photography'
 import Zolvo from './pages/Zolvo'
-import Cursor from './components/Cursor'
+import WorkRoom from './pages/WorkRoom'
+import About from './pages/About'
+import Photography from './pages/Photography'
+import Contact from './pages/Contact'
+import Loupe from './components/Loupe'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -18,8 +21,11 @@ function AnimatedRoutes() {
       >
         <Routes location={location}>
           <Route path="/" element={<Home />} />
-          <Route path="/photography" element={<Photography />} />
           <Route path="/work/zolvo" element={<Zolvo />} />
+          <Route path="/work/:slug" element={<WorkRoom />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/photography" element={<Photography />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -29,7 +35,7 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <>
-      <Cursor />
+      <Loupe />
       <AnimatedRoutes />
     </>
   )
