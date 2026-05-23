@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { MousePointer2, StickyNote, Pencil, Volume2, VolumeX, Trash2 } from 'lucide-react'
-import { isMuted, setMuted, playClick } from '../lib/sound'
+import { MousePointer2, StickyNote, Pencil, Trash2, Camera } from 'lucide-react'
 import { DRAW_COLORS } from './Canvas'
 
 const TOOLS = [
@@ -14,11 +12,13 @@ function ToolBtn({ active, onClick, title, children }) {
     <button
       title={title}
       onClick={onClick}
+      onPointerDown={e => e.stopPropagation()}
       style={{
-        width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'none',
+        width: 36, height: 36, border: 'none', cursor: 'none',
+        borderRadius: 'calc(var(--radius-pill) - 2px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: active ? 'var(--accent)' : 'transparent',
-        color: active ? '#fff' : 'var(--ink-soft)',
+        color: active ? 'var(--surface)' : 'var(--ink-soft)',
         transition: 'background 0.15s, color 0.15s',
       }}
       onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
@@ -29,45 +29,17 @@ function ToolBtn({ active, onClick, title, children }) {
   )
 }
 
-export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onClearDrawing }) {
-  const [muted, setMutedState] = useState(isMuted())
-
-  const toggleMute = () => {
-    const next = !muted
-    setMuted(next)
-    setMutedState(next)
-    if (!next) playClick()
-  }
-
+export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onClearDrawing, onOpenPhotoBooth }) {
   return (
     <>
-      {/* Left tool dock */}
-      <div style={{
-        position: 'fixed', left: 16, top: '50%', transform: 'translateY(-50%)',
-        zIndex: 9000, display: 'flex', flexDirection: 'column', gap: 2,
-        background: 'var(--surface)', border: '1px solid var(--line)',
-        borderRadius: 12, padding: 5,
-        boxShadow: '0 6px 22px rgba(0,0,0,0.1)',
-      }}>
-        {TOOLS.map(({ id, Icon, title }) => (
-          <ToolBtn key={id} active={mode === id} title={title} onClick={() => setMode(id)}>
-            <Icon size={17} />
-          </ToolBtn>
-        ))}
-        <div style={{ height: 1, background: 'var(--line)', margin: '4px 6px' }} />
-        <ToolBtn active={false} title={muted ? 'Sound off' : 'Sound on'} onClick={toggleMute}>
-          {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-        </ToolBtn>
-      </div>
-
-      {/* Draw sub-toolbar */}
+      {/* Draw sub-toolbar — appears RIGHT of the left vertical dock when drawing */}
       {mode === 'draw' && (
         <div style={{
-          position: 'fixed', left: 64, top: '50%', transform: 'translateY(-50%)',
-          zIndex: 9000, display: 'flex', flexDirection: 'column', gap: 8,
-          background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 12, padding: '0.6rem 0.5rem',
-          boxShadow: '0 6px 22px rgba(0,0,0,0.1)', alignItems: 'center',
+          position: 'fixed', left: 66, top: '50%', transform: 'translateY(-50%)',
+          zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius-pill)', padding: '0.6rem 0.45rem',
+          boxShadow: 'var(--shadow-card)',
         }}>
           {DRAW_COLORS.map(c => (
             <button
@@ -82,7 +54,7 @@ export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onCle
               }}
             />
           ))}
-          <div style={{ height: 1, width: 22, background: 'var(--line)' }} />
+          <div style={{ width: 1, height: 18, background: 'var(--line)' }} />
           <button
             title="Clear all drawings"
             onClick={onClearDrawing}
@@ -98,6 +70,26 @@ export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onCle
           </button>
         </div>
       )}
+
+      {/* Left vertical tool dock */}
+      <div onPointerDown={e => e.stopPropagation()} style={{
+        position: 'fixed', left: 16, top: '50%', transform: 'translateY(-50%)',
+        zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+        background: 'var(--surface)', border: 'var(--border-card)',
+        borderRadius: 'var(--radius-pill)', padding: 5,
+        boxShadow: 'var(--shadow-card)',
+        animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.2s',
+      }}>
+        {TOOLS.map(({ id, Icon, title }) => (
+          <ToolBtn key={id} active={mode === id} title={title} onClick={() => setMode(id)}>
+            <Icon size={17} />
+          </ToolBtn>
+        ))}
+        <div style={{ width: 18, height: 1, background: 'var(--line)', margin: '4px 0' }} />
+        <ToolBtn title="Photo booth — drop a polaroid" onClick={onOpenPhotoBooth}>
+          <Camera size={17} />
+        </ToolBtn>
+      </div>
     </>
   )
 }

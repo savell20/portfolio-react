@@ -85,9 +85,9 @@ export default function TestimonialWall() {
 
   return (
     <div style={{
-      background: 'var(--surface)', border: '1px solid var(--line)',
-      borderRadius: 18, padding: '1.75rem 1.9rem 2rem',
-      boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+      background: 'var(--surface)', border: 'var(--border-card)',
+      borderRadius: 'var(--radius)', padding: '1.75rem 1.9rem 2rem',
+      boxShadow: 'var(--shadow-card)',
     }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>

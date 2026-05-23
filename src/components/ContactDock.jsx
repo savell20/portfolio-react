@@ -35,7 +35,8 @@ function DockItem({ Icon, label, href, ext }) {
       onMouseLeave={() => setHover(false)}
       style={{
         position: 'relative', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', width: 38, height: 38, borderRadius: 9,
+        justifyContent: 'center', width: 38, height: 38,
+        borderRadius: 'calc(var(--radius-pill) - 2px)',
         textDecoration: 'none', cursor: 'none',
         background: hover ? 'var(--accent)' : 'transparent',
         color: hover ? '#fff' : 'var(--ink-soft)',
@@ -60,11 +61,11 @@ function DockItem({ Icon, label, href, ext }) {
 export default function ContactDock() {
   return (
     <div style={{
-      position: 'fixed', right: 16, top: '50%', transform: 'translateY(-50%)',
-      zIndex: 9000, display: 'flex', flexDirection: 'column', gap: 2,
-      background: 'var(--surface)', border: '1px solid var(--line)',
-      borderRadius: 12, padding: 5,
-      boxShadow: '0 6px 22px rgba(0,0,0,0.1)',
+      position: 'fixed', left: 92, bottom: 16,
+      zIndex: 9000, display: 'flex', flexDirection: 'row', gap: 2,
+      background: 'var(--surface)', border: 'var(--border-card)',
+      borderRadius: 'var(--radius-pill)', padding: 5,
+      boxShadow: 'var(--shadow-card)',
       animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.2s',
     }}>
       {LINKS.map(l => <DockItem key={l.label} {...l} />)}

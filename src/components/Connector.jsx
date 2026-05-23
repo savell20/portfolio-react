@@ -18,15 +18,15 @@ export default function Connector({ x1, y1, x2, y2, label }) {
     <g>
       <path
         d={d}
-        strokeWidth={2}
-        strokeDasharray="2 7"
+        strokeWidth={2.5}
+        strokeDasharray="6 6"
         strokeLinecap="round"
-        opacity={0.5}
+        opacity={0.9}
         style={{ fill: 'none', stroke: 'var(--accent)' }}
       />
-      <circle cx={x1} cy={y1} r={4} strokeWidth={2}
+      <circle cx={x1} cy={y1} r={5} strokeWidth={2.5}
         style={{ fill: 'var(--canvas)', stroke: 'var(--accent)' }} />
-      <circle cx={x2} cy={y2} r={4} style={{ fill: 'var(--accent)' }} />
+      <circle cx={x2} cy={y2} r={5} style={{ fill: 'var(--accent)' }} />
       {label && (
         <g>
           <rect

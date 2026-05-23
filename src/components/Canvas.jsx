@@ -4,7 +4,8 @@ import CanvasObject from './CanvasObject'
 import Toolbar from './Toolbar'
 import ToolDock from './ToolDock'
 import EditableSticky from './EditableSticky'
-import TestimonialWall from './TestimonialWall'
+import Polaroid from './Polaroid'
+import PhotoBooth from './PhotoBooth'
 import { playPop } from '../lib/sound'
 
 const MIN = 0.4
@@ -12,6 +13,7 @@ const MAX = 2.2
 const GRID_UNIT = 26
 const STICKY_KEY = 'canvas-stickies-v1'
 const STROKE_KEY = 'canvas-strokes-v1'
+const POLAROID_KEY = 'canvas-polaroids-v1'
 
 const STICKY_COLORS = [
   'var(--sticky-yellow)', 'var(--sticky-pink)',
@@ -35,8 +37,6 @@ function edgePoint(cx, cy, hw, hh, tx, ty) {
   return [cx + dx * s, cy + dy * s]
 }
 
-// Anchor on a box. side ∈ 'top'|'bottom'|'left'|'right' = that midpoint;
-// otherwise auto (the edge point facing the other box's center).
 function anchor(side, x, y, w, h, tx, ty) {
   if (side === 'top')    return [x + w / 2, y]
   if (side === 'bottom') return [x + w / 2, y + h]
@@ -54,10 +54,12 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const [objects, setObjects] = useState(initialObjects)
   const [stickies, setStickies] = useState(() => load(STICKY_KEY, []))
   const [strokes, setStrokes] = useState(() => load(STROKE_KEY, []))
+  const [polaroids, setPolaroids] = useState(() => load(POLAROID_KEY, []))
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
   const [mode, setMode] = useState('select') // select | sticky | draw
   const [drawColor, setDrawColor] = useState(DRAW_COLORS[0])
   const [editingId, setEditingId] = useState(null)
+  const [booth, setBooth] = useState(false)
 
   const topZ = useRef(initialObjects.length + 50)
   const rootRef = useRef(null)
@@ -163,6 +165,8 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const moveObj = useCallback((id, x, y) => {
     if (id.startsWith('us')) {
       setStickies(prev => { const next = prev.map(o => o.id === id ? { ...o, x, y } : o); save(STICKY_KEY, next); return next })
+    } else if (id.startsWith('up')) {
+      setPolaroids(prev => { const next = prev.map(o => o.id === id ? { ...o, x, y } : o); save(POLAROID_KEY, next); return next })
     } else {
       setObjects(objs => objs.map(o => (o.id === id ? { ...o, x, y } : o)))
     }
@@ -173,10 +177,34 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const z = topZ.current
     if (id.startsWith('us')) {
       setStickies(prev => { const next = prev.map(o => o.id === id ? { ...o, z } : o); save(STICKY_KEY, next); return next })
+    } else if (id.startsWith('up')) {
+      setPolaroids(prev => { const next = prev.map(o => o.id === id ? { ...o, z } : o); save(POLAROID_KEY, next); return next })
     } else {
       setObjects(objs => objs.map(o => (o.id === id ? { ...o, z } : o)))
     }
   }, [])
+
+  const addPolaroid = ({ src, caption }) => {
+    topZ.current += 1
+    const v = viewRef.current
+    const cx = (window.innerWidth / 2 - v.x) / v.scale
+    const cy = (window.innerHeight / 2 - v.y) / v.scale
+    const w = 220, h = 280
+    const p = {
+      id: 'up' + Date.now(),
+      x: cx - w / 2 + (Math.random() - 0.5) * 60,
+      y: cy - h / 2 + (Math.random() - 0.5) * 60,
+      w, h, z: topZ.current,
+      data: { src, caption, rotate: (Math.random() - 0.5) * 8 },
+    }
+    setPolaroids(prev => { const next = [...prev, p]; save(POLAROID_KEY, next); return next })
+    setBooth(false)
+    playPop()
+  }
+
+  const deletePolaroid = (id) => {
+    setPolaroids(prev => { const next = prev.filter(o => o.id !== id); save(POLAROID_KEY, next); return next })
+  }
 
   const editSticky = (id, text) => {
     setStickies(prev => {
@@ -270,10 +298,20 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
           </CanvasObject>
         ))}
 
-        {/* Testimonial wall */}
-        <div style={{ position: 'absolute', left: 476, top: 1300, width: 1040 }}>
-          <TestimonialWall />
-        </div>
+        {/* Polaroids */}
+        {polaroids.map((obj, i) => (
+          <CanvasObject key={obj.id} obj={obj} index={i} scale={view.scale}
+            locked={false} mode={mode}
+            onMove={moveObj} onFront={bringFront} onActivate={() => {}}>
+            <Polaroid
+              src={obj.data.src}
+              caption={obj.data.caption}
+              rotate={obj.data.rotate}
+              onDelete={() => deletePolaroid(obj.id)}
+            />
+          </CanvasObject>
+        ))}
+
       </div>
 
       <Toolbar
@@ -289,7 +327,10 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         drawColor={drawColor}
         setDrawColor={setDrawColor}
         onClearDrawing={clearDrawing}
+        onOpenPhotoBooth={() => setBooth(true)}
       />
+
+      {booth && <PhotoBooth onClose={() => setBooth(false)} onSave={addPolaroid} />}
     </div>
   )
 }

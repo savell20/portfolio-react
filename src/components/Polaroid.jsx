@@ -1,0 +1,58 @@
+import { useState } from 'react'
+import { X } from 'lucide-react'
+
+export default function Polaroid({ src, caption, rotate = 0, onDelete }) {
+  const [hover, setHover] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: '#FAF8F2',
+        padding: '10px 10px 28px',
+        boxShadow: '0 14px 32px rgba(0,0,0,0.28)',
+        transform: `rotate(${rotate}deg)`,
+        position: 'relative',
+        width: '100%', height: '100%',
+        display: 'flex', flexDirection: 'column',
+      }}
+    >
+      <div style={{
+        flex: 1, overflow: 'hidden', background: '#222',
+        marginBottom: 8,
+      }}>
+        <img
+          src={src}
+          alt={caption || 'polaroid'}
+          draggable={false}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </div>
+      <p style={{
+        textAlign: 'center',
+        fontFamily: 'var(--font-hand)', fontSize: '1.15rem',
+        color: '#2a2a26', lineHeight: 1.1,
+        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+      }}>
+        {caption}
+      </p>
+
+      {hover && onDelete && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete() }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label="Delete polaroid"
+          style={{
+            position: 'absolute', top: -8, right: -8,
+            width: 22, height: 22, borderRadius: '50%', cursor: 'none',
+            background: '#18181A', color: '#fff', border: '2px solid #FAF8F2',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+          }}
+        >
+          <X size={11} />
+        </button>
+      )}
+    </div>
+  )
+}

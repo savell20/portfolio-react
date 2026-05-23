@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Canvas from '../components/Canvas'
-import ContactDock from '../components/ContactDock'
 import MusicPlayer from '../components/MusicPlayer'
-import { TitleCard, ProjectCard, StickyNote, AboutCard, ContactCard } from '../components/CanvasCards'
+import PhotoTeaser from '../components/PhotoTeaser'
+import { ProjectCard, StickyNote, AboutCard } from '../components/CanvasCards'
 
 const projects = {
   zolvo: {
@@ -29,41 +29,31 @@ const projects = {
   },
 }
 
-// A tidy, aligned composition. Content cards are locked in place;
-// only the sticky notes are draggable. `h` ≈ real rendered height
-// (used for connector anchoring) so nothing overlaps.
+// Trimmed composition: an About hero on top, 3 project cards beneath,
+// plus the draggable sticky notes. (Contact info lives in the right
+// ContactDock; identity was folded into About.)
 const OBJECTS = [
-  { id: 'title', type: 'title', x: 500, y: 176, w: 430, h: 300, z: 5 },
-  { id: 'about', type: 'about', x: 1142, y: 176, w: 350, h: 392, z: 5 },
-  { id: 'zolvo', type: 'project', x: 500, y: 624, w: 296, h: 350, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 848, y: 624, w: 296, h: 350, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1196, y: 624, w: 296, h: 350, z: 6, to: '/work/captura', data: projects.captura },
-  { id: 'contact', type: 'contact', x: 821, y: 1034, w: 350, h: 185, z: 5 },
+  { id: 'about', type: 'about', x: 540, y: 120, w: 920, h: 360, z: 5 },
 
-  { id: 'sticky-1', type: 'sticky', x: 168, y: 250, w: 185, h: 150, z: 3, draggable: true,
-    data: { text: 'psst — the sticky notes still move ✎', color: 'var(--sticky-yellow)', rotate: -7, tall: true } },
-  { id: 'sticky-2', type: 'sticky', x: 1556, y: 232, w: 195, h: 150, z: 3, draggable: true,
-    data: { text: 'AI that feels human — not a magic trick', color: 'var(--sticky-blue)', rotate: 6, tall: true } },
-  { id: 'sticky-photo', type: 'sticky', x: 250, y: 1020, w: 205, h: 160, z: 3, draggable: true, to: '/photography',
-    data: { text: 'off the clock, I shoot film 📷', color: 'var(--sticky-pink)', rotate: -5, tall: true, link: '→ open the roll' } },
-  { id: 'sticky-process', type: 'sticky', x: 1300, y: 1064, w: 185, h: 150, z: 3, draggable: true,
-    data: { text: 'process > pixels. always.', color: 'var(--sticky-mint)', rotate: 5, tall: true } },
+  { id: 'zolvo', type: 'project', x: 540, y: 600, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 852, y: 600, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1164, y: 600, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
+
+  { id: 'sticky-1', type: 'sticky', x: 240, y: 240, w: 215, h: 165, z: 3, draggable: true,
+    data: { text: 'psst — you can drop your own sticky notes ✎', color: 'var(--sticky-yellow)', rotate: -6, tall: true } },
 ]
 
 const CONNECTORS = [
-  { from: 'title', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
-  { from: 'title', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
-  { from: 'title', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
-  { from: 'title', to: 'about', label: 'who?' },
+  { from: 'about', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
+  { from: 'about', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
+  { from: 'about', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
 ]
 
 function renderObject(obj) {
   switch (obj.type) {
-    case 'title': return <TitleCard />
     case 'project': return <ProjectCard data={obj.data} />
     case 'sticky': return <StickyNote data={obj.data} />
     case 'about': return <AboutCard />
-    case 'contact': return <ContactCard />
     default: return null
   }
 }
@@ -71,11 +61,16 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  const scale = w < 1200 ? 0.56 : 0.72
+  // Fit about + 3 project cards on first load. Content x:240–1500, y:120–960.
+  const scale = Math.min(
+    (w - 80) / 1260,
+    (h - 120) / 840,
+    0.85,
+  )
   return {
     scale,
-    x: w / 2 - 996 * scale,
-    y: h / 2 - 690 * scale,
+    x: w / 2 - 870 * scale,
+    y: h / 2 - 540 * scale,
   }
 }
 
@@ -86,18 +81,16 @@ function StackedBoard({ navigate }) {
       minHeight: '100vh', padding: '1.5rem 1.2rem 4rem',
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
     }}>
-      <div style={{ width: '100%', maxWidth: 420 }}><TitleCard /></div>
+      <div style={{ width: '100%', maxWidth: 440 }}><AboutCard /></div>
       {['zolvo', 'hubspot', 'captura'].map(slug => (
         <div
           key={slug}
           onClick={() => navigate(`/work/${slug}`)}
-          style={{ width: '100%', maxWidth: 420, cursor: 'pointer' }}
+          style={{ width: '100%', maxWidth: 440, cursor: 'pointer' }}
         >
           <ProjectCard data={projects[slug]} />
         </div>
       ))}
-      <div style={{ width: '100%', maxWidth: 420 }}><AboutCard /></div>
-      <div style={{ width: '100%', maxWidth: 420 }}><ContactCard /></div>
       <div
         onClick={() => navigate('/photography')}
         style={{ width: 210, cursor: 'pointer' }}
@@ -129,22 +122,8 @@ export default function Home() {
         renderObject={renderObject}
         onActivate={onActivate}
       />
-      <ContactDock />
       <MusicPlayer />
-      {/* hint */}
-      <div
-        style={{
-          position: 'fixed', bottom: 18, left: '50%', transform: 'translateX(-50%)',
-          zIndex: 9000, pointerEvents: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
-          color: 'var(--ink-soft)', background: 'var(--surface)',
-          border: '1px solid var(--line)', borderRadius: 8,
-          padding: '0.5rem 0.9rem', boxShadow: '0 4px 16px rgba(24,24,26,0.08)',
-          animation: 'fade-in 0.6s ease both', animationDelay: '0.8s',
-        }}
-      >
-        click a card to open it · scroll to zoom · drag to pan
-      </div>
+      <PhotoTeaser />
     </>
   )
 }

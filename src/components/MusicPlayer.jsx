@@ -1,18 +1,20 @@
 import { useState, useRef, useEffect } from 'react'
-import { Music2, X, Play, Pause, SkipBack, SkipForward, Minus, Maximize2 } from 'lucide-react'
+import {
+  X, Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
+} from 'lucide-react'
+import { isMuted, setMuted } from '../lib/sound'
 
 const LS_KEY = 'music-embed-url-v1'
+const LS_VOL = 'music-volume-v1'
 
-/* SANTIAGO — optionally set a default playlist (YouTube or Spotify link). */
+/* SANTIAGO — optionally set a default YouTube or Spotify playlist link. */
 const DEFAULT_URL = ''
 
-// Parse a pasted Spotify / YouTube link.
 function parse(raw) {
   if (!raw) return null
   let u
   try { u = new URL(raw.trim()) } catch { return null }
   const host = u.hostname.replace(/^www\.|^m\./, '')
-
   if (host === 'open.spotify.com') {
     const [type, id] = u.pathname.split('/').filter(Boolean)
     if (type && id) return { platform: 'spotify', src: `https://open.spotify.com/embed/${type}/${id}` }
@@ -30,7 +32,6 @@ function parse(raw) {
   return null
 }
 
-// Load the YouTube IFrame Player API once.
 let ytReady = null
 function ytApi() {
   if (ytReady) return ytReady
@@ -47,35 +48,84 @@ function ytApi() {
   return ytReady
 }
 
-const shell = {
-  position: 'fixed', left: 16, bottom: 62, zIndex: 9000,
-  background: 'var(--surface)', border: '1px solid var(--line)',
-  borderRadius: 12, boxShadow: '0 8px 28px rgba(0,0,0,0.16)',
+/* ---------------- Vinyl record ---------------- */
+
+function Vinyl({ cover, playing, size = 80, onClick }) {
+  const labelSize = Math.round(size * 0.42)
+  return (
+    <button
+      onClick={onClick}
+      title={cover ? 'Now playing' : 'Music'}
+      style={{
+        width: size, height: size, padding: 0, border: 'none',
+        cursor: 'none', background: 'transparent',
+        position: 'relative',
+      }}
+    >
+      <div style={{
+        width: '100%', height: '100%', borderRadius: '50%',
+        background: `
+          repeating-radial-gradient(circle at 50% 50%,
+            rgba(255,255,255,0.045) 0 1.2px, transparent 1.2px 3px),
+          radial-gradient(circle at 30% 30%, #2e2e2e 0 8%, #131313 60%, #050505 100%)
+        `,
+        boxShadow: '0 8px 24px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.08)',
+        animation: 'vinyl-spin 8s linear infinite',
+        animationPlayState: playing ? 'running' : 'paused',
+        position: 'relative',
+      }}>
+        {/* center label / cover art */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          width: labelSize, height: labelSize,
+          marginLeft: -labelSize / 2, marginTop: -labelSize / 2,
+          borderRadius: '50%', overflow: 'hidden',
+          background: 'var(--accent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--surface)',
+          boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.55)',
+        }}>
+          {cover
+            ? <img src={cover} alt="" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <span style={{ fontSize: labelSize * 0.45, fontWeight: 700 }}>♪</span>}
+        </div>
+        {/* spindle */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          width: 6, height: 6, marginLeft: -3, marginTop: -3,
+          borderRadius: '50%', background: '#070707',
+          boxShadow: '0 0 0 1px rgba(255,255,255,0.5)',
+        }} />
+      </div>
+    </button>
+  )
 }
-const iconBtn = {
-  border: 'none', background: 'transparent', cursor: 'none',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  color: 'var(--ink-soft)',
-}
+
+/* ---------------- Player ---------------- */
 
 export default function MusicPlayer() {
   const [url, setUrl] = useState(() => localStorage.getItem(LS_KEY) || DEFAULT_URL)
   const [input, setInput] = useState('')
   const [bad, setBad] = useState(false)
-  const [opened, setOpened] = useState(false)
-  const [mini, setMini] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [title, setTitle] = useState('')
+  const [videoId, setVideoId] = useState('')
+  const [volume, setVolume] = useState(() => {
+    const v = Number(localStorage.getItem(LS_VOL))
+    return Number.isFinite(v) && v >= 0 && v <= 100 ? v : 70
+  })
+  const [clickMuted, setClickMutedState] = useState(isMuted())
 
   const parsed = parse(url)
   const ytHostRef = useRef(null)
   const playerRef = useRef(null)
 
-  // Manage the YouTube player across url changes — it stays mounted while a
-  // link is loaded, so collapsing the panel never stops playback.
+  /* Build / rebuild the YT player when the url changes. */
   useEffect(() => {
     if (!parsed || parsed.platform !== 'youtube') {
       if (playerRef.current) { try { playerRef.current.destroy() } catch { /* */ } playerRef.current = null }
+      setVideoId(''); setTitle(''); setPlaying(false)
       return
     }
     let cancelled = false
@@ -86,17 +136,24 @@ export default function MusicPlayer() {
       host.innerHTML = ''
       const inner = document.createElement('div')
       host.appendChild(inner)
+      const onMeta = (p) => {
+        const d = p && p.getVideoData && p.getVideoData()
+        if (d) {
+          if (d.video_id) setVideoId(d.video_id)
+          if (d.title) setTitle(d.title)
+        }
+        try { p.unMute(); p.setVolume(volume) } catch { /* */ }
+      }
       const opts = {
         width: '100%', height: '100%',
         playerVars: parsed.kind === 'playlist'
           ? { listType: 'playlist', list: parsed.list }
           : (parsed.list ? { list: parsed.list } : {}),
         events: {
-          onReady: (e) => setTitle(e.target.getVideoData()?.title || ''),
+          onReady: (e) => onMeta(e.target),
           onStateChange: (e) => {
             setPlaying(e.data === 1)
-            const d = e.target.getVideoData && e.target.getVideoData()
-            if (d && d.title) setTitle(d.title)
+            onMeta(e.target)
           },
         },
       }
@@ -107,195 +164,218 @@ export default function MusicPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url])
 
+  /* Persist + apply volume to the YT player. */
+  useEffect(() => {
+    localStorage.setItem(LS_VOL, String(volume))
+    const p = playerRef.current
+    if (p && p.setVolume) { try { p.setVolume(volume) } catch { /* */ } }
+  }, [volume])
+
   const submit = () => {
     const p = parse(input)
     if (!p) { setBad(true); return }
     setBad(false)
     const v = input.trim()
-    setUrl(v)
-    localStorage.setItem(LS_KEY, v)
-    setInput('')
-    setTitle('')
-    setMini(false)
+    setUrl(v); localStorage.setItem(LS_KEY, v)
+    setInput(''); setTitle(''); setVideoId('')
   }
   const clear = () => {
     setUrl(''); localStorage.removeItem(LS_KEY)
-    setPlaying(false); setTitle('')
+    setPlaying(false); setTitle(''); setVideoId('')
   }
-
-  const yt = () => playerRef.current
   const togglePlay = () => {
-    const p = yt()
-    if (!p) return
-    if (playing) p.pauseVideo()
-    else p.playVideo()
+    const p = playerRef.current; if (!p) return
+    if (playing) {
+      p.pauseVideo()
+    } else {
+      try { p.unMute(); p.setVolume(volume) } catch { /* */ }
+      p.playVideo()
+    }
   }
-  const next = () => { const p = yt(); if (p && p.nextVideo) p.nextVideo() }
-  const prev = () => { const p = yt(); if (p && p.previousVideo) p.previousVideo() }
+  const next = () => { const p = playerRef.current; if (p && p.nextVideo) p.nextVideo() }
+  const prev = () => { const p = playerRef.current; if (p && p.previousVideo) p.previousVideo() }
+  const toggleClickMute = () => { const v = !clickMuted; setMuted(v); setClickMutedState(v) }
 
-  /* ---------- collapsed pill (nothing loaded yet) ---------- */
-  if (!parsed && !opened) {
-    return (
-      <button
-        onClick={() => setOpened(true)}
-        style={{
-          ...shell, display: 'flex', alignItems: 'center', gap: 6,
-          padding: '0.45rem 0.7rem', cursor: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--ink)',
-          animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.3s',
-        }}
-      >
-        <Music2 size={13} style={{ color: 'var(--accent)' }} /> music
-      </button>
-    )
-  }
+  const cover = parsed && parsed.platform === 'youtube' && videoId
+    ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+    : null
 
-  /* ---------- YouTube player host (kept mounted whenever a YT link is loaded) ---------- */
-  const ytHost = parsed && parsed.platform === 'youtube' && (
+  /* Persistent hidden YT host (audio keeps playing regardless of UI state). */
+  const hiddenYtHost = parsed && parsed.platform === 'youtube' && (
     <div
       ref={ytHostRef}
+      aria-hidden
       style={{
-        width: mini ? 96 : '100%',
-        height: mini ? 54 : 176,
-        flexShrink: 0,
-        borderRadius: 8, overflow: 'hidden', background: '#000',
+        position: 'fixed', top: -9999, left: -9999, width: 1, height: 1,
+        opacity: 0, pointerEvents: 'none',
       }}
     />
   )
-  const spotifyEmbed = parsed && parsed.platform === 'spotify' && (
-    <iframe
-      title="Spotify player"
-      src={parsed.src}
-      width="100%"
-      height={mini ? 80 : 152}
-      frameBorder="0"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      style={{ display: 'block', border: 'none', borderRadius: 8 }}
-    />
-  )
 
-  /* ---------- minimized bar ---------- */
-  if (mini && parsed) {
-    return (
-      <div style={{ ...shell, width: 288, padding: '0.55rem 0.6rem', animation: 'pop-in 0.22s var(--ease) both' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <span style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--ink-soft)',
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 210,
-          }}>
-            {parsed.platform === 'youtube' ? (title || 'now playing') : 'Spotify — now playing'}
-          </span>
-          <button onClick={() => setMini(false)} title="Expand" style={{ ...iconBtn, width: 22, height: 22 }}>
-            <Maximize2 size={13} />
-          </button>
-        </div>
-
-        {parsed.platform === 'youtube' ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {ytHost}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <button onClick={prev} title="Previous" style={{ ...iconBtn, width: 30, height: 30 }}>
-                <SkipBack size={15} />
-              </button>
-              <button
-                onClick={togglePlay}
-                title={playing ? 'Pause' : 'Play'}
-                style={{
-                  width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'none',
-                  background: 'var(--accent)', color: '#fff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                {playing ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: 1 }} />}
-              </button>
-              <button onClick={next} title="Next" style={{ ...iconBtn, width: 30, height: 30 }}>
-                <SkipForward size={15} />
-              </button>
-            </div>
-          </div>
-        ) : (
-          spotifyEmbed
-        )}
-      </div>
-    )
+  const panelStyle = {
+    position: 'fixed', bottom: 90, left: 16, zIndex: 9500,
+    width: 308, padding: '0.85rem',
+    background: 'var(--surface)', border: 'var(--border-card)',
+    borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-card)',
+    animation: 'pop-in 0.22s var(--ease) both',
+  }
+  const iconBtn = {
+    background: 'transparent', border: 'none', cursor: 'none',
+    color: 'var(--ink-soft)', display: 'flex',
+    alignItems: 'center', justifyContent: 'center',
   }
 
-  /* ---------- expanded panel ---------- */
   return (
-    <div style={{ ...shell, width: 320, padding: '0.7rem', animation: 'pop-in 0.22s var(--ease) both' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-        <span style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          fontFamily: 'var(--font-mono)', fontSize: '0.66rem', fontWeight: 500, color: 'var(--ink)',
-        }}>
-          <Music2 size={13} style={{ color: 'var(--accent)' }} /> Music corner
-        </span>
-        <button
-          onClick={() => (parsed ? setMini(true) : setOpened(false))}
-          title={parsed ? 'Minimize' : 'Close'}
-          style={{ ...iconBtn, width: 22, height: 22 }}
-        >
-          {parsed ? <Minus size={14} /> : <X size={13} />}
-        </button>
+    <>
+      {/* Vinyl — always visible (bottom-left, compact) */}
+      <div style={{
+        position: 'fixed', bottom: 16, left: 16, zIndex: 9500,
+        animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.2s',
+      }}>
+        <Vinyl cover={cover} playing={playing} size={62} onClick={() => setExpanded(e => !e)} />
       </div>
 
-      {parsed ? (
-        <div style={{ marginBottom: '0.6rem' }}>
-          {parsed.platform === 'youtube' ? ytHost : spotifyEmbed}
+      {hiddenYtHost}
+
+      {/* Expanded panel */}
+      {expanded && (
+        <div style={panelStyle}>
+          {/* header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', gap: 8 }}>
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--ink)',
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1,
+            }}>
+              {parsed
+                ? (parsed.platform === 'youtube' ? (title || 'YouTube — loading…') : 'Spotify')
+                : 'Music corner'}
+            </span>
+            <button onClick={() => setExpanded(false)} title="Close" style={{ ...iconBtn, width: 24, height: 24 }}>
+              <X size={13} />
+            </button>
+          </div>
+
+          {/* Controls per platform */}
+          {parsed && parsed.platform === 'youtube' && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: '0.75rem' }}>
+                <button onClick={prev} title="Previous" style={{ ...iconBtn, width: 32, height: 32 }}><SkipBack size={16} /></button>
+                <button
+                  onClick={togglePlay}
+                  title={playing ? 'Pause' : 'Play'}
+                  style={{
+                    width: 38, height: 38, borderRadius: '50%', border: 'none', cursor: 'none',
+                    background: 'var(--accent)', color: 'var(--surface)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  {playing ? <Pause size={15} /> : <Play size={15} style={{ marginLeft: 1 }} />}
+                </button>
+                <button onClick={next} title="Next" style={{ ...iconBtn, width: 32, height: 32 }}><SkipForward size={16} /></button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.8rem' }}>
+                <Volume2 size={13} style={{ color: 'var(--ink-faint)', flexShrink: 0 }} />
+                <input
+                  type="range" min={0} max={100} value={volume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
+                  style={{ flex: 1, accentColor: 'var(--accent)' }}
+                />
+                <span style={{
+                  fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--ink-faint)',
+                  minWidth: 22, textAlign: 'right',
+                }}>
+                  {volume}
+                </span>
+              </div>
+            </>
+          )}
+
+          {parsed && parsed.platform === 'spotify' && (
+            <div style={{ marginBottom: '0.75rem', borderRadius: 8, overflow: 'hidden' }}>
+              <iframe
+                title="Spotify player"
+                src={parsed.src}
+                width="100%" height="152" frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                style={{ display: 'block', border: 'none' }}
+              />
+            </div>
+          )}
+
+          {!parsed && (
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink-soft)',
+              lineHeight: 1.6, marginBottom: '0.6rem',
+            }}>
+              🎧 Paste a Spotify or YouTube playlist link to start.
+            </p>
+          )}
+
+          {/* Paste box */}
+          <div style={{ display: 'flex', gap: 5 }}>
+            <input
+              value={input}
+              onChange={(e) => { setInput(e.target.value); setBad(false) }}
+              onKeyDown={(e) => { if (e.key === 'Enter') submit() }}
+              placeholder="paste a Spotify / YouTube link"
+              style={{
+                flex: 1, minWidth: 0, padding: '0.45rem 0.55rem',
+                background: 'var(--canvas)', borderRadius: 7,
+                border: `1px solid ${bad ? 'var(--accent)' : 'var(--line)'}`,
+                fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink)',
+                outline: 'none',
+              }}
+            />
+            <button
+              onClick={submit}
+              style={{
+                cursor: 'none', border: 'none', borderRadius: 7, padding: '0 0.65rem',
+                background: 'var(--accent)', color: 'var(--surface)',
+                display: 'flex', alignItems: 'center', gap: 4,
+                fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+              }}
+            >
+              <Play size={11} /> play
+            </button>
+          </div>
+
+          {bad && (
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--accent)', marginTop: '0.4rem',
+            }}>
+              Use a Spotify (open.spotify.com) or YouTube link.
+            </p>
+          )}
+
+          {/* Footer: click-sound mute + clear */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.7rem' }}>
+            <button
+              onClick={toggleClickMute}
+              title={clickMuted ? 'Click sounds: off' : 'Click sounds: on'}
+              style={{
+                ...iconBtn, gap: 5, padding: '0.25rem 0.45rem',
+                fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em',
+              }}
+            >
+              {clickMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+              clicks {clickMuted ? 'off' : 'on'}
+            </button>
+            {parsed && (
+              <button
+                onClick={clear}
+                style={{
+                  background: 'none', border: 'none', cursor: 'none',
+                  fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--ink-faint)',
+                  padding: 0,
+                }}
+              >
+                clear
+              </button>
+            )}
+          </div>
         </div>
-      ) : (
-        <p style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink-soft)',
-          lineHeight: 1.6, marginBottom: '0.6rem',
-        }}>
-          🎧 Paste a Spotify or YouTube playlist link to start.
-        </p>
       )}
-
-      <div style={{ display: 'flex', gap: 5 }}>
-        <input
-          value={input}
-          onChange={(e) => { setInput(e.target.value); setBad(false) }}
-          onKeyDown={(e) => { if (e.key === 'Enter') submit() }}
-          placeholder="paste a Spotify / YouTube link"
-          style={{
-            flex: 1, minWidth: 0, padding: '0.45rem 0.55rem',
-            background: 'var(--canvas)', borderRadius: 7,
-            border: `1px solid ${bad ? 'var(--accent)' : 'var(--line)'}`,
-            fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink)',
-            outline: 'none',
-          }}
-        />
-        <button
-          onClick={submit}
-          style={{
-            cursor: 'none', border: 'none', borderRadius: 7, padding: '0 0.7rem',
-            background: 'var(--accent)', color: '#fff',
-            display: 'flex', alignItems: 'center', gap: 4,
-            fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-          }}
-        >
-          <Play size={11} /> play
-        </button>
-      </div>
-
-      {bad && (
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--accent)', marginTop: '0.4rem' }}>
-          Use a Spotify (open.spotify.com) or YouTube link.
-        </p>
-      )}
-      {parsed && (
-        <button
-          onClick={clear}
-          style={{
-            background: 'none', border: 'none', cursor: 'none',
-            fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--ink-faint)',
-            marginTop: '0.45rem', padding: 0,
-          }}
-        >
-          clear
-        </button>
-      )}
-    </div>
+    </>
   )
 }

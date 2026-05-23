@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -22,6 +22,12 @@
   --font-mono: 'JetBrains Mono', monospace;
   --font-hand: 'Caveat', cursive;
 
+  /* Style vars (default = modern) */
+  --radius: 12px;
+  --radius-pill: 10px;
+  --border-card: 1px solid var(--line);
+  --shadow-card: 0 6px 22px rgba(24, 24, 26, 0.07);
+
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -35,6 +41,8 @@
   --line-strong: #41414A;
   --accent: #5B7CFF;
   --accent-soft: #20233E;
+
+  --shadow-card: 0 6px 22px rgba(0, 0, 0, 0.4);
 }
 
 html { color-scheme: light dark; }
@@ -60,7 +68,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: var(--surface);
 }
 
 button { font-family: inherit; }
@@ -69,23 +77,22 @@ button { font-family: inherit; }
   from { opacity: 0; transform: translateY(14px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes lift-in {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 @keyframes pop-in {
   from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
 }
-
 @keyframes float-y {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-7px); }
+}
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
 }
