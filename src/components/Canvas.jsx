@@ -35,6 +35,16 @@ function edgePoint(cx, cy, hw, hh, tx, ty) {
   return [cx + dx * s, cy + dy * s]
 }
 
+// Anchor on a box. side ∈ 'top'|'bottom'|'left'|'right' = that midpoint;
+// otherwise auto (the edge point facing the other box's center).
+function anchor(side, x, y, w, h, tx, ty) {
+  if (side === 'top')    return [x + w / 2, y]
+  if (side === 'bottom') return [x + w / 2, y + h]
+  if (side === 'left')   return [x, y + h / 2]
+  if (side === 'right')  return [x + w, y + h / 2]
+  return edgePoint(x + w / 2, y + h / 2, w / 2, h / 2, tx, ty)
+}
+
 function strokePath(points) {
   if (!points.length) return ''
   return 'M ' + points.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')
@@ -63,7 +73,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const onWheel = (e) => {
       e.preventDefault()
       setView(v => {
-        const factor = Math.min(1.25, Math.max(0.8, Math.exp(-e.deltaY * 0.001)))
+        const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.003)))
         const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
         const k = ns / v.scale
         return {
@@ -222,8 +232,8 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
             if (!a || !b) return null
             const acx = a.x + a.w / 2, acy = a.y + a.h / 2
             const bcx = b.x + b.w / 2, bcy = b.y + b.h / 2
-            const [x1, y1] = edgePoint(acx, acy, a.w / 2, a.h / 2, bcx, bcy)
-            const [x2, y2] = edgePoint(bcx, bcy, b.w / 2, b.h / 2, acx, acy)
+            const [x1, y1] = anchor(c.fromSide, a.x, a.y, a.w, a.h, bcx, bcy)
+            const [x2, y2] = anchor(c.toSide, b.x, b.y, b.w, b.h, acx, acy)
             return <Connector key={i} x1={x1} y1={y1} x2={x2} y2={y2} label={c.label} />
           })}
           {/* Drawings */}

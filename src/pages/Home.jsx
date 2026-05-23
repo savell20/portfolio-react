@@ -51,9 +51,9 @@ const OBJECTS = [
 ]
 
 const CONNECTORS = [
-  { from: 'title', to: 'zolvo', label: '01' },
-  { from: 'title', to: 'hubspot', label: '02' },
-  { from: 'title', to: 'captura', label: '03' },
+  { from: 'title', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
+  { from: 'title', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
+  { from: 'title', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
   { from: 'title', to: 'about', label: 'who?' },
 ]
 
