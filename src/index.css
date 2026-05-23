@@ -100,3 +100,11 @@ button { font-family: inherit; }
   0%   { opacity: 1; }
   100% { opacity: 0; }
 }
+@keyframes hint-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-6px); }
+}
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.3); }
+}

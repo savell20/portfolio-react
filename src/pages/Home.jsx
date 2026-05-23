@@ -124,6 +124,30 @@ export default function Home() {
       />
       <MusicPlayer />
       <PhotoTeaser />
+
+      {/* Floating hint — bottom-center */}
+      <div
+        style={{
+          position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)',
+          zIndex: 9000, pointerEvents: 'none',
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius-pill)',
+          padding: '0.45rem 0.85rem',
+          boxShadow: 'var(--shadow-card)',
+          fontFamily: 'var(--font-mono)', fontSize: '0.64rem',
+          color: 'var(--ink-soft)', letterSpacing: '0.02em',
+          animation: 'hint-float 3.6s ease-in-out infinite, fade-in 0.6s var(--ease) both',
+          animationDelay: '0s, 0.9s',
+        }}
+      >
+        <span style={{
+          width: 6, height: 6, borderRadius: '50%',
+          background: 'var(--accent)',
+          animation: 'hint-pulse 1.8s ease-in-out infinite',
+        }} />
+        drag to move · scroll to zoom
+      </div>
     </>
   )
 }
