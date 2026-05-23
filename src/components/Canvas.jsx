@@ -53,7 +53,13 @@ function strokePath(points) {
 export default function Canvas({ initialObjects, connectors = [], initialView, renderObject, onActivate }) {
   const [objects, setObjects] = useState(initialObjects)
   const [stickies, setStickies] = useState(() => load(STICKY_KEY, []))
-  const [strokes, setStrokes] = useState(() => load(STROKE_KEY, []))
+  const [strokes, setStrokes] = useState(() => {
+    const loaded = load(STROKE_KEY, [])
+    // Strip stray single-point strokes (accidental taps in pen mode).
+    const cleaned = Array.isArray(loaded) ? loaded.filter(s => s && Array.isArray(s.points) && s.points.length >= 2) : []
+    if (cleaned.length !== (loaded?.length || 0)) save(STROKE_KEY, cleaned)
+    return cleaned
+  })
   const [polaroids, setPolaroids] = useState(() => load(POLAROID_KEY, []))
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
   const [mode, setMode] = useState('select') // select | sticky | draw
@@ -112,7 +118,12 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
       pan.current = null
       if (drawing.current) {
         drawing.current = null
-        setStrokes(s => { save(STROKE_KEY, s); return s })
+        setStrokes(s => {
+          // Drop any 1-point "tap" strokes — they render as a stray dot.
+          const cleaned = s.filter(st => st.points.length >= 2)
+          save(STROKE_KEY, cleaned)
+          return cleaned
+        })
       }
     }
     window.addEventListener('pointermove', onMove)
@@ -184,18 +195,19 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     }
   }, [])
 
-  const addPolaroid = ({ src, caption }) => {
+  const addPolaroid = ({ src, caption, aspect }) => {
     topZ.current += 1
     const v = viewRef.current
     const cx = (window.innerWidth / 2 - v.x) / v.scale
     const cy = (window.innerHeight / 2 - v.y) / v.scale
-    const w = 220, h = 280
+    const w = 180
+    const h = aspect ? Math.round(w / aspect) : 220
     const p = {
       id: 'up' + Date.now(),
       x: cx - w / 2 + (Math.random() - 0.5) * 60,
       y: cy - h / 2 + (Math.random() - 0.5) * 60,
       w, h, z: topZ.current,
-      data: { src, caption, rotate: (Math.random() - 0.5) * 8 },
+      data: { src, caption, rotate: (Math.random() - 0.5) * 8, isStrip: !!aspect && aspect < 0.8 },
     }
     setPolaroids(prev => { const next = [...prev, p]; save(POLAROID_KEY, next); return next })
     setBooth(false)
@@ -307,6 +319,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
               src={obj.data.src}
               caption={obj.data.caption}
               rotate={obj.data.rotate}
+              isStrip={obj.data.isStrip}
               onDelete={() => deletePolaroid(obj.id)}
             />
           </CanvasObject>

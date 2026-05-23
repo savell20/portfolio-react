@@ -102,20 +102,20 @@ export default function CaseStudy() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 4rem' }}>
 
-      {/* Back control */}
+      {/* Back control — bottom-center, leaves room for StyleSwitcher (top-left) and TopBar (top-right) */}
       <button
         onClick={() => navigate('/')}
         style={{
-          position: 'fixed', top: 16, left: 16, zIndex: 9000,
-          display: 'flex', alignItems: 'center', gap: '0.45rem',
-          background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 10, padding: '0.5rem 0.8rem', cursor: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
-          color: 'var(--ink-soft)', boxShadow: '0 4px 16px rgba(24,24,26,0.06)',
-          transition: 'color 0.2s',
+          position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', zIndex: 9000,
+          display: 'flex', alignItems: 'center', gap: '0.5rem',
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius-pill)', padding: '0.6rem 1rem', cursor: 'none',
+          fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 500,
+          color: 'var(--ink-soft)', boxShadow: 'var(--shadow-card)',
+          transition: 'color 0.2s, transform 0.2s var(--ease)',
         }}
-        onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-        onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink-soft)')}
+        onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(-2px)' }}
+        onMouseLeave={e => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(0)' }}
       >
         <ArrowLeft size={13} /> back to canvas
       </button>

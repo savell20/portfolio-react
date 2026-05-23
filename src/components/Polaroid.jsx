@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 
-export default function Polaroid({ src, caption, rotate = 0, onDelete }) {
+export default function Polaroid({ src, caption, rotate = 0, isStrip = false, onDelete }) {
   const [hover, setHover] = useState(false)
+  // Photobooth strips already include the caption baked into the image,
+  // so render the whole frame without a separate white caption band.
   return (
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
         background: '#FAF8F2',
-        padding: '10px 10px 28px',
+        padding: isStrip ? 0 : '10px 10px 28px',
         boxShadow: '0 14px 32px rgba(0,0,0,0.28)',
         transform: `rotate(${rotate}deg)`,
         position: 'relative',
@@ -19,23 +21,30 @@ export default function Polaroid({ src, caption, rotate = 0, onDelete }) {
     >
       <div style={{
         flex: 1, overflow: 'hidden', background: '#222',
-        marginBottom: 8,
+        marginBottom: isStrip ? 0 : 8,
       }}>
         <img
           src={src}
           alt={caption || 'polaroid'}
           draggable={false}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          style={{
+            width: '100%', height: '100%',
+            objectFit: isStrip ? 'contain' : 'cover',
+            display: 'block',
+            background: isStrip ? '#FAF8F2' : '#222',
+          }}
         />
       </div>
-      <p style={{
-        textAlign: 'center',
-        fontFamily: 'var(--font-hand)', fontSize: '1.15rem',
-        color: '#2a2a26', lineHeight: 1.1,
-        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-      }}>
-        {caption}
-      </p>
+      {!isStrip && (
+        <p style={{
+          textAlign: 'center',
+          fontFamily: 'var(--font-hand)', fontSize: '1.15rem',
+          color: '#2a2a26', lineHeight: 1.1,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {caption}
+        </p>
+      )}
 
       {hover && onDelete && (
         <button

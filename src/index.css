@@ -96,3 +96,7 @@ button { font-family: inherit; }
 @keyframes vinyl-spin {
   to { transform: rotate(360deg); }
 }
+@keyframes photobooth-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
