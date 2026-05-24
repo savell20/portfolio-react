@@ -35,29 +35,21 @@ const projects = {
 // plus the draggable sticky notes. (Contact info lives in the right
 // ContactDock; identity was folded into About.)
 const OBJECTS = [
-  // Identity polaroid — sits cleanly in the left space
-  { id: 'me', type: 'identity', x: 220, y: 210, w: 270, h: 320, z: 5 },
+  // Identity polaroid — prominent in the left space
+  { id: 'me', type: 'identity', x: 300, y: 160, w: 300, h: 360, z: 5 },
 
-  // Two stickies: the "intro" (who I am) and the "experience" (where I've worked).
-  // The experience sticky is the one that visually feeds into the case studies.
-  { id: 'sticky-intro', type: 'sticky', x: 1490, y: 220, w: 240, h: 220, z: 4, draggable: true,
-    data: {
-      text: 'Product designer crafting AI-native interfaces — turning complex systems into things that feel obvious 🎯',
-      color: 'var(--sticky-yellow)', rotate: 5, tall: true,
-    } },
-
-  // Wide & untilted — its bottom edge spans the project trio so the three
-  // 01/02/03 connectors drop straight down, one above each card.
-  { id: 'sticky-experience', type: 'sticky', x: 560, y: 240, w: 880, h: 180, z: 4, draggable: true,
+  // Single sticky that spans the project trio so the 01/02/03 connectors
+  // drop straight down, one directly above each case study.
+  { id: 'sticky-experience', type: 'sticky', x: 700, y: 200, w: 760, h: 220, z: 4, draggable: true,
     data: {
       text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
       color: 'var(--sticky-blue)', rotate: 0, tall: false,
     } },
 
-  // Case studies
-  { id: 'zolvo', type: 'project', x: 560, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 872, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1184, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
+  // Case studies — sit under the sticky so each connector drops straight in
+  { id: 'zolvo', type: 'project', x: 660, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 972, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1284, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 ]
 
 const CONNECTORS = [
@@ -78,17 +70,17 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Fit polaroid + 2 stickies + 3 project cards on first load.
-  // Content roughly spans canvas x:220–1730, y:210–940.
+  // Fit polaroid + sticky + 3 project cards on first load.
+  // Content roughly spans canvas x:300–1580, y:160–940.
   const scale = Math.min(
-    (w - 80) / 1510,
-    (h - 160) / 740,
-    0.78,
+    (w - 80) / 1280,
+    (h - 160) / 780,
+    0.82,
   )
   return {
     scale,
-    x: w / 2 - 975 * scale,
-    y: h / 2 - 575 * scale,
+    x: w / 2 - 940 * scale,
+    y: h / 2 - 550 * scale,
   }
 }
 
