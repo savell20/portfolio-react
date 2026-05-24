@@ -59,10 +59,13 @@ const OBJECTS = [
     data: { text: 'what people say', arrow: '↑', rotate: -2 } },
   { id: 'note-left', type: 'note', x: 220, y: 540, w: 240, h: 80, z: 8,
     data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
-  { id: 'note-right-photo', type: 'note', x: 1540, y: 470, w: 240, h: 80, z: 8,
-    data: { text: 'photography roll', arrow: '→', rotate: -2 } },
+  { id: 'note-right-photo', type: 'note', x: 1540, y: 60, w: 280, h: 80, z: 8,
+    data: { text: 'snap a polaroid', arrow: '↓', rotate: -3 } },
   { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
+  // Points directly at the identity polaroid so first-time visitors know it's clickable
+  { id: 'note-polaroid', type: 'note', x: 380, y: 60, w: 320, h: 80, z: 8,
+    data: { text: 'click my photo — about me', arrow: '↓', rotate: 4 } },
 
   // ─── LEFT — hobbies & life ───
   { id: 'hobby-1', type: 'sticky', x: -60, y: 200, w: 230, h: 170, z: 5, draggable: true,
@@ -80,17 +83,17 @@ const OBJECTS = [
   { id: 'test-3', type: 'sticky', x: 1190, y: -210, w: 280, h: 170, z: 5, draggable: true,
     data: { text: '"Calm under pressure, surgical with feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
 
-  // ─── RIGHT — photography prints + photo booth cabin ───
-  { id: 'photo-1', type: 'photoprint', x: 1700, y: 180, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
-  { id: 'photo-2', type: 'photoprint', x: 1890, y: 200, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1700, y: 420, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
-  { id: 'photo-4', type: 'photoprint', x: 1890, y: 440, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: -3 } },
-  // Actual photo booth — click to open the modal
-  { id: 'photobooth', type: 'photobooth', x: 1780, y: 660, w: 220, h: 300, z: 6, to: '__photobooth__' },
+  // ─── RIGHT — photo booth cabin (prominent) + photography prints around it ───
+  // Cabin sits front-and-center in the right zone so it's the first thing visible
+  { id: 'photobooth', type: 'photobooth', x: 1560, y: 180, w: 220, h: 320, z: 6, to: '__photobooth__' },
+  { id: 'photo-1', type: 'photoprint', x: 1810, y: 170, w: 160, h: 180, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: 4 } },
+  { id: 'photo-2', type: 'photoprint', x: 1810, y: 360, w: 160, h: 180, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: -3 } },
+  { id: 'photo-3', type: 'photoprint', x: 1580, y: 540, w: 170, h: 190, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: -4 } },
+  { id: 'photo-4', type: 'photoprint', x: 1790, y: 570, w: 170, h: 190, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: 3 } },
 
   // ─── BOTTOM — my story ───
   { id: 'story', type: 'story', x: 540, y: 1180, w: 920, h: 360, z: 5,
