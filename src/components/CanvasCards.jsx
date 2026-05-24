@@ -232,29 +232,28 @@ export function PhotographyCard() {
 }
 
 /* ---- Annotation label — feels like marker writing on the canvas grid ---- */
-// Hand-drawn squiggly arrow paths, one per direction. Designed in a 120×60 viewBox.
+// All four arrows share an identical 80-unit "sweep" and shaft length so the
+// waymarkers feel consistent in weight regardless of direction.
 const ARROW_PATHS = {
-  '↑': 'M60 58 C 55 45, 65 35, 58 22 M 58 22 L 51 30 M 58 22 L 64 30',
-  '↓': 'M60 4  C 65 18, 55 28, 62 42 M 62 42 L 55 35 M 62 42 L 68 34',
-  '←': 'M118 30 C 100 25, 80 35, 30 28 M 30 28 L 40 22 M 30 28 L 40 35',
-  '→': 'M2 30  C 22 26, 42 36, 92 30 M 92 30 L 82 24 M 92 30 L 82 37',
+  '↑': 'M50 90 C 46 70, 56 50, 50 12 M 50 12 L 41 22 M 50 12 L 59 22',
+  '↓': 'M50 10 C 54 30, 44 50, 50 88 M 50 88 L 41 78 M 50 88 L 59 78',
+  '←': 'M90 50 C 70 46, 50 54, 12 50 M 12 50 L 22 41 M 12 50 L 22 59',
+  '→': 'M10 50 C 30 54, 50 46, 88 50 M 88 50 L 78 41 M 88 50 L 78 59',
 }
 
-function HandArrow({ direction, size = 56 }) {
+function HandArrow({ direction, size = 70 }) {
   const d = ARROW_PATHS[direction] || ARROW_PATHS['→']
-  const isVertical = direction === '↑' || direction === '↓'
   return (
     <svg
-      width={isVertical ? size * 0.45 : size}
-      height={isVertical ? size : size * 0.45}
-      viewBox="0 0 120 60"
+      width={size} height={size}
+      viewBox="0 0 100 100"
       preserveAspectRatio="xMidYMid meet"
-      style={{ overflow: 'visible' }}
+      style={{ overflow: 'visible', display: 'block' }}
     >
       <path
         d={d}
         fill="none" stroke="var(--accent)"
-        strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+        strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>
   )

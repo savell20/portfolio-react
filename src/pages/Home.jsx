@@ -54,14 +54,14 @@ const OBJECTS = [
   { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Hand-drawn waymarkers at the edges of the central view ───
-  { id: 'note-top', type: 'note', x: 880, y: 80, w: 280, h: 60, z: 8,
+  // ─── Hand-drawn waymarkers — spaced out from the central hero ───
+  { id: 'note-top', type: 'note', x: 880, y: 0, w: 280, h: 80, z: 8,
     data: { text: 'what people say', arrow: '↑', rotate: -2 } },
-  { id: 'note-left', type: 'note', x: 320, y: 540, w: 240, h: 56, z: 8,
+  { id: 'note-left', type: 'note', x: 220, y: 540, w: 240, h: 80, z: 8,
     data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
-  { id: 'note-right-photo', type: 'note', x: 1470, y: 460, w: 230, h: 56, z: 8,
+  { id: 'note-right-photo', type: 'note', x: 1540, y: 470, w: 240, h: 80, z: 8,
     data: { text: 'photography roll', arrow: '→', rotate: -2 } },
-  { id: 'note-bottom', type: 'note', x: 870, y: 990, w: 240, h: 60, z: 8,
+  { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
 
   // ─── LEFT — hobbies & life ───
@@ -91,7 +91,7 @@ const OBJECTS = [
     data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: -3 } },
 
   // ─── BOTTOM — my story ───
-  { id: 'story', type: 'story', x: 540, y: 1060, w: 920, h: 360, z: 5,
+  { id: 'story', type: 'story', x: 540, y: 1180, w: 920, h: 360, z: 5,
     data: {
       label: 'the long version',
       title: 'Bogotá → SCAD → here',
@@ -125,14 +125,9 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Includes the central hero + the directional annotations at each edge,
-  // so visitors see the waymarkers nudging them to pan outward.
-  // Bbox approx x:320 → 1700 (1380 wide), y:40 → 1030 (990 tall).
-  const scale = Math.min(
-    (w - 120) / 1380,
-    (h - 180) / 990,
-    0.78,
-  )
+  // Always open at 82% on first load (clamped down on small screens so the
+  // central hero still fits without scrolling).
+  const scale = Math.min(0.82, (w - 80) / 1380, (h - 140) / 990)
   return {
     scale,
     x: w / 2 - 1010 * scale,
