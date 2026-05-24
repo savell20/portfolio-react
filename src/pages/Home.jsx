@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import PhotoTeaser from '../components/PhotoTeaser'
-import { ProjectCard, StickyNote, AboutCard } from '../components/CanvasCards'
+import { ProjectCard, StickyNote } from '../components/CanvasCards'
+import Polaroid from '../components/Polaroid'
+import fotoPersonal from '../assets/foto-personal.jpeg'
 
 const projects = {
   zolvo: {
@@ -33,27 +35,40 @@ const projects = {
 // plus the draggable sticky notes. (Contact info lives in the right
 // ContactDock; identity was folded into About.)
 const OBJECTS = [
-  { id: 'about', type: 'about', x: 540, y: 120, w: 920, h: 360, z: 5 },
+  // Identity polaroid (photo + handwritten name)
+  { id: 'me', type: 'identity', x: 360, y: 170, w: 230, h: 290, z: 5 },
 
+  // Two stickies: the "intro" (who I am) and the "experience" (where I've worked).
+  // The experience sticky is the one that visually feeds into the case studies.
+  { id: 'sticky-intro', type: 'sticky', x: 1260, y: 180, w: 260, h: 230, z: 4, draggable: true,
+    data: {
+      text: 'Product designer crafting AI-native interfaces — turning complex systems into things that feel obvious 🎯',
+      color: 'var(--sticky-yellow)', rotate: 5, tall: true,
+    } },
+
+  { id: 'sticky-experience', type: 'sticky', x: 720, y: 200, w: 480, h: 220, z: 4, draggable: true,
+    data: {
+      text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
+      color: 'var(--sticky-blue)', rotate: -2, tall: true,
+    } },
+
+  // Case studies
   { id: 'zolvo', type: 'project', x: 540, y: 600, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
   { id: 'hubspot', type: 'project', x: 852, y: 600, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1164, y: 600, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
-
-  { id: 'sticky-1', type: 'sticky', x: 240, y: 240, w: 215, h: 165, z: 3, draggable: true,
-    data: { text: 'psst — you can drop your own sticky notes ✎', color: 'var(--sticky-yellow)', rotate: -6, tall: true } },
 ]
 
 const CONNECTORS = [
-  { from: 'about', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
-  { from: 'about', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
-  { from: 'about', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
+  { from: 'sticky-experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
+  { from: 'sticky-experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
+  { from: 'sticky-experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
 ]
 
 function renderObject(obj) {
   switch (obj.type) {
     case 'project': return <ProjectCard data={obj.data} />
     case 'sticky': return <StickyNote data={obj.data} />
-    case 'about': return <AboutCard />
+    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-4} />
     default: return null
   }
 }
@@ -61,16 +76,17 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Fit about + 3 project cards on first load. Content x:240–1500, y:120–960.
+  // Fit polaroid + 2 stickies + 3 project cards on first load.
+  // Content roughly spans canvas x:360–1520, y:170–960.
   const scale = Math.min(
-    (w - 80) / 1260,
-    (h - 120) / 840,
+    (w - 80) / 1200,
+    (h - 140) / 820,
     0.85,
   )
   return {
     scale,
-    x: w / 2 - 870 * scale,
-    y: h / 2 - 540 * scale,
+    x: w / 2 - 940 * scale,
+    y: h / 2 - 565 * scale,
   }
 }
 
@@ -81,7 +97,21 @@ function StackedBoard({ navigate }) {
       minHeight: '100vh', padding: '1.5rem 1.2rem 4rem',
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
     }}>
-      <div style={{ width: '100%', maxWidth: 440 }}><AboutCard /></div>
+      <div style={{ width: 220, height: 280 }}>
+        <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-3} />
+      </div>
+      <div style={{ width: '100%', maxWidth: 360 }}>
+        <StickyNote data={{
+          text: 'Product designer crafting AI-native interfaces — turning complex systems into things that feel obvious 🎯',
+          color: 'var(--sticky-yellow)', rotate: 2, tall: true,
+        }} />
+      </div>
+      <div style={{ width: '100%', maxWidth: 380 }}>
+        <StickyNote data={{
+          text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
+          color: 'var(--sticky-blue)', rotate: -2, tall: true,
+        }} />
+      </div>
       {['zolvo', 'hubspot', 'captura'].map(slug => (
         <div
           key={slug}
