@@ -13,10 +13,6 @@ export default function FigmaCursor() {
       if (ref.current) {
         ref.current.style.transform =
           `translate(${e.clientX}px, ${e.clientY}px)`
-        // Hide the custom cursor over grabbable items so the OS
-        // grab/grabbing hand shows through instead.
-        const overGrab = e.target && e.target.closest && e.target.closest('[data-grab]')
-        ref.current.style.opacity = overGrab ? '0' : '1'
       }
     }
     window.addEventListener('pointermove', onMove)
@@ -41,16 +37,6 @@ export default function FigmaCursor() {
           fill="#2F5CFF" stroke="#fff" strokeWidth="1.6" strokeLinejoin="round"
         />
       </svg>
-      {/* Name tag */}
-      <div style={{
-        position: 'absolute', top: 19, left: 15,
-        background: 'var(--accent)', color: '#fff',
-        fontFamily: 'var(--font-display)', fontSize: '0.66rem', fontWeight: 700,
-        padding: '0.16rem 0.5rem', borderRadius: 5, whiteSpace: 'nowrap',
-        letterSpacing: '0.01em',
-      }}>
-        Santiago
-      </div>
     </div>
   )
 }

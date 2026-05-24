@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
+/* The blue FigmaCursor stands in for the native pointer everywhere. */
+@media (hover: hover) and (pointer: fine) {
+  html, body, *, *::before, *::after { cursor: none !important; }
+}
+
 :root {
   --canvas: #F1F0ED;
   --surface: #FFFFFF;
