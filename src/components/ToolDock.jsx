@@ -1,4 +1,4 @@
-import { MousePointer2, StickyNote, Pencil, Trash2, Camera } from 'lucide-react'
+import { MousePointer2, StickyNote, Pencil, Trash2 } from 'lucide-react'
 import { DRAW_COLORS } from './Canvas'
 
 const TOOLS = [
@@ -29,7 +29,7 @@ function ToolBtn({ active, onClick, title, children }) {
   )
 }
 
-export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onClearDrawing, onOpenPhotoBooth }) {
+export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onClearDrawing }) {
   return (
     <>
       {/* Draw sub-toolbar — appears RIGHT of the left vertical dock when drawing */}
@@ -85,10 +85,6 @@ export default function ToolDock({ mode, setMode, drawColor, setDrawColor, onCle
             <Icon size={17} />
           </ToolBtn>
         ))}
-        <div style={{ width: 18, height: 1, background: 'var(--line)', margin: '4px 0' }} />
-        <ToolBtn title="Photo booth — drop a polaroid" onClick={onOpenPhotoBooth}>
-          <Camera size={17} />
-        </ToolBtn>
       </div>
     </>
   )

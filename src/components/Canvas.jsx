@@ -6,6 +6,7 @@ import ToolDock from './ToolDock'
 import EditableSticky from './EditableSticky'
 import Polaroid from './Polaroid'
 import PhotoBooth from './PhotoBooth'
+import PhotoBoothButton from './PhotoBoothButton'
 import { playPop } from '../lib/sound'
 
 const MIN = 0.4
@@ -355,8 +356,9 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         drawColor={drawColor}
         setDrawColor={setDrawColor}
         onClearDrawing={clearDrawing}
-        onOpenPhotoBooth={() => setBooth(true)}
       />
+
+      <PhotoBoothButton onClick={() => setBooth(true)} />
 
       {booth && <PhotoBooth onClose={() => setBooth(false)} onSave={addPolaroid} />}
     </div>
