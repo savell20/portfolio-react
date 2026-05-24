@@ -231,23 +231,54 @@ export function PhotographyCard() {
   )
 }
 
-/* ---- Annotation label (directional waymarker pill) ---- */
+/* ---- Annotation label — feels like marker writing on the canvas grid ---- */
+// Hand-drawn squiggly arrow paths, one per direction. Designed in a 120×60 viewBox.
+const ARROW_PATHS = {
+  '↑': 'M60 58 C 55 45, 65 35, 58 22 M 58 22 L 51 30 M 58 22 L 64 30',
+  '↓': 'M60 4  C 65 18, 55 28, 62 42 M 62 42 L 55 35 M 62 42 L 68 34',
+  '←': 'M118 30 C 100 25, 80 35, 30 28 M 30 28 L 40 22 M 30 28 L 40 35',
+  '→': 'M2 30  C 22 26, 42 36, 92 30 M 92 30 L 82 24 M 92 30 L 82 37',
+}
+
+function HandArrow({ direction, size = 56 }) {
+  const d = ARROW_PATHS[direction] || ARROW_PATHS['→']
+  const isVertical = direction === '↑' || direction === '↓'
+  return (
+    <svg
+      width={isVertical ? size * 0.45 : size}
+      height={isVertical ? size : size * 0.45}
+      viewBox="0 0 120 60"
+      preserveAspectRatio="xMidYMid meet"
+      style={{ overflow: 'visible' }}
+    >
+      <path
+        d={d}
+        fill="none" stroke="var(--accent)"
+        strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function AnnotationLabel({ data }) {
-  const left = data.arrow === '←' || data.arrow === '↖' || data.arrow === '↙'
+  const isVertical = data.arrow === '↑' || data.arrow === '↓'
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 10,
-      padding: '0.6rem 1rem',
-      background: 'var(--surface)', border: 'var(--border-card)',
-      borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)',
-      fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
-      color: 'var(--ink-soft)', letterSpacing: '0.06em',
-      textTransform: 'uppercase', whiteSpace: 'nowrap',
+      display: 'flex',
+      flexDirection: isVertical ? 'column' : 'row',
+      alignItems: 'center', gap: isVertical ? 4 : 8,
       transform: `rotate(${data.rotate || 0}deg)`,
+      userSelect: 'none',
     }}>
-      {left && <span style={{ fontSize: '1rem', color: 'var(--accent)', lineHeight: 1 }}>{data.arrow}</span>}
-      {data.text}
-      {!left && <span style={{ fontSize: '1rem', color: 'var(--accent)', lineHeight: 1 }}>{data.arrow}</span>}
+      {(data.arrow === '←' || data.arrow === '↑') && <HandArrow direction={data.arrow} />}
+      <span style={{
+        fontFamily: 'var(--font-note)', fontSize: '1.35rem',
+        fontWeight: 400, color: 'var(--accent)',
+        whiteSpace: 'nowrap', lineHeight: 1,
+      }}>
+        {data.text}
+      </span>
+      {(data.arrow === '→' || data.arrow === '↓') && <HandArrow direction={data.arrow} />}
     </div>
   )
 }

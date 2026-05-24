@@ -54,16 +54,14 @@ const OBJECTS = [
   { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Annotations — directional waymarkers at the edges of the central view ───
-  { id: 'note-top', type: 'note', x: 870, y: 40, w: 260, h: 40, z: 8,
-    data: { text: 'design inspiration', arrow: '↑', rotate: -1 } },
-  { id: 'note-left', type: 'note', x: 320, y: 540, w: 240, h: 40, z: 8,
+  // ─── Hand-drawn waymarkers at the edges of the central view ───
+  { id: 'note-top', type: 'note', x: 880, y: 80, w: 280, h: 60, z: 8,
+    data: { text: 'what people say', arrow: '↑', rotate: -2 } },
+  { id: 'note-left', type: 'note', x: 320, y: 540, w: 240, h: 56, z: 8,
     data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
-  { id: 'note-right-test', type: 'note', x: 1470, y: 280, w: 220, h: 40, z: 8,
-    data: { text: 'testimonials', arrow: '→', rotate: 2 } },
-  { id: 'note-right-photo', type: 'note', x: 1470, y: 720, w: 230, h: 40, z: 8,
+  { id: 'note-right-photo', type: 'note', x: 1470, y: 460, w: 230, h: 56, z: 8,
     data: { text: 'photography roll', arrow: '→', rotate: -2 } },
-  { id: 'note-bottom', type: 'note', x: 870, y: 990, w: 240, h: 40, z: 8,
+  { id: 'note-bottom', type: 'note', x: 870, y: 990, w: 240, h: 60, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
 
   // ─── LEFT — hobbies & life ───
@@ -74,27 +72,23 @@ const OBJECTS = [
   { id: 'hobby-3', type: 'sticky', x: -50, y: 650, w: 230, h: 170, z: 5, draggable: true,
     data: { text: 'Hiking ✦ mountains > beaches. Bogotá raised me on altitude', color: 'var(--sticky-yellow)', rotate: -2, tall: true } },
 
-  // ─── RIGHT (upper) — testimonials ───
-  { id: 'test-1', type: 'sticky', x: 1700, y: 180, w: 250, h: 200, z: 5, draggable: true,
-    data: { text: '"Santi turns ambiguity into shipped product faster than anyone I\'ve worked with."\n— Maria, PM at Zolvo', color: 'var(--sticky-blue)', rotate: 3, tall: true } },
-  { id: 'test-2', type: 'sticky', x: 1720, y: 420, w: 240, h: 190, z: 5, draggable: true,
-    data: { text: '"Rare designer — thinks like an engineer, ships like a founder."\n— David, Eng Lead', color: 'var(--sticky-pink)', rotate: -3, tall: true } },
+  // ─── TOP — testimonials ───
+  { id: 'test-1', type: 'sticky', x: 540, y: -210, w: 290, h: 180, z: 5, draggable: true,
+    data: { text: '"Santi turns ambiguity into shipped product faster than anyone I\'ve worked with."\n— Maria, PM at Zolvo', color: 'var(--sticky-blue)', rotate: -3, tall: true } },
+  { id: 'test-2', type: 'sticky', x: 870, y: -240, w: 280, h: 180, z: 5, draggable: true,
+    data: { text: '"Rare designer — thinks like an engineer, ships like a founder."\n— David, Eng Lead', color: 'var(--sticky-pink)', rotate: 2, tall: true } },
+  { id: 'test-3', type: 'sticky', x: 1190, y: -210, w: 280, h: 170, z: 5, draggable: true,
+    data: { text: '"Calm under pressure, surgical with feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
 
-  // ─── RIGHT (lower) — photography prints ───
-  { id: 'photo-1', type: 'photoprint', x: 1700, y: 800, w: 160, h: 180, z: 5, draggable: true,
+  // ─── RIGHT — photography prints ───
+  { id: 'photo-1', type: 'photoprint', x: 1700, y: 180, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
-  { id: 'photo-2', type: 'photoprint', x: 1880, y: 820, w: 160, h: 180, z: 5, draggable: true,
+  { id: 'photo-2', type: 'photoprint', x: 1890, y: 200, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1780, y: 1020, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: -2 } },
-
-  // ─── TOP — design inspiration ───
-  { id: 'insp-1', type: 'sticky', x: 540, y: -180, w: 280, h: 150, z: 5, draggable: true,
-    data: { text: '"Less, but better." — Dieter Rams', color: 'var(--sticky-yellow)', rotate: -4, tall: false } },
-  { id: 'insp-2', type: 'sticky', x: 880, y: -200, w: 280, h: 160, z: 5, draggable: true,
-    data: { text: '"Make it as simple as possible, but not simpler." — Einstein, basically about UI', color: 'var(--sticky-mint)', rotate: 3, tall: true } },
-  { id: 'insp-3', type: 'sticky', x: 1220, y: -180, w: 260, h: 150, z: 5, draggable: true,
-    data: { text: 'Process > pixels. Always.', color: 'var(--sticky-blue)', rotate: -2, tall: false } },
+  { id: 'photo-3', type: 'photoprint', x: 1720, y: 420, w: 170, h: 190, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
+  { id: 'photo-4', type: 'photoprint', x: 1900, y: 440, w: 170, h: 190, z: 5, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: -3 } },
 
   // ─── BOTTOM — my story ───
   { id: 'story', type: 'story', x: 540, y: 1060, w: 920, h: 360, z: 5,
