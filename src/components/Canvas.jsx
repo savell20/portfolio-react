@@ -6,7 +6,6 @@ import ToolDock from './ToolDock'
 import EditableSticky from './EditableSticky'
 import Polaroid from './Polaroid'
 import PhotoBooth from './PhotoBooth'
-import PhotoBoothButton from './PhotoBoothButton'
 import { playPop } from '../lib/sound'
 
 const MIN = 0.4
@@ -78,6 +77,13 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const drawing = useRef(null)
   const viewRef = useRef(view)
   viewRef.current = view
+
+  // Open the PhotoBooth modal when the on-canvas cabin dispatches the event.
+  useEffect(() => {
+    const onOpen = () => setBooth(true)
+    window.addEventListener('open-photo-booth', onOpen)
+    return () => window.removeEventListener('open-photo-booth', onOpen)
+  }, [])
 
   // FigJam-style wheel: plain scroll PANS the canvas; pinch (trackpad sets
   // ctrlKey on wheel events) or ⌘/Ctrl + scroll ZOOMS toward the cursor.
@@ -357,8 +363,6 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         setDrawColor={setDrawColor}
         onClearDrawing={clearDrawing}
       />
-
-      <PhotoBoothButton onClick={() => setBooth(true)} />
 
       {booth && <PhotoBooth onClose={() => setBooth(false)} onSave={addPolaroid} />}
     </div>

@@ -1,6 +1,29 @@
 import { useState } from 'react'
-import { ArrowUpRight, Camera } from 'lucide-react'
+import { ArrowRight, Camera } from 'lucide-react'
 import fotoPersonal from '../assets/foto-personal.jpeg'
+
+/* Shared arrow chip — points right by default, rotates to diagonal
+   top-right (↗) on hover. Same animation on every interactive card. */
+export function ArrowChip({ hover, size = 26 }) {
+  return (
+    <span style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      width: size, height: size, borderRadius: '50%',
+      background: hover ? 'var(--accent)' : 'var(--canvas)',
+      color: hover ? 'var(--surface)' : 'var(--ink-soft)',
+      transition: 'background 0.2s, color 0.2s',
+      flexShrink: 0,
+    }}>
+      <span style={{
+        display: 'inline-flex',
+        transform: hover ? 'rotate(-45deg)' : 'rotate(0deg)',
+        transition: 'transform 0.28s var(--ease)',
+      }}>
+        <ArrowRight size={Math.round(size * 0.54)} />
+      </span>
+    </span>
+  )
+}
 
 // All chrome reads from CSS vars so every art-style restyles the cards.
 const cardBase = {
@@ -71,15 +94,7 @@ export function ProjectCard({ data }) {
             }}>
               {data.company}
             </h3>
-            <span style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 26, height: 26, borderRadius: '50%',
-              background: hover ? 'var(--accent)' : 'var(--canvas)',
-              color: hover ? 'var(--surface)' : 'var(--ink-soft)',
-              transition: 'all 0.2s',
-            }}>
-              <ArrowUpRight size={14} />
-            </span>
+            <ArrowChip hover={hover} size={26} />
           </div>
           <p style={{
             fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
@@ -185,15 +200,7 @@ export function PhotographyCard() {
             }}>
               <Camera size={11} /> off the clock
             </span>
-            <span style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 30, height: 30, borderRadius: '50%',
-              background: hover ? 'var(--accent)' : 'var(--canvas)',
-              color: hover ? 'var(--surface)' : 'var(--ink-soft)',
-              transition: 'all 0.2s',
-            }}>
-              <ArrowUpRight size={15} />
-            </span>
+            <ArrowChip hover={hover} size={30} />
           </div>
 
           <h3 style={{
@@ -311,6 +318,106 @@ export function StoryCard({ data }) {
           </p>
         ))}
       </div>
+    </div>
+  )
+}
+
+/* ---- Photo booth cabin — curtains open on hover ---- */
+export function PhotoBoothCabin() {
+  const [hover, setHover] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        position: 'relative',
+        width: '100%', height: '100%',
+        background: '#2a1410', borderRadius: 8,
+        boxShadow: '0 18px 38px rgba(0,0,0,0.45), inset 0 0 0 6px #4a2418',
+        overflow: 'hidden',
+        transform: hover ? 'translateY(-3px)' : 'translateY(0)',
+        transition: 'transform 0.25s var(--ease)',
+      }}
+    >
+      {/* Marquee sign */}
+      <div style={{
+        position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
+        background: 'linear-gradient(180deg,#FFD84D 0%,#E8B520 100%)',
+        color: '#2a1410',
+        padding: '4px 11px', borderRadius: 4,
+        fontFamily: 'var(--font-display)', fontSize: '0.62rem', fontWeight: 800,
+        letterSpacing: '0.16em', zIndex: 5,
+        boxShadow: '0 0 14px rgba(255,216,77,0.55)',
+      }}>
+        PHOTO BOOTH
+      </div>
+
+      {/* Inside (revealed when curtains part) */}
+      <div style={{
+        position: 'absolute', inset: '46px 14px 14px',
+        background: 'linear-gradient(180deg,#1a1a2a 0%,#0a0a16 100%)',
+        borderRadius: 4,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 8, padding: '1rem 0.7rem', textAlign: 'center',
+      }}>
+        {/* Tiny bench silhouette */}
+        <span style={{
+          width: '60%', height: 6, background: '#3a2a1a',
+          borderRadius: '3px 3px 0 0', marginBottom: 4,
+        }} />
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+          color: '#fff', letterSpacing: '0.14em',
+          textTransform: 'uppercase', opacity: 0.7,
+        }}>
+          step inside
+        </span>
+        <span style={{
+          fontFamily: 'var(--font-note)', fontSize: '1.05rem',
+          color: '#FFD84D', lineHeight: 1.1,
+        }}>
+          snap a polaroid
+        </span>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          width: 30, height: 30, borderRadius: '50%',
+          background: '#FFD84D', color: '#2a1410',
+          transform: hover ? 'rotate(-45deg) scale(1.05)' : 'rotate(0deg)',
+          transition: 'transform 0.32s var(--ease)',
+          marginTop: 4,
+        }}>
+          <ArrowRight size={15} />
+        </span>
+      </div>
+
+      {/* Curtain — left half */}
+      <div style={{
+        position: 'absolute', top: 38, bottom: 0, left: 0,
+        width: '50%',
+        background: 'repeating-linear-gradient(90deg, #b21818 0 8px, #7a0e0e 8px 14px)',
+        boxShadow: 'inset -8px 0 14px rgba(0,0,0,0.4)',
+        transform: hover ? 'translateX(-92%)' : 'translateX(0)',
+        transition: 'transform 0.5s var(--ease)',
+        zIndex: 4,
+      }} />
+      {/* Curtain — right half */}
+      <div style={{
+        position: 'absolute', top: 38, bottom: 0, right: 0,
+        width: '50%',
+        background: 'repeating-linear-gradient(90deg, #7a0e0e 0 8px, #b21818 8px 14px)',
+        boxShadow: 'inset 8px 0 14px rgba(0,0,0,0.4)',
+        transform: hover ? 'translateX(92%)' : 'translateX(0)',
+        transition: 'transform 0.5s var(--ease)',
+        zIndex: 4,
+      }} />
+
+      {/* Curtain rod */}
+      <div style={{
+        position: 'absolute', top: 36, left: 8, right: 8, height: 4,
+        background: 'linear-gradient(180deg,#c4a165 0%,#8b6a30 100%)',
+        borderRadius: 2, zIndex: 5,
+      }} />
     </div>
   )
 }

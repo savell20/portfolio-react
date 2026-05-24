@@ -4,7 +4,7 @@ import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
-  AnnotationLabel, StoryCard, PhotoPrint,
+  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
 } from '../components/CanvasCards'
 import Polaroid from '../components/Polaroid'
 import fotoPersonal from '../assets/foto-personal.jpeg'
@@ -43,7 +43,7 @@ const projects = {
 //   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
   // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
-  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 400, z: 5 },
+  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5, to: '/about' },
 
   // Experience card — right edge at x:1460 (aligned with Captura below)
   // h matches the card's natural rendered height so the connector lands flush
@@ -80,15 +80,17 @@ const OBJECTS = [
   { id: 'test-3', type: 'sticky', x: 1190, y: -210, w: 280, h: 170, z: 5, draggable: true,
     data: { text: '"Calm under pressure, surgical with feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
 
-  // ─── RIGHT — photography prints ───
+  // ─── RIGHT — photography prints + photo booth cabin ───
   { id: 'photo-1', type: 'photoprint', x: 1700, y: 180, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
   { id: 'photo-2', type: 'photoprint', x: 1890, y: 200, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1720, y: 420, w: 170, h: 190, z: 5, draggable: true,
+  { id: 'photo-3', type: 'photoprint', x: 1700, y: 420, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
-  { id: 'photo-4', type: 'photoprint', x: 1900, y: 440, w: 170, h: 190, z: 5, draggable: true,
+  { id: 'photo-4', type: 'photoprint', x: 1890, y: 440, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: -3 } },
+  // Actual photo booth — click to open the modal
+  { id: 'photobooth', type: 'photobooth', x: 1780, y: 660, w: 220, h: 300, z: 6, to: '__photobooth__' },
 
   // ─── BOTTOM — my story ───
   { id: 'story', type: 'story', x: 540, y: 1180, w: 920, h: 360, z: 5,
@@ -119,13 +121,14 @@ function makeRenderObject(navigate) {
           src={fotoPersonal}
           caption="Santiago Avella"
           rotate={-4}
-          action={{ label: 'about me', onClick: () => navigate('/about') }}
+          clickable
         />
       )
       case 'experience': return <ExperienceCard />
       case 'note': return <AnnotationLabel data={obj.data} />
       case 'story': return <StoryCard data={obj.data} />
       case 'photoprint': return <PhotoPrint data={obj.data} />
+      case 'photobooth': return <PhotoBoothCabin />
       default: return null
     }
   }
@@ -193,7 +196,12 @@ export default function Home() {
 
   const onActivate = (id) => {
     const obj = OBJECTS.find(o => o.id === id)
-    if (obj && obj.to) navigate(obj.to)
+    if (!obj) return
+    if (obj.to === '__photobooth__') {
+      window.dispatchEvent(new CustomEvent('open-photo-booth'))
+    } else if (obj.to) {
+      navigate(obj.to)
+    }
   }
 
   if (!isCanvas) return <StackedBoard navigate={navigate} />
