@@ -220,7 +220,7 @@ export default function Home() {
           background: 'var(--accent)',
           animation: 'hint-pulse 1.8s ease-in-out infinite',
         }} />
-        drag to move · scroll to zoom
+        scroll to move · ⌘ + scroll to zoom
       </div>
     </>
   )

@@ -17,12 +17,12 @@ const STEPS = [
   {
     Icon: MousePointer2,
     title: 'Move around',
-    body: 'Click and drag any empty space to pan the board. Project cards stay in place — only the stickies are draggable.',
+    body: 'Two-finger scroll on a trackpad (or scroll wheel) pans the board in any direction. You can still click-drag empty space too if you prefer.',
   },
   {
     Icon: ZoomIn,
     title: 'Zoom in & out',
-    body: 'Scroll your mouse or trackpad to zoom toward the cursor. The bottom-right pill has +, −, and a reset button if you get lost.',
+    body: 'Pinch on a trackpad, or hold ⌘/Ctrl and scroll to zoom toward the cursor. The bottom-right pill has +, −, and a reset button if you get lost.',
   },
   {
     Icon: StickyIcon,

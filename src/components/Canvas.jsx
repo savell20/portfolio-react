@@ -78,22 +78,33 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const viewRef = useRef(view)
   viewRef.current = view
 
-  // Wheel zoom — gentle, toward cursor.
+  // FigJam-style wheel: plain scroll PANS the canvas; pinch (trackpad sets
+  // ctrlKey on wheel events) or ⌘/Ctrl + scroll ZOOMS toward the cursor.
   useEffect(() => {
     const el = rootRef.current
     if (!el) return
     const onWheel = (e) => {
       e.preventDefault()
-      setView(v => {
-        const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.003)))
-        const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
-        const k = ns / v.scale
-        return {
-          scale: ns,
-          x: e.clientX - (e.clientX - v.x) * k,
-          y: e.clientY - (e.clientY - v.y) * k,
-        }
-      })
+      if (e.ctrlKey || e.metaKey) {
+        setView(v => {
+          const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.012)))
+          const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
+          const k = ns / v.scale
+          return {
+            scale: ns,
+            x: e.clientX - (e.clientX - v.x) * k,
+            y: e.clientY - (e.clientY - v.y) * k,
+          }
+        })
+      } else {
+        // Scroll to pan. Shift+wheel mice flip deltaY into deltaX
+        // automatically, so horizontal scrolling works for free.
+        setView(v => ({
+          ...v,
+          x: v.x - e.deltaX,
+          y: v.y - e.deltaY,
+        }))
+      }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
