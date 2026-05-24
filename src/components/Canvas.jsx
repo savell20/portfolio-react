@@ -37,11 +37,9 @@ function edgePoint(cx, cy, hw, hh, tx, ty) {
   return [cx + dx * s, cy + dy * s]
 }
 
-// 'bottom' and 'top' align the source point with the target's center-x
-// (clamped to the source's edge) so connectors drop straight down/up.
 function anchor(side, x, y, w, h, tx, ty) {
-  if (side === 'top')    return [Math.min(Math.max(tx, x + 14), x + w - 14), y]
-  if (side === 'bottom') return [Math.min(Math.max(tx, x + 14), x + w - 14), y + h]
+  if (side === 'top')    return [x + w / 2, y]
+  if (side === 'bottom') return [x + w / 2, y + h]
   if (side === 'left')   return [x, y + h / 2]
   if (side === 'right')  return [x + w, y + h / 2]
   return edgePoint(x + w / 2, y + h / 2, w / 2, h / 2, tx, ty)

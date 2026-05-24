@@ -34,22 +34,27 @@ const projects = {
 // Trimmed composition: an About hero on top, 3 project cards beneath,
 // plus the draggable sticky notes. (Contact info lives in the right
 // ContactDock; identity was folded into About.)
+// Layout grid:
+//   - Projects row spans x:540 → x:1460 (3 cards × 296 + 2 gaps × 16 = 920)
+//   - Polaroid left edge aligns with Zolvo (x:540)
+//   - Sticky right edge aligns with Captura (x:1460)
+//   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
-  // Identity polaroid — prominent in the left space
-  { id: 'me', type: 'identity', x: 300, y: 160, w: 300, h: 360, z: 5 },
+  // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
+  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5 },
 
-  // Single sticky that spans the project trio so the 01/02/03 connectors
-  // drop straight down, one directly above each case study.
-  { id: 'sticky-experience', type: 'sticky', x: 700, y: 200, w: 760, h: 220, z: 4, draggable: true,
+  // Single sticky — right edge at x:1460 (aligned with Captura below)
+  // x: 1460 - 580 = 880
+  { id: 'sticky-experience', type: 'sticky', x: 880, y: 220, w: 580, h: 240, z: 4, draggable: true,
     data: {
       text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
       color: 'var(--sticky-blue)', rotate: 0, tall: false,
     } },
 
-  // Case studies — sit under the sticky so each connector drops straight in
-  { id: 'zolvo', type: 'project', x: 660, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 972, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1284, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
+  // Case studies — centered trio at canvas x:540 → x:1460
+  { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 ]
 
 const CONNECTORS = [
@@ -62,7 +67,7 @@ function renderObject(obj) {
   switch (obj.type) {
     case 'project': return <ProjectCard data={obj.data} />
     case 'sticky': return <StickyNote data={obj.data} />
-    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-4} />
+    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={0} />
     default: return null
   }
 }
@@ -70,16 +75,15 @@ function renderObject(obj) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Fit polaroid + sticky + 3 project cards on first load.
-  // Content roughly spans canvas x:300–1580, y:160–940.
+  // Content bbox: x:540–1460 (920w), y:160–940 (780h). Centered around (1000, 550).
   const scale = Math.min(
-    (w - 80) / 1280,
-    (h - 160) / 780,
-    0.82,
+    (w - 120) / 920,
+    (h - 180) / 780,
+    0.95,
   )
   return {
     scale,
-    x: w / 2 - 940 * scale,
+    x: w / 2 - 1000 * scale,
     y: h / 2 - 550 * scale,
   }
 }
