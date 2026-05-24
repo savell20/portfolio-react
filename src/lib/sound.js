@@ -44,6 +44,36 @@ export function playPop() {
   setTimeout(() => blip({ freq: 760, dur: 0.09, type: 'sine', gain: 0.1 }), 45)
 }
 
+// A plucked-string-like arpeggio (C major: C E G C). Sawtooth through a
+// quickly-closing lowpass gives an acoustic-guitar feel without samples.
+export function playGuitarChord() {
+  if (muted) return
+  const c = ac()
+  if (!c) return
+  const notes = [261.63, 329.63, 392.00, 523.25]
+  notes.forEach((freq, i) => {
+    setTimeout(() => {
+      try {
+        const osc = c.createOscillator()
+        const filter = c.createBiquadFilter()
+        const g = c.createGain()
+        osc.type = 'sawtooth'
+        osc.frequency.setValueAtTime(freq, c.currentTime)
+        filter.type = 'lowpass'
+        filter.Q.value = 1.2
+        filter.frequency.setValueAtTime(2200, c.currentTime)
+        filter.frequency.exponentialRampToValueAtTime(380, c.currentTime + 0.7)
+        g.gain.setValueAtTime(0, c.currentTime)
+        g.gain.linearRampToValueAtTime(0.07, c.currentTime + 0.015)
+        g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 1.3)
+        osc.connect(filter); filter.connect(g); g.connect(c.destination)
+        osc.start()
+        osc.stop(c.currentTime + 1.5)
+      } catch { /* noop */ }
+    }, i * 90)
+  })
+}
+
 export function isMuted() {
   return muted
 }

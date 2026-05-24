@@ -6,6 +6,7 @@ import {
   ProjectCard, StickyNote, ExperienceCard,
   AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
 } from '../components/CanvasCards'
+import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
 import Polaroid from '../components/Polaroid'
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
@@ -70,13 +71,18 @@ const OBJECTS = [
   { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
 
-  // ─── LEFT — hobbies & life ───
+  // ─── LEFT — hobbies & life (interactive toys + stickies) ───
+  // Stickies — the written hobbies
   { id: 'hobby-1', type: 'sticky', x: -60, y: 200, w: 230, h: 170, z: 5, draggable: true,
     data: { text: 'Film cameras ✦ Pentax K1000, Portra 400, slow weekends', color: 'var(--sticky-pink)', rotate: -5, tall: true } },
   { id: 'hobby-2', type: 'sticky', x: -40, y: 420, w: 240, h: 180, z: 5, draggable: true,
     data: { text: 'Cooking ✦ slow Sundays, lots of garlic, recipes from my abuela', color: 'var(--sticky-mint)', rotate: 4, tall: true } },
   { id: 'hobby-3', type: 'sticky', x: -50, y: 650, w: 230, h: 170, z: 5, draggable: true,
     data: { text: 'Hiking ✦ mountains > beaches. Bogotá raised me on altitude', color: 'var(--sticky-yellow)', rotate: -2, tall: true } },
+  // Toys — interactive things you can touch
+  { id: 'toy-guitar', type: 'guitar', x: -330, y: 170, w: 200, h: 270, z: 6 },
+  { id: 'toy-f1', type: 'f1', x: -360, y: 470, w: 260, h: 150, z: 6 },
+  { id: 'toy-plane', type: 'flight', x: -380, y: 660, w: 290, h: 170, z: 6 },
 
   // ─── TOP — testimonials ───
   { id: 'test-1', type: 'sticky', x: 540, y: -210, w: 290, h: 180, z: 5, draggable: true,
@@ -135,6 +141,9 @@ function makeRenderObject(navigate) {
       case 'story': return <StoryCard data={obj.data} />
       case 'photoprint': return <PhotoPrint data={obj.data} />
       case 'photobooth': return <PhotoBoothCabin />
+      case 'guitar': return <Guitar />
+      case 'f1': return <F1Car />
+      case 'flight': return <FlightMap />
       default: return null
     }
   }
