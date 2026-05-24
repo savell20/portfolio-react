@@ -240,8 +240,9 @@ export function StickyNote({ data }) {
       justifyContent: data.link ? 'space-between' : 'center',
     }}>
       <p style={{
-        fontFamily: 'var(--font-hand)', fontWeight: 600,
-        fontSize: '1.4rem', lineHeight: 1.15, color: '#2a2a26',
+        fontFamily: 'var(--font-display)', fontWeight: 500,
+        fontSize: '1.02rem', lineHeight: 1.45, color: '#2a2a26',
+        letterSpacing: '-0.005em',
       }}>
         {data.text}
       </p>
