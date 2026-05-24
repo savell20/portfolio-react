@@ -43,7 +43,7 @@ const projects = {
 //   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
   // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
-  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5 },
+  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 400, z: 5 },
 
   // Experience card — right edge at x:1460 (aligned with Captura below)
   // h matches the card's natural rendered height so the connector lands flush
@@ -109,16 +109,25 @@ const CONNECTORS = [
   { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
 ]
 
-function renderObject(obj) {
-  switch (obj.type) {
-    case 'project': return <ProjectCard data={obj.data} />
-    case 'sticky': return <StickyNote data={obj.data} />
-    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-4} />
-    case 'experience': return <ExperienceCard />
-    case 'note': return <AnnotationLabel data={obj.data} />
-    case 'story': return <StoryCard data={obj.data} />
-    case 'photoprint': return <PhotoPrint data={obj.data} />
-    default: return null
+function makeRenderObject(navigate) {
+  return function renderObject(obj) {
+    switch (obj.type) {
+      case 'project': return <ProjectCard data={obj.data} />
+      case 'sticky': return <StickyNote data={obj.data} />
+      case 'identity': return (
+        <Polaroid
+          src={fotoPersonal}
+          caption="Santiago Avella"
+          rotate={-4}
+          action={{ label: 'about me', onClick: () => navigate('/about') }}
+        />
+      )
+      case 'experience': return <ExperienceCard />
+      case 'note': return <AnnotationLabel data={obj.data} />
+      case 'story': return <StoryCard data={obj.data} />
+      case 'photoprint': return <PhotoPrint data={obj.data} />
+      default: return null
+    }
   }
 }
 
@@ -180,6 +189,7 @@ export default function Home() {
   const navigate = useNavigate()
   const [isCanvas] = useState(() => window.innerWidth >= 820)
   const [view] = useState(computeInitialView)
+  const [renderObject] = useState(() => makeRenderObject(navigate))
 
   const onActivate = (id) => {
     const obj = OBJECTS.find(o => o.id === id)
