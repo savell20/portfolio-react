@@ -37,12 +37,13 @@ function edgePoint(cx, cy, hw, hh, tx, ty) {
   return [cx + dx * s, cy + dy * s]
 }
 
-// 'top'/'bottom' slide along the source's edge toward the target's center-x
-// (clamped to the source's bounds) so each connector lands right above the
-// card it points to, not bunched at the source's midpoint.
+// Bottom-center / top-center anchors: every connector enters its target at
+// the top-center of the card and leaves its source from the bottom-center
+// of the sticky. Single fan-out point on the sticky, single landing point
+// per card.
 function anchor(side, x, y, w, h, tx, ty) {
-  if (side === 'top')    return [Math.min(Math.max(tx, x + 14), x + w - 14), y]
-  if (side === 'bottom') return [Math.min(Math.max(tx, x + 14), x + w - 14), y + h]
+  if (side === 'top')    return [x + w / 2, y]
+  if (side === 'bottom') return [x + w / 2, y + h]
   if (side === 'left')   return [x, y + h / 2]
   if (side === 'right')  return [x + w, y + h / 2]
   return edgePoint(x + w / 2, y + h / 2, w / 2, h / 2, tx, ty)
