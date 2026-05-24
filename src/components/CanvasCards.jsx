@@ -10,12 +10,16 @@ const cardBase = {
   boxShadow: 'var(--shadow-card)',
 }
 
+// FrameLabel floats above the card via absolute positioning so it doesn't
+// add height to the card's bounding box — keeps connector anchors flush
+// with the card's actual visible edges.
 function FrameLabel({ children }) {
   return (
     <div style={{
+      position: 'absolute', left: 2, bottom: 'calc(100% + 6px)',
       fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 500,
-      color: 'var(--ink-faint)', letterSpacing: '0.04em', marginBottom: 6,
-      paddingLeft: 2, userSelect: 'none',
+      color: 'var(--ink-faint)', letterSpacing: '0.04em', userSelect: 'none',
+      whiteSpace: 'nowrap',
     }}>
       {children}
     </div>

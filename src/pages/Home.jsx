@@ -44,7 +44,8 @@ const OBJECTS = [
   { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5 },
 
   // Experience card — right edge at x:1460 (aligned with Captura below)
-  { id: 'experience', type: 'experience', x: 880, y: 220, w: 580, h: 220, z: 4 },
+  // h matches the card's natural rendered height so the connector lands flush
+  { id: 'experience', type: 'experience', x: 880, y: 240, w: 580, h: 170, z: 4 },
 
   // Case studies — centered trio at canvas x:540 → x:1460
   { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
