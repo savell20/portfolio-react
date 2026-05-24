@@ -323,7 +323,7 @@ export function StoryCard({ data }) {
 }
 
 /* ---- Photo booth cabin — curtains open on hover ---- */
-export function PhotoBoothCabin() {
+export function PhotoBoothCabin({ height = 320 }) {
   const [hover, setHover] = useState(false)
   return (
     <div
@@ -331,9 +331,11 @@ export function PhotoBoothCabin() {
       onMouseLeave={() => setHover(false)}
       style={{
         position: 'relative',
-        width: '100%', height: '100%',
-        background: '#2a1410', borderRadius: 8,
-        boxShadow: '0 18px 38px rgba(0,0,0,0.45), inset 0 0 0 6px #4a2418',
+        width: '100%', height,
+        background: '#2a1410',
+        border: '6px solid #4a2418',
+        borderRadius: 10,
+        boxShadow: '0 22px 42px rgba(0,0,0,0.5)',
         overflow: 'hidden',
         transform: hover ? 'translateY(-3px)' : 'translateY(0)',
         transition: 'transform 0.25s var(--ease)',
@@ -341,82 +343,83 @@ export function PhotoBoothCabin() {
     >
       {/* Marquee sign */}
       <div style={{
-        position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
+        position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
         background: 'linear-gradient(180deg,#FFD84D 0%,#E8B520 100%)',
         color: '#2a1410',
-        padding: '4px 11px', borderRadius: 4,
-        fontFamily: 'var(--font-display)', fontSize: '0.62rem', fontWeight: 800,
-        letterSpacing: '0.16em', zIndex: 5,
-        boxShadow: '0 0 14px rgba(255,216,77,0.55)',
+        padding: '5px 12px', borderRadius: 4,
+        fontFamily: 'var(--font-display)', fontSize: '0.7rem', fontWeight: 800,
+        letterSpacing: '0.18em', zIndex: 5, whiteSpace: 'nowrap',
+        boxShadow: '0 0 18px rgba(255,216,77,0.55), 0 2px 4px rgba(0,0,0,0.3)',
       }}>
-        PHOTO BOOTH
+        PHOTO · BOOTH
       </div>
 
       {/* Inside (revealed when curtains part) */}
       <div style={{
-        position: 'absolute', inset: '46px 14px 14px',
+        position: 'absolute', top: 52, left: 10, right: 10, bottom: 10,
         background: 'linear-gradient(180deg,#1a1a2a 0%,#0a0a16 100%)',
         borderRadius: 4,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        gap: 8, padding: '1rem 0.7rem', textAlign: 'center',
+        gap: 10, padding: '1.2rem 0.8rem', textAlign: 'center',
       }}>
-        {/* Tiny bench silhouette */}
+        {/* Bench silhouette */}
         <span style={{
-          width: '60%', height: 6, background: '#3a2a1a',
-          borderRadius: '3px 3px 0 0', marginBottom: 4,
+          width: '60%', height: 8, background: '#3a2a1a',
+          borderRadius: '4px 4px 0 0', marginBottom: 6,
         }} />
         <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-          color: '#fff', letterSpacing: '0.14em',
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          color: '#fff', letterSpacing: '0.16em',
           textTransform: 'uppercase', opacity: 0.7,
         }}>
           step inside
         </span>
         <span style={{
-          fontFamily: 'var(--font-note)', fontSize: '1.05rem',
-          color: '#FFD84D', lineHeight: 1.1,
+          fontFamily: 'var(--font-note)', fontSize: '1.25rem',
+          color: '#FFD84D', lineHeight: 1.15,
         }}>
           snap a polaroid
         </span>
         <span style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          width: 30, height: 30, borderRadius: '50%',
+          width: 36, height: 36, borderRadius: '50%',
           background: '#FFD84D', color: '#2a1410',
-          transform: hover ? 'rotate(-45deg) scale(1.05)' : 'rotate(0deg)',
+          transform: hover ? 'rotate(-45deg) scale(1.08)' : 'rotate(0deg)',
           transition: 'transform 0.32s var(--ease)',
-          marginTop: 4,
+          marginTop: 6,
         }}>
-          <ArrowRight size={15} />
+          <ArrowRight size={18} />
         </span>
       </div>
 
+      {/* Curtain rod */}
+      <div style={{
+        position: 'absolute', top: 44, left: 6, right: 6, height: 5,
+        background: 'linear-gradient(180deg,#d6b478 0%,#8b6a30 100%)',
+        borderRadius: 2, zIndex: 6,
+        boxShadow: '0 1px 2px rgba(0,0,0,0.4)',
+      }} />
+
       {/* Curtain — left half */}
       <div style={{
-        position: 'absolute', top: 38, bottom: 0, left: 0,
-        width: '50%',
+        position: 'absolute', top: 49, bottom: 6, left: 6,
+        width: 'calc(50% - 6px)',
         background: 'repeating-linear-gradient(90deg, #b21818 0 8px, #7a0e0e 8px 14px)',
-        boxShadow: 'inset -8px 0 14px rgba(0,0,0,0.4)',
-        transform: hover ? 'translateX(-92%)' : 'translateX(0)',
-        transition: 'transform 0.5s var(--ease)',
-        zIndex: 4,
+        boxShadow: 'inset -10px 0 16px rgba(0,0,0,0.45)',
+        transform: hover ? 'translateX(-96%)' : 'translateX(0)',
+        transition: 'transform 0.55s var(--ease)',
+        zIndex: 5,
       }} />
       {/* Curtain — right half */}
       <div style={{
-        position: 'absolute', top: 38, bottom: 0, right: 0,
-        width: '50%',
+        position: 'absolute', top: 49, bottom: 6, right: 6,
+        width: 'calc(50% - 6px)',
         background: 'repeating-linear-gradient(90deg, #7a0e0e 0 8px, #b21818 8px 14px)',
-        boxShadow: 'inset 8px 0 14px rgba(0,0,0,0.4)',
-        transform: hover ? 'translateX(92%)' : 'translateX(0)',
-        transition: 'transform 0.5s var(--ease)',
-        zIndex: 4,
-      }} />
-
-      {/* Curtain rod */}
-      <div style={{
-        position: 'absolute', top: 36, left: 8, right: 8, height: 4,
-        background: 'linear-gradient(180deg,#c4a165 0%,#8b6a30 100%)',
-        borderRadius: 2, zIndex: 5,
+        boxShadow: 'inset 10px 0 16px rgba(0,0,0,0.45)',
+        transform: hover ? 'translateX(96%)' : 'translateX(0)',
+        transition: 'transform 0.55s var(--ease)',
+        zIndex: 5,
       }} />
     </div>
   )
