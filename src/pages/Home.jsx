@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import PhotoTeaser from '../components/PhotoTeaser'
-import { ProjectCard, StickyNote } from '../components/CanvasCards'
+import { ProjectCard, StickyNote, ExperienceCard } from '../components/CanvasCards'
 import Polaroid from '../components/Polaroid'
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
@@ -43,13 +43,8 @@ const OBJECTS = [
   // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
   { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5 },
 
-  // Single sticky — right edge at x:1460 (aligned with Captura below)
-  // x: 1460 - 580 = 880
-  { id: 'sticky-experience', type: 'sticky', x: 880, y: 220, w: 580, h: 240, z: 4, draggable: true,
-    data: {
-      text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
-      color: 'var(--sticky-blue)', rotate: 0, tall: false,
-    } },
+  // Experience card — right edge at x:1460 (aligned with Captura below)
+  { id: 'experience', type: 'experience', x: 880, y: 220, w: 580, h: 220, z: 4 },
 
   // Case studies — centered trio at canvas x:540 → x:1460
   { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
@@ -58,16 +53,17 @@ const OBJECTS = [
 ]
 
 const CONNECTORS = [
-  { from: 'sticky-experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
-  { from: 'sticky-experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
-  { from: 'sticky-experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
+  { from: 'experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
+  { from: 'experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
+  { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
 ]
 
 function renderObject(obj) {
   switch (obj.type) {
     case 'project': return <ProjectCard data={obj.data} />
     case 'sticky': return <StickyNote data={obj.data} />
-    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={0} />
+    case 'identity': return <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-4} />
+    case 'experience': return <ExperienceCard />
     default: return null
   }
 }

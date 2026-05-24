@@ -257,6 +257,38 @@ export function StickyNote({ data }) {
   )
 }
 
+/* ---- Experience header card (sits above the case studies) ---- */
+export function ExperienceCard() {
+  return (
+    <div>
+      <FrameLabel># the arc</FrameLabel>
+      <div style={{
+        ...cardBase,
+        padding: '1.5rem 1.7rem',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        height: '100%',
+      }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          color: 'var(--accent)', letterSpacing: '0.12em',
+          textTransform: 'uppercase', marginBottom: '0.7rem',
+        }}>
+          where I've worked
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 600,
+          fontSize: '1.3rem', lineHeight: 1.4, letterSpacing: '-0.01em',
+          color: 'var(--ink)',
+        }}>
+          Designed at a <span style={{ color: 'var(--accent)' }}>YC-backed fintech</span>,
+          shipped at <span style={{ color: 'var(--accent)' }}>HubSpot</span>,
+          founded my own studio from scratch — here&rsquo;s the arc&nbsp;↓
+        </p>
+      </div>
+    </div>
+  )
+}
+
 /* ---- About (identity card) ---- */
 function LinkedinGlyph({ size = 16 }) {
   return (
