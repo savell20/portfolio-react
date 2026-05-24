@@ -231,6 +231,89 @@ export function PhotographyCard() {
   )
 }
 
+/* ---- Annotation label (directional waymarker pill) ---- */
+export function AnnotationLabel({ data }) {
+  const left = data.arrow === '←' || data.arrow === '↖' || data.arrow === '↙'
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 10,
+      padding: '0.6rem 1rem',
+      background: 'var(--surface)', border: 'var(--border-card)',
+      borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)',
+      fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
+      color: 'var(--ink-soft)', letterSpacing: '0.06em',
+      textTransform: 'uppercase', whiteSpace: 'nowrap',
+      transform: `rotate(${data.rotate || 0}deg)`,
+    }}>
+      {left && <span style={{ fontSize: '1rem', color: 'var(--accent)', lineHeight: 1 }}>{data.arrow}</span>}
+      {data.text}
+      {!left && <span style={{ fontSize: '1rem', color: 'var(--accent)', lineHeight: 1 }}>{data.arrow}</span>}
+    </div>
+  )
+}
+
+/* ---- Long-form story card ---- */
+export function StoryCard({ data }) {
+  return (
+    <div>
+      <FrameLabel># my story</FrameLabel>
+      <div style={{ ...cardBase, padding: '1.75rem 2rem', position: 'relative' }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          color: 'var(--accent)', letterSpacing: '0.12em',
+          textTransform: 'uppercase', marginBottom: '0.7rem',
+        }}>
+          {data.label}
+        </p>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 800,
+          fontSize: '1.7rem', letterSpacing: '-0.02em',
+          color: 'var(--ink)', marginBottom: '1rem',
+        }}>
+          {data.title}
+        </h3>
+        {data.paragraphs.map((p, i) => (
+          <p key={i} style={{
+            fontSize: '0.98rem', color: 'var(--ink-soft)', lineHeight: 1.65,
+            marginBottom: '0.85rem',
+          }}>
+            {p}
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ---- Mini photo print (right-side photography zone) ---- */
+export function PhotoPrint({ data }) {
+  return (
+    <div style={{
+      background: '#FAF8F2', padding: '8px 8px 22px',
+      boxShadow: '0 12px 28px rgba(0,0,0,0.18)',
+      transform: `rotate(${data.rotate || 0}deg)`,
+      width: '100%', height: '100%',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      <div style={{
+        flex: 1, overflow: 'hidden', background: '#222',
+      }}>
+        <img src={data.src} alt={data.caption}
+          draggable={false} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      </div>
+      <p style={{
+        textAlign: 'center',
+        fontFamily: 'var(--font-mono)', fontSize: '0.52rem',
+        color: '#5a5a52', marginTop: 6, letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+      }}>
+        {data.caption}
+      </p>
+    </div>
+  )
+}
+
 /* ---- Sticky note ---- */
 export function StickyNote({ data }) {
   return (
