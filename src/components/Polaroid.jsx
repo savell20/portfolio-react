@@ -12,7 +12,7 @@ export default function Polaroid({ src, caption, rotate = 0, isStrip = false, cl
       onMouseLeave={() => setHover(false)}
       style={{
         background: '#FAF8F2',
-        padding: isStrip ? 0 : '10px 10px 28px',
+        padding: isStrip ? 0 : '10px 10px 40px',
         boxShadow: lift
           ? '0 22px 44px rgba(0,0,0,0.38)'
           : '0 14px 32px rgba(0,0,0,0.28)',
@@ -46,7 +46,8 @@ export default function Polaroid({ src, caption, rotate = 0, isStrip = false, cl
           <p style={{
             flex: 1,
             textAlign: clickable ? 'left' : 'center',
-            fontFamily: 'var(--font-hand)', fontSize: '1.15rem',
+            fontFamily: 'var(--font-hand)', fontSize: '1.85rem',
+            fontWeight: 600,
             color: '#2a2a26', lineHeight: 1.1,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
