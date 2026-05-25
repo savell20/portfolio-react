@@ -245,8 +245,9 @@ const ARROW_PATHS = {
   '↓': 'M50 10 C 54 30, 44 50, 50 88 M 50 88 L 41 78 M 50 88 L 59 78',
   '←': 'M90 50 C 70 46, 50 54, 12 50 M 12 50 L 22 41 M 12 50 L 22 59',
   '→': 'M10 50 C 30 54, 50 46, 88 50 M 88 50 L 78 41 M 88 50 L 78 59',
-  // diagonal: down-right (from upper-left to lower-right)
-  '↘': 'M10 14 C 30 24, 52 46, 84 84 M 84 84 L 72 78 M 84 84 L 78 72',
+  // diagonal: down-right. Starts at the SVG's vertical center so the
+  // arrow head leaves from the text baseline, then curves down-right.
+  '↘': 'M8 50 C 26 56, 48 66, 84 92 M 84 92 L 72 88 M 84 92 L 80 76',
 }
 
 function HandArrow({ direction, size = 70 }) {
