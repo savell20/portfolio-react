@@ -4,7 +4,7 @@ import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
-  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
+  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin, AwardCard,
 } from '../components/CanvasCards'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
 import MobileHome from '../components/MobileHome'
@@ -59,8 +59,10 @@ const OBJECTS = [
   { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
   // ─── Hand-drawn waymarkers (positioned to mirror the reference layout) ───
-  { id: 'note-top', type: 'note', x: 880, y: 0, w: 280, h: 80, z: 8,
-    data: { text: 'what people say', arrow: '↑', rotate: -2 } },
+  { id: 'note-awards', type: 'note', x: 240, y: 0, w: 240, h: 80, z: 8,
+    data: { text: 'awards', arrow: '↑', rotate: -3 } },
+  { id: 'note-recognition', type: 'note', x: 1280, y: 0, w: 280, h: 80, z: 8,
+    data: { text: 'recognition', arrow: '↑', rotate: 2 } },
   // Sits right above the polaroid corner, arrow swoops diagonally down-right at it
   { id: 'note-polaroid', type: 'note', x: 360, y: 95, w: 320, h: 80, z: 8,
     data: { text: 'click my photo', arrow: '↘', rotate: -4 } },
@@ -86,13 +88,21 @@ const OBJECTS = [
   { id: 'toy-plane', type: 'flight', x: -350, y: 540, w: 290, h: 240, z: 6,
     data: { label: 'I love traveling' } },
 
-  // ─── TOP — testimonials ───
-  { id: 'test-1', type: 'sticky', x: 540, y: -210, w: 290, h: 180, z: 5, draggable: true,
+  // ─── TOP-LEFT — awards I've won ───
+  { id: 'award-1', type: 'award', x: 120, y: -230, w: 260, h: 130, z: 5,
+    data: { icon: 'trophy', title: 'Site of the Day', org: 'Awwwards', year: '2024', rotate: -3 } },
+  { id: 'award-2', type: 'award', x: 400, y: -250, w: 260, h: 130, z: 5,
+    data: { icon: 'award', title: 'Best UX · Fintech', org: 'CSS Design Awards', year: '2024', rotate: 2 } },
+  { id: 'award-3', type: 'award', x: 680, y: -220, w: 260, h: 130, z: 5,
+    data: { icon: 'star', title: 'Design Excellence Award', org: 'SCAD · Service Design', year: '2025', rotate: -1 } },
+
+  // ─── TOP-RIGHT — recognition (what people say) ───
+  { id: 'test-1', type: 'sticky', x: 1080, y: -220, w: 250, h: 170, z: 5, draggable: true,
     data: { text: '"Santi turns ambiguity into shipped product faster than anyone I\'ve worked with."\n— Maria, PM at Zolvo', color: 'var(--sticky-blue)', rotate: -3, tall: true } },
-  { id: 'test-2', type: 'sticky', x: 870, y: -240, w: 280, h: 180, z: 5, draggable: true,
+  { id: 'test-2', type: 'sticky', x: 1350, y: -250, w: 250, h: 170, z: 5, draggable: true,
     data: { text: '"Rare designer — thinks like an engineer, ships like a founder."\n— David, Eng Lead', color: 'var(--sticky-pink)', rotate: 2, tall: true } },
-  { id: 'test-3', type: 'sticky', x: 1190, y: -210, w: 280, h: 170, z: 5, draggable: true,
-    data: { text: '"Calm under pressure, surgical with feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
+  { id: 'test-3', type: 'sticky', x: 1620, y: -220, w: 250, h: 170, z: 5, draggable: true,
+    data: { text: '"Calm under pressure, surgical feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
 
   // ─── RIGHT — tight photography cluster (2x2) + photo booth furthest right ───
   // Spacing matches the gap that "hobbies & life ←" has from the main composition
@@ -147,6 +157,7 @@ function makeRenderObject(navigate) {
       case 'guitar': return <Guitar label={obj.data?.label} />
       case 'f1': return <F1Car label={obj.data?.label} />
       case 'flight': return <FlightMap label={obj.data?.label} />
+      case 'award': return <AwardCard data={obj.data} />
       default: return null
     }
   }

@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { ArrowRight, Camera } from 'lucide-react'
+import { ArrowRight, Camera, Award, Trophy, Star } from 'lucide-react'
+
+const AWARD_ICONS = { award: Award, trophy: Trophy, star: Star }
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
 /* Shared arrow chip — points right by default, rotates to diagonal
@@ -281,6 +283,44 @@ export function PhotographyCard() {
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---- Award card (top-left zone) ---- */
+export function AwardCard({ data }) {
+  const Icon = AWARD_ICONS[data.icon] || Award
+  return (
+    <div style={{
+      ...cardBase,
+      padding: '1rem 1.05rem 1.1rem',
+      display: 'flex', flexDirection: 'column', gap: 8,
+      transform: `rotate(${data.rotate || 0}deg)`,
+    }}>
+      <span style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        width: 36, height: 36, borderRadius: 9,
+        background: 'var(--accent-soft)', color: 'var(--accent)',
+      }}>
+        <Icon size={18} strokeWidth={2.2} />
+      </span>
+      <div>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          fontSize: '0.98rem', lineHeight: 1.2,
+          letterSpacing: '-0.01em', color: 'var(--ink)',
+          marginBottom: 3,
+        }}>
+          {data.title}
+        </h3>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+          color: 'var(--ink-soft)', letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+        }}>
+          {data.org} · {data.year}
+        </p>
       </div>
     </div>
   )
