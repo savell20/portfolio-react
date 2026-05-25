@@ -296,7 +296,7 @@ export default function CaseStudy() {
               alignItems: 'center', flexWrap: 'wrap', gap: '1rem',
             }}>
               <a
-                href="mailto:santiagoavellad@gmail.com"
+                href="mailto:santi.avella28@gmail.com"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
                   fontFamily: 'var(--font-mono)', fontSize: '0.74rem',

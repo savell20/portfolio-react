@@ -20,7 +20,7 @@ const RESUME_URL = '#'
 
 const LINKS = [
   { Icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/in/santiagoavella', ext: true },
-  { Icon: Mail, label: 'Email', href: 'mailto:santiagoavellad@gmail.com' },
+  { Icon: Mail, label: 'Email', href: 'mailto:santi.avella28@gmail.com' },
   { Icon: Phone, label: 'Call', href: `tel:${PHONE.replace(/[^+\d]/g, '')}` },
   { Icon: FileText, label: 'Résumé', href: RESUME_URL, ext: true },
 ]

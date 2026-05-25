@@ -1,7 +1,7 @@
 import { FileText, Mail } from 'lucide-react'
 
-const RESUME_URL = '#'
-const EMAIL = 'santiagoavellad@gmail.com'
+const RESUME_URL = 'https://drive.google.com/file/d/1mkUQy2AQd0vYHAqsHoGi-qibLa5ssIcC/view?usp=sharing'
+const EMAIL = 'santi.avella28@gmail.com'
 
 export default function TopBar() {
   return (

@@ -274,7 +274,7 @@ export default function MobileHome() {
         fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
         color: 'var(--ink-faint)', letterSpacing: '0.1em',
       }}>
-        santiagoavellad@gmail.com
+        santi.avella28@gmail.com
       </footer>
     </div>
   )
