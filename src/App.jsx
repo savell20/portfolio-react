@@ -5,6 +5,9 @@ import Home from './pages/Home'
 import CaseStudy from './pages/CaseStudy'
 import Photography from './pages/Photography'
 import About from './pages/About'
+import Hobbies from './pages/Hobbies'
+import Testimonials from './pages/Testimonials'
+import Story from './pages/Story'
 import FigmaCursor from './components/FigmaCursor'
 import StyleSwitcher from './components/StyleSwitcher'
 import Tutorial from './components/Tutorial'
@@ -66,6 +69,9 @@ export default function App() {
         <Route path="/work/:slug" element={<CaseStudy />} />
         <Route path="/photography" element={<Photography />} />
         <Route path="/about" element={<About />} />
+        <Route path="/hobbies" element={<Hobbies />} />
+        <Route path="/testimonials" element={<Testimonials />} />
+        <Route path="/story" element={<Story />} />
       </Routes>
     </>
   )

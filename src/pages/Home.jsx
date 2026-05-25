@@ -7,6 +7,7 @@ import {
   AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
 } from '../components/CanvasCards'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
+import MobileHome from '../components/MobileHome'
 import Polaroid from '../components/Polaroid'
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
@@ -68,8 +69,8 @@ const OBJECTS = [
   { id: 'note-photography', type: 'note', x: 1540, y: 420, w: 240, h: 80, z: 8,
     data: { text: 'my photography', arrow: '→', rotate: -3 } },
   // Sits above the cabin, pointing down at it
-  { id: 'note-booth', type: 'note', x: 2120, y: 130, w: 240, h: 80, z: 8,
-    data: { text: 'snap a polaroid', arrow: '↓', rotate: 2 } },
+  { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
+    data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
   { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
 
@@ -162,46 +163,6 @@ function computeInitialView() {
   }
 }
 
-/* Mobile / touch fallback — a simple stacked board */
-function StackedBoard({ navigate }) {
-  return (
-    <div style={{
-      minHeight: '100vh', padding: '1.5rem 1.2rem 4rem',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem',
-    }}>
-      <div style={{ width: 220, height: 280 }}>
-        <Polaroid src={fotoPersonal} caption="Santiago Avella" rotate={-3} />
-      </div>
-      <div style={{ width: '100%', maxWidth: 360 }}>
-        <StickyNote data={{
-          text: 'Product designer crafting AI-native interfaces — turning complex systems into things that feel obvious 🎯',
-          color: 'var(--sticky-yellow)', rotate: 2, tall: true,
-        }} />
-      </div>
-      <div style={{ width: '100%', maxWidth: 380 }}>
-        <StickyNote data={{
-          text: "Designed at a YC-backed fintech, shipped at HubSpot, founded my own studio from scratch — here's the arc ↓",
-          color: 'var(--sticky-blue)', rotate: -2, tall: true,
-        }} />
-      </div>
-      {['zolvo', 'hubspot', 'captura'].map(slug => (
-        <div
-          key={slug}
-          onClick={() => navigate(`/work/${slug}`)}
-          style={{ width: '100%', maxWidth: 440, cursor: 'pointer' }}
-        >
-          <ProjectCard data={projects[slug]} />
-        </div>
-      ))}
-      <div
-        onClick={() => navigate('/photography')}
-        style={{ width: 210, cursor: 'pointer' }}
-      >
-        <StickyNote data={{ text: 'off the clock, I shoot film 📷', color: 'var(--sticky-pink)', rotate: -3, tall: true, link: '→ open the roll' }} />
-      </div>
-    </div>
-  )
-}
 
 export default function Home() {
   const navigate = useNavigate()
@@ -219,7 +180,7 @@ export default function Home() {
     }
   }
 
-  if (!isCanvas) return <StackedBoard navigate={navigate} />
+  if (!isCanvas) return <MobileHome />
 
   return (
     <>
@@ -231,30 +192,6 @@ export default function Home() {
         onActivate={onActivate}
       />
       <MusicPlayer />
-
-      {/* Floating hint — bottom-center */}
-      <div
-        style={{
-          position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)',
-          zIndex: 9000, pointerEvents: 'none',
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: 'var(--surface)', border: 'var(--border-card)',
-          borderRadius: 'var(--radius-pill)',
-          padding: '0.45rem 0.85rem',
-          boxShadow: 'var(--shadow-card)',
-          fontFamily: 'var(--font-mono)', fontSize: '0.64rem',
-          color: 'var(--ink-soft)', letterSpacing: '0.02em',
-          animation: 'hint-float 3.6s ease-in-out infinite, fade-in 0.6s var(--ease) both',
-          animationDelay: '0s, 0.9s',
-        }}
-      >
-        <span style={{
-          width: 6, height: 6, borderRadius: '50%',
-          background: 'var(--accent)',
-          animation: 'hint-pulse 1.8s ease-in-out infinite',
-        }} />
-        scroll to move · ⌘ + scroll to zoom
-      </div>
     </>
   )
 }
