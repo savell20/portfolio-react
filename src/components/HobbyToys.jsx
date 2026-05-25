@@ -5,7 +5,19 @@ import { playGuitarChord } from '../lib/sound'
    GUITAR — click to strum, plays a C-major arpeggio + the
    strings briefly twitch.
    ───────────────────────────────────────────────────────────── */
-export function Guitar({ height = 270 }) {
+function ToyCaption({ children }) {
+  return (
+    <p style={{
+      textAlign: 'center', marginTop: 6,
+      fontFamily: 'var(--font-note)', fontSize: '1rem',
+      color: 'var(--accent)', lineHeight: 1.1,
+    }}>
+      {children}
+    </p>
+  )
+}
+
+export function Guitar({ height = 270, label }) {
   const [pluck, setPluck] = useState(0)
   const handleStrum = (e) => {
     e.stopPropagation()
@@ -13,6 +25,7 @@ export function Guitar({ height = 270 }) {
     setPluck(p => p + 1)
   }
   return (
+    <div style={{ width: '100%' }}>
     <div
       onClick={handleStrum}
       onPointerDown={e => e.stopPropagation()}
@@ -74,6 +87,8 @@ export function Guitar({ height = 270 }) {
         </defs>
       </svg>
     </div>
+    {label && <ToyCaption>{label}</ToyCaption>}
+    </div>
   )
 }
 
@@ -81,8 +96,9 @@ export function Guitar({ height = 270 }) {
    F1 CAR — drives across the frame in a loop, wheels spinning,
    tiny smoke puffs trailing behind.
    ───────────────────────────────────────────────────────────── */
-export function F1Car({ height = 150 }) {
+export function F1Car({ height = 150, label }) {
   return (
+    <div style={{ width: '100%' }}>
     <div style={{
       width: '100%', height,
       background: 'linear-gradient(180deg,#1a1d2e 0%,#0a0c1a 70%, #2a2520 100%)',
@@ -151,6 +167,8 @@ export function F1Car({ height = 150 }) {
         Mónaco · {new Date().getFullYear()}
       </span>
     </div>
+    {label && <ToyCaption>{label}</ToyCaption>}
+    </div>
   )
 }
 
@@ -167,8 +185,9 @@ const STOPS = [
 ]
 const ROUTE = 'M 50,110 Q 80,30 110,70 T 170,60 T 220,80 T 240,130'
 
-export function FlightMap({ height = 170 }) {
+export function FlightMap({ height = 170, label }) {
   return (
+    <div style={{ width: '100%' }}>
     <div style={{
       width: '100%', height,
       background: 'linear-gradient(180deg,#0a1530 0%, #050a1c 100%)',
@@ -237,6 +256,8 @@ export function FlightMap({ height = 170 }) {
       }}>
         Always somewhere
       </span>
+    </div>
+    {label && <ToyCaption>{label}</ToyCaption>}
     </div>
   )
 }

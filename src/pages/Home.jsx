@@ -62,27 +62,25 @@ const OBJECTS = [
     data: { text: 'click my photo', arrow: '↓', rotate: 4 } },
   { id: 'note-left', type: 'note', x: 240, y: 540, w: 240, h: 80, z: 8,
     data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
-  // Points right at the photo print cluster
-  { id: 'note-photography', type: 'note', x: 1340, y: 420, w: 240, h: 80, z: 8,
+  // Points right at the photo print cluster — sits the same distance from
+  // the main composition that "hobbies & life ←" sits on the opposite side
+  { id: 'note-photography', type: 'note', x: 1540, y: 420, w: 240, h: 80, z: 8,
     data: { text: 'my photography', arrow: '→', rotate: -3 } },
   // Sits above the cabin, pointing down at it
-  { id: 'note-booth', type: 'note', x: 1790, y: 130, w: 240, h: 80, z: 8,
+  { id: 'note-booth', type: 'note', x: 2120, y: 130, w: 240, h: 80, z: 8,
     data: { text: 'snap a polaroid', arrow: '↓', rotate: 2 } },
   { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
     data: { text: 'my story', arrow: '↓', rotate: 1 } },
 
-  // ─── LEFT — hobbies & life (interactive toys + stickies) ───
-  // Stickies — the written hobbies
-  { id: 'hobby-1', type: 'sticky', x: -60, y: 200, w: 230, h: 170, z: 5, draggable: true,
-    data: { text: 'Film cameras ✦ Pentax K1000, Portra 400, slow weekends', color: 'var(--sticky-pink)', rotate: -5, tall: true } },
-  { id: 'hobby-2', type: 'sticky', x: -40, y: 420, w: 240, h: 180, z: 5, draggable: true,
-    data: { text: 'Cooking ✦ slow Sundays, lots of garlic, recipes from my abuela', color: 'var(--sticky-mint)', rotate: 4, tall: true } },
-  { id: 'hobby-3', type: 'sticky', x: -50, y: 650, w: 230, h: 170, z: 5, draggable: true,
-    data: { text: 'Hiking ✦ mountains > beaches. Bogotá raised me on altitude', color: 'var(--sticky-yellow)', rotate: -2, tall: true } },
-  // Toys — interactive things you can touch
-  { id: 'toy-guitar', type: 'guitar', x: -330, y: 170, w: 200, h: 270, z: 6 },
-  { id: 'toy-f1', type: 'f1', x: -360, y: 470, w: 260, h: 150, z: 6 },
-  { id: 'toy-plane', type: 'flight', x: -380, y: 660, w: 290, h: 170, z: 6 },
+  // ─── LEFT — hobbies & life: three interactive toys, each with a caption ───
+  // Row 1: guitar + F1 side by side
+  { id: 'toy-guitar', type: 'guitar', x: -340, y: 170, w: 200, h: 340, z: 6,
+    data: { label: 'I love guitar' } },
+  { id: 'toy-f1', type: 'f1', x: -110, y: 220, w: 260, h: 220, z: 6,
+    data: { label: 'I love Formula One' } },
+  // Row 2: plane (travel) below
+  { id: 'toy-plane', type: 'flight', x: -350, y: 540, w: 290, h: 240, z: 6,
+    data: { label: 'I love traveling' } },
 
   // ─── TOP — testimonials ───
   { id: 'test-1', type: 'sticky', x: 540, y: -210, w: 290, h: 180, z: 5, draggable: true,
@@ -93,16 +91,17 @@ const OBJECTS = [
     data: { text: '"Calm under pressure, surgical with feedback. The teammate I always want."\n— Ana, Director of Design', color: 'var(--sticky-mint)', rotate: -2, tall: true } },
 
   // ─── RIGHT — tight photography cluster (2x2) + photo booth furthest right ───
-  { id: 'photo-1', type: 'photoprint', x: 1500, y: 280, w: 170, h: 190, z: 5, draggable: true,
+  // Spacing matches the gap that "hobbies & life ←" has from the main composition
+  { id: 'photo-1', type: 'photoprint', x: 1800, y: 280, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
-  { id: 'photo-2', type: 'photoprint', x: 1640, y: 300, w: 170, h: 190, z: 5, draggable: true,
+  { id: 'photo-2', type: 'photoprint', x: 1940, y: 300, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1500, y: 470, w: 170, h: 190, z: 5, draggable: true,
+  { id: 'photo-3', type: 'photoprint', x: 1800, y: 470, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
-  { id: 'photo-4', type: 'photoprint', x: 1640, y: 490, w: 170, h: 190, z: 5, draggable: true,
+  { id: 'photo-4', type: 'photoprint', x: 1940, y: 490, w: 170, h: 190, z: 5, draggable: true,
     data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: -3 } },
   // Photo booth — far right, big and red
-  { id: 'photobooth', type: 'photobooth', x: 1830, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
+  { id: 'photobooth', type: 'photobooth', x: 2160, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
 
   // ─── BOTTOM — my story ───
   { id: 'story', type: 'story', x: 540, y: 1180, w: 920, h: 360, z: 5,
@@ -141,9 +140,9 @@ function makeRenderObject(navigate) {
       case 'story': return <StoryCard data={obj.data} />
       case 'photoprint': return <PhotoPrint data={obj.data} />
       case 'photobooth': return <PhotoBoothCabin />
-      case 'guitar': return <Guitar />
-      case 'f1': return <F1Car />
-      case 'flight': return <FlightMap />
+      case 'guitar': return <Guitar label={obj.data?.label} />
+      case 'f1': return <F1Car label={obj.data?.label} />
+      case 'flight': return <FlightMap label={obj.data?.label} />
       default: return null
     }
   }

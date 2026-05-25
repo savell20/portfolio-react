@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const photos = [
@@ -116,24 +116,6 @@ export default function Photography() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'fixed', inset: 0, background: 'var(--canvas)' }}>
-
-      {/* Back — bottom-center (StyleSwitcher owns top-left, TopBar owns top-right) */}
-      <button
-        onClick={() => navigate('/')}
-        style={{
-          position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', zIndex: 9000,
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          background: 'var(--surface)', border: 'var(--border-card)',
-          borderRadius: 'var(--radius-pill)', padding: '0.6rem 1rem', cursor: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 500,
-          color: 'var(--ink-soft)', boxShadow: 'var(--shadow-card)',
-          transition: 'color 0.2s, transform 0.2s var(--ease)',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(-2px)' }}
-        onMouseLeave={e => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(0)' }}
-      >
-        <ArrowLeft size={13} /> back to canvas
-      </button>
 
       {/* Header label — keeps a bit of distance from the StyleSwitcher / TopBar */}
       <div style={{

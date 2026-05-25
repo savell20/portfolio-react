@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, MapPin, GraduationCap, Briefcase, Sparkles } from 'lucide-react'
+import { MapPin, GraduationCap, Briefcase, Sparkles } from 'lucide-react'
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
 function Reveal({ children, delay = 0 }) {
@@ -24,8 +23,6 @@ const FACTS = [
 ]
 
 export default function About() {
-  const navigate = useNavigate()
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 6rem' }}>
 
@@ -216,23 +213,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* Back — bottom-center pill */}
-      <button
-        onClick={() => navigate('/')}
-        style={{
-          position: 'fixed', bottom: 22, left: '50%', transform: 'translateX(-50%)', zIndex: 9000,
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          background: 'var(--surface)', border: 'var(--border-card)',
-          borderRadius: 'var(--radius-pill)', padding: '0.6rem 1rem', cursor: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 500,
-          color: 'var(--ink-soft)', boxShadow: 'var(--shadow-card)',
-          transition: 'color 0.2s, transform 0.2s var(--ease)',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(-2px)' }}
-        onMouseLeave={e => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.transform = 'translateX(-50%) translateY(0)' }}
-      >
-        <ArrowLeft size={13} /> back to canvas
-      </button>
     </div>
   )
 }
