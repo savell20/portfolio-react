@@ -239,13 +239,14 @@ export function PhotographyCard() {
 }
 
 /* ---- Annotation label — feels like marker writing on the canvas grid ---- */
-// All four arrows share an identical 80-unit "sweep" and shaft length so the
-// waymarkers feel consistent in weight regardless of direction.
+// All arrows share an identical sweep so the waymarkers feel consistent.
 const ARROW_PATHS = {
   '↑': 'M50 90 C 46 70, 56 50, 50 12 M 50 12 L 41 22 M 50 12 L 59 22',
   '↓': 'M50 10 C 54 30, 44 50, 50 88 M 50 88 L 41 78 M 50 88 L 59 78',
   '←': 'M90 50 C 70 46, 50 54, 12 50 M 12 50 L 22 41 M 12 50 L 22 59',
   '→': 'M10 50 C 30 54, 50 46, 88 50 M 88 50 L 78 41 M 88 50 L 78 59',
+  // diagonal: down-right (from upper-left to lower-right)
+  '↘': 'M10 14 C 30 24, 52 46, 84 84 M 84 84 L 72 78 M 84 84 L 78 72',
 }
 
 function HandArrow({ direction, size = 70 }) {
@@ -268,6 +269,7 @@ function HandArrow({ direction, size = 70 }) {
 
 export function AnnotationLabel({ data }) {
   const isVertical = data.arrow === '↑' || data.arrow === '↓'
+  const arrowAfter = data.arrow === '→' || data.arrow === '↓' || data.arrow === '↘'
   return (
     <div style={{
       display: 'flex',
@@ -276,7 +278,7 @@ export function AnnotationLabel({ data }) {
       transform: `rotate(${data.rotate || 0}deg)`,
       userSelect: 'none',
     }}>
-      {(data.arrow === '←' || data.arrow === '↑') && <HandArrow direction={data.arrow} />}
+      {!arrowAfter && <HandArrow direction={data.arrow} />}
       <span style={{
         fontFamily: 'var(--font-note)', fontSize: '1.35rem',
         fontWeight: 400, color: 'var(--accent)',
@@ -284,7 +286,7 @@ export function AnnotationLabel({ data }) {
       }}>
         {data.text}
       </span>
-      {(data.arrow === '→' || data.arrow === '↓') && <HandArrow direction={data.arrow} />}
+      {arrowAfter && <HandArrow direction={data.arrow} />}
     </div>
   )
 }

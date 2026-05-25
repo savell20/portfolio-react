@@ -58,8 +58,9 @@ const OBJECTS = [
   // ─── Hand-drawn waymarkers (positioned to mirror the reference layout) ───
   { id: 'note-top', type: 'note', x: 880, y: 0, w: 280, h: 80, z: 8,
     data: { text: 'what people say', arrow: '↑', rotate: -2 } },
-  { id: 'note-polaroid', type: 'note', x: 420, y: 60, w: 320, h: 80, z: 8,
-    data: { text: 'click my photo', arrow: '↓', rotate: 4 } },
+  // Sits right above the polaroid corner, arrow swoops diagonally down-right at it
+  { id: 'note-polaroid', type: 'note', x: 360, y: 95, w: 320, h: 80, z: 8,
+    data: { text: 'click my photo', arrow: '↘', rotate: -4 } },
   { id: 'note-left', type: 'note', x: 240, y: 540, w: 240, h: 80, z: 8,
     data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
   // Points right at the photo print cluster — sits the same distance from
