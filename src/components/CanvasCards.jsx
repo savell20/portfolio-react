@@ -1,7 +1,14 @@
 import { useState } from 'react'
-import { ArrowRight, Camera, Award, Trophy, Star } from 'lucide-react'
+import {
+  ArrowRight, Camera, Award, Trophy, Star,
+  Lightbulb, Sparkles, PenTool, GitBranch, Rocket, RefreshCw,
+} from 'lucide-react'
 
 const AWARD_ICONS = { award: Award, trophy: Trophy, star: Star }
+const WORKFLOW_ICONS = {
+  lightbulb: Lightbulb, sparkles: Sparkles, pentool: PenTool,
+  git: GitBranch, rocket: Rocket, refresh: RefreshCw,
+}
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
 /* Shared arrow chip — points right by default, rotates to diagonal
@@ -284,6 +291,47 @@ export function PhotographyCard() {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+/* ---- Workflow step (AI-workflow zone) ---- */
+export function WorkflowStep({ data }) {
+  const Icon = WORKFLOW_ICONS[data.icon] || Sparkles
+  return (
+    <div style={{
+      ...cardBase,
+      padding: '1rem 1.1rem 1.1rem',
+      display: 'flex', flexDirection: 'column', gap: 6,
+      transform: `rotate(${data.rotate || 0}deg)`,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <span style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 30, height: 30, borderRadius: 7,
+          background: data.tint || 'var(--accent-soft)',
+          color: data.tintInk || 'var(--accent)',
+        }}>
+          <Icon size={15} strokeWidth={2.2} />
+        </span>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.55rem',
+          color: 'var(--ink-faint)', letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+        }}>
+          step {data.n}
+        </span>
+      </div>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 700,
+        fontSize: '1rem', lineHeight: 1.15, letterSpacing: '-0.01em',
+        color: 'var(--ink)',
+      }}>
+        {data.title}
+      </h3>
+      <p style={{ fontSize: '0.74rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
+        {data.body}
+      </p>
     </div>
   )
 }

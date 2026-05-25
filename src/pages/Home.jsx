@@ -4,7 +4,8 @@ import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
-  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin, AwardCard,
+  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
+  AwardCard, WorkflowStep,
 } from '../components/CanvasCards'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
 import MobileHome from '../components/MobileHome'
@@ -73,8 +74,8 @@ const OBJECTS = [
   // Sits above the cabin, pointing down at it
   { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
     data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
-  { id: 'note-bottom', type: 'note', x: 870, y: 1060, w: 240, h: 80, z: 8,
-    data: { text: 'my story', arrow: '↓', rotate: 1 } },
+  { id: 'note-workflow', type: 'note', x: 800, y: 1060, w: 360, h: 80, z: 8,
+    data: { text: 'how I built this with AI', arrow: '↓', rotate: 1 } },
 
   // ─── LEFT — hobbies & life: three interactive toys, each with a caption ───
   // Row 1: guitar + F1 side by side
@@ -107,23 +108,46 @@ const OBJECTS = [
   // Photo booth — far right, big and red
   { id: 'photobooth', type: 'photobooth', x: 2160, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
 
-  // ─── BOTTOM — my story ───
-  { id: 'story', type: 'story', x: 540, y: 1180, w: 920, h: 360, z: 5,
-    data: {
-      label: 'the long version',
-      title: 'Bogotá → SCAD → here',
-      paragraphs: [
-        "I grew up in Bogotá, Colombia — a city that taught me how to design with constraints. Limited resources, big ambitions, and a culture that punishes anything that doesn't actually work.",
-        "Moved to the US for SCAD, fell in love with product design, founded my own visual-storytelling company at 18, learned every part of running a business the hard way, then took the lessons to HubSpot and now Zolvo.",
-        "The thread through all of it: I care about what gets shipped, not what gets shown. Best interfaces disappear — leaving only the outcome.",
-      ],
-    } },
+  // ─── BOTTOM — how I built this portfolio with AI ───
+  // Six workflow steps laid out horizontally; CONNECTORS wire them
+  // left → right so the diagram reads as one continuous loop.
+  { id: 'wf-1', type: 'workflow', x: 240, y: 1200, w: 210, h: 175, z: 5,
+    data: { n: '01', icon: 'lightbulb', title: 'Spark',
+      body: 'Sketched "infinite canvas portfolio" in 5 minutes. No Figma file — straight to a Notion brief.',
+      tint: '#FFE9A8', tintInk: '#8a6a18', rotate: -1 } },
+  { id: 'wf-2', type: 'workflow', x: 510, y: 1180, w: 220, h: 175, z: 5,
+    data: { n: '02', icon: 'sparkles', title: 'Claude Code',
+      body: 'Pair-programmed every component live with Claude — designer intent → working React in seconds.',
+      tint: '#EAEEFF', tintInk: '#2F5CFF', rotate: 1 } },
+  { id: 'wf-3', type: 'workflow', x: 790, y: 1200, w: 220, h: 175, z: 5,
+    data: { n: '03', icon: 'pentool', title: 'Design system',
+      body: 'CSS variables for surface, ink, accent, radius — restyle the whole canvas by editing six tokens.',
+      tint: '#C5EBD6', tintInk: '#1F8A6E', rotate: -1 } },
+  { id: 'wf-4', type: 'workflow', x: 1070, y: 1180, w: 220, h: 175, z: 5,
+    data: { n: '04', icon: 'git', title: 'Git + GitHub',
+      body: 'Every change committed to main with a clear message. Full history, free rollback, public source.',
+      tint: '#F3F3F3', tintInk: '#18181A', rotate: 1 } },
+  { id: 'wf-5', type: 'workflow', x: 1350, y: 1200, w: 220, h: 175, z: 5,
+    data: { n: '05', icon: 'rocket', title: 'Vercel',
+      body: 'Auto-deploys from main on every push. ~30 seconds from local edit to live URL.',
+      tint: '#111', tintInk: '#fff', rotate: -1 } },
+  { id: 'wf-6', type: 'workflow', x: 1630, y: 1180, w: 220, h: 175, z: 5,
+    data: { n: '06', icon: 'refresh', title: 'See & iterate',
+      body: 'Open the live site, screenshot the rough edge, paste it back to Claude. Loop until it sings.',
+      tint: '#FFD3DA', tintInk: '#B23A56', rotate: 1 } },
 ]
 
 const CONNECTORS = [
   { from: 'experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
   { from: 'experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
   { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
+  // Workflow flow: spark → claude → design → git → vercel → iterate → loop back
+  { from: 'wf-1', to: 'wf-2', fromSide: 'right', toSide: 'left' },
+  { from: 'wf-2', to: 'wf-3', fromSide: 'right', toSide: 'left' },
+  { from: 'wf-3', to: 'wf-4', fromSide: 'right', toSide: 'left' },
+  { from: 'wf-4', to: 'wf-5', fromSide: 'right', toSide: 'left' },
+  { from: 'wf-5', to: 'wf-6', fromSide: 'right', toSide: 'left' },
+  { from: 'wf-6', to: 'wf-2', fromSide: 'bottom', toSide: 'bottom', label: 'loop' },
 ]
 
 function makeRenderObject(navigate) {
@@ -148,6 +172,7 @@ function makeRenderObject(navigate) {
       case 'f1': return <F1Car label={obj.data?.label} />
       case 'flight': return <FlightMap label={obj.data?.label} />
       case 'award': return <AwardCard data={obj.data} />
+      case 'workflow': return <WorkflowStep data={obj.data} />
       default: return null
     }
   }
