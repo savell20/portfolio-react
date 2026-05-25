@@ -7,7 +7,7 @@ const STUDIES = {
     frame: 'zolvo.case',
     role: 'Founding Designer',
     dates: 'Mar 2026 — Present',
-    tags: ['Fintech', 'AI', 'YC S26'],
+    tags: ['Fintech', 'AI', 'YC P26'],
     cover: 'linear-gradient(135deg,#2F3BC9,#5B6CF5)',
     intro: 'Founding designer at a YC-backed fintech — five core product modules designed and shipped in eight weeks.',
     stats: [

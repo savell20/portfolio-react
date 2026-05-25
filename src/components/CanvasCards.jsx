@@ -36,6 +36,53 @@ const cardBase = {
 // FrameLabel floats above the card via absolute positioning so it doesn't
 // add height to the card's bounding box — keeps connector anchors flush
 // with the card's actual visible edges.
+/* Brand logo chips for the project covers. */
+function YCLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
+      <rect width="24" height="24" rx="3" fill="#F26522" />
+      <text x="12" y="18" textAnchor="middle"
+        fontFamily="'Helvetica Neue', Arial, sans-serif"
+        fontSize="17" fontWeight="700" fill="#fff">Y</text>
+    </svg>
+  )
+}
+function HubSpotLogo({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
+      <rect width="24" height="24" rx="3" fill="#FF7A59" />
+      <circle cx="11.5" cy="15" r="3.4" fill="none" stroke="#fff" strokeWidth="1.6" />
+      <line x1="11.5" y1="15" x2="11.5" y2="9.5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="11.5" y1="9.5" x2="17" y2="6.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="17" cy="6.5" r="1.6" fill="#fff" />
+    </svg>
+  )
+}
+
+function BadgeChip({ badge }) {
+  if (!badge) return null
+  const Logo = badge.type === 'yc' ? YCLogo : badge.type === 'hubspot' ? HubSpotLogo : null
+  return (
+    <span style={{
+      position: 'absolute', top: 10, right: 12, zIndex: 2,
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '0.28rem 0.55rem 0.28rem 0.35rem',
+      background: 'rgba(0,0,0,0.45)',
+      border: '1px solid rgba(255,255,255,0.18)',
+      borderRadius: 'var(--radius-pill)',
+      backdropFilter: 'blur(8px)',
+    }}>
+      {Logo && <Logo size={16} />}
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 500,
+        color: '#fff', letterSpacing: '0.08em', whiteSpace: 'nowrap',
+      }}>
+        {badge.label}
+      </span>
+    </span>
+  )
+}
+
 function FrameLabel({ children }) {
   return (
     <div style={{
@@ -64,7 +111,7 @@ export function ProjectCard({ data }) {
         transform: hover ? 'translate(-2px, -3px)' : 'translate(0, 0)',
         transition: 'transform 0.22s var(--ease)',
       }}>
-        {/* Cover — monogram */}
+        {/* Cover — monogram + optional brand badge */}
         <div style={{
           height: 132, background: data.cover,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -84,6 +131,7 @@ export function ProjectCard({ data }) {
           }}>
             {data.year}
           </span>
+          <BadgeChip badge={data.badge} />
         </div>
         {/* Body */}
         <div style={{ padding: '1.05rem 1.15rem 1.2rem' }}>

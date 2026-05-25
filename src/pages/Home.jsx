@@ -13,11 +13,12 @@ import fotoPersonal from '../assets/foto-personal.jpeg'
 
 const projects = {
   zolvo: {
-    company: 'Zolvo', frame: 'zolvo.case', year: "'26",
-    role: 'Founding Designer · YC S26',
+    company: 'Zolvo (YC P26)', frame: 'zolvo.case', year: "'26",
+    role: 'Founding Designer',
     blurb: 'Designed five core fintech modules — AI invoice verification, reconciliation, collections — in eight weeks.',
     tags: ['Fintech', 'AI', '0→1'],
     cover: 'linear-gradient(135deg,#2F3BC9,#5B6CF5)',
+    badge: { type: 'yc', label: 'YC P26' },
   },
   hubspot: {
     company: 'HubSpot', frame: 'hubspot.case', year: "'25",
@@ -25,6 +26,7 @@ const projects = {
     blurb: 'Product experiences for sales & service teams across a CRM used by millions.',
     tags: ['CRM', 'Scale', 'Systems'],
     cover: 'linear-gradient(135deg,#E8551E,#FF8A4C)',
+    badge: { type: 'hubspot', label: 'HubSpot' },
   },
   captura: {
     company: 'Captura tu mundo', frame: 'captura.case', year: "'20",

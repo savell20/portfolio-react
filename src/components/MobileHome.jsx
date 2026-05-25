@@ -4,14 +4,16 @@ import fotoPersonal from '../assets/foto-personal.jpeg'
 
 const projects = {
   zolvo: {
-    company: 'Zolvo', year: "'26", role: 'Founding Designer · YC S26',
+    company: 'Zolvo (YC P26)', year: "'26", role: 'Founding Designer',
     blurb: 'Designed five core fintech modules in eight weeks.',
     cover: 'linear-gradient(135deg,#2F3BC9,#5B6CF5)',
+    badge: { type: 'yc', label: 'YC P26' },
   },
   hubspot: {
     company: 'HubSpot', year: "'25", role: 'UI/UX Designer',
     blurb: 'Product experiences for sales & service teams.',
     cover: 'linear-gradient(135deg,#E8551E,#FF8A4C)',
+    badge: { type: 'hubspot', label: 'HubSpot' },
   },
   captura: {
     company: 'Captura tu mundo', year: "'20", role: 'Founder & Designer',
@@ -69,6 +71,25 @@ function SectionCard({ to, Icon, title, blurb, tint, navigate }) {
   )
 }
 
+function MiniLogo({ type }) {
+  if (type === 'yc') return (
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+      <rect width="24" height="24" rx="3" fill="#F26522" />
+      <text x="12" y="18" textAnchor="middle" fontFamily="Helvetica, Arial, sans-serif" fontSize="17" fontWeight="700" fill="#fff">Y</text>
+    </svg>
+  )
+  if (type === 'hubspot') return (
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
+      <rect width="24" height="24" rx="3" fill="#FF7A59" />
+      <circle cx="11.5" cy="15" r="3.4" fill="none" stroke="#fff" strokeWidth="1.6" />
+      <line x1="11.5" y1="15" x2="11.5" y2="9.5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="11.5" y1="9.5" x2="17" y2="6.6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="17" cy="6.5" r="1.6" fill="#fff" />
+    </svg>
+  )
+  return null
+}
+
 function ProjectMobileCard({ slug, data, navigate }) {
   return (
     <button
@@ -83,7 +104,7 @@ function ProjectMobileCard({ slug, data, navigate }) {
       <div style={{
         height: 92, background: data.cover,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 1rem',
+        padding: '0 1rem', position: 'relative',
       }}>
         <span style={{
           fontFamily: 'var(--font-display)', fontWeight: 900,
@@ -97,6 +118,23 @@ function ProjectMobileCard({ slug, data, navigate }) {
         }}>
           {data.year}
         </span>
+        {data.badge && (
+          <span style={{
+            position: 'absolute', top: 8, right: 10,
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            padding: '0.22rem 0.5rem 0.22rem 0.32rem',
+            background: 'rgba(0,0,0,0.45)', borderRadius: 999,
+            border: '1px solid rgba(255,255,255,0.2)',
+          }}>
+            <MiniLogo type={data.badge.type} />
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.52rem',
+              color: '#fff', letterSpacing: '0.08em',
+            }}>
+              {data.badge.label}
+            </span>
+          </span>
+        )}
       </div>
       <div style={{ padding: '0.95rem 1.05rem 1.05rem' }}>
         <h3 style={{
