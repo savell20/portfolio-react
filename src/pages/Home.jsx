@@ -147,7 +147,6 @@ const CONNECTORS = [
   { from: 'wf-3', to: 'wf-4', fromSide: 'right', toSide: 'left' },
   { from: 'wf-4', to: 'wf-5', fromSide: 'right', toSide: 'left' },
   { from: 'wf-5', to: 'wf-6', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-6', to: 'wf-2', fromSide: 'bottom', toSide: 'bottom', label: 'loop' },
 ]
 
 function makeRenderObject(navigate) {
