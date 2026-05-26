@@ -162,12 +162,13 @@ export default function TopNavbar() {
           rel="noopener noreferrer"
           title="Open résumé"
           style={{
-            display: 'flex', alignItems: 'center', gap: 5,
+            display: 'inline-flex', alignItems: 'center', gap: 5,
             height: 34, padding: '0 0.7rem',
             borderRadius: 'calc(var(--radius-pill) - 2px)',
             background: 'transparent', color: 'var(--ink)',
             fontFamily: 'var(--font-mono)', fontSize: '0.68rem',
             textDecoration: 'none', cursor: 'none',
+            whiteSpace: 'nowrap', flexShrink: 0,
             transition: 'background 0.15s',
           }}
           onMouseEnter={e => { e.currentTarget.style.background = 'var(--canvas)' }}
@@ -181,12 +182,13 @@ export default function TopNavbar() {
           rel="noopener noreferrer"
           title="Send me an email"
           style={{
-            display: 'flex', alignItems: 'center', gap: 5,
+            display: 'inline-flex', alignItems: 'center', gap: 5,
             height: 34, padding: '0 0.85rem',
             borderRadius: 'calc(var(--radius-pill) - 2px)',
             background: 'var(--accent)', color: '#fff',
             fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
             textDecoration: 'none', cursor: 'none',
+            whiteSpace: 'nowrap', flexShrink: 0,
             transition: 'transform 0.15s var(--ease), filter 0.15s',
           }}
           onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.08)' }}
