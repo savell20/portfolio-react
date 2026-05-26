@@ -9,11 +9,7 @@ import Hobbies from './pages/Hobbies'
 import Testimonials from './pages/Testimonials'
 import Story from './pages/Story'
 import FigmaCursor from './components/FigmaCursor'
-import StyleSwitcher from './components/StyleSwitcher'
-import Tutorial from './components/Tutorial'
-import TopBar from './components/TopBar'
-import ClickSoundsToggle from './components/ClickSoundsToggle'
-import Navbar from './components/Navbar'
+import TopNavbar from './components/TopNavbar'
 import { installClickSounds } from './lib/sound'
 
 function BackToCanvas() {
@@ -21,7 +17,7 @@ function BackToCanvas() {
   return (
     <button
       onClick={() => navigate('/')}
-      aria-label="Back to canvas"
+      aria-label="Back to home canvas"
       style={{
         position: 'fixed', top: 16, left: 16, zIndex: 9500,
         display: 'flex', alignItems: 'center', gap: 8,
@@ -36,7 +32,7 @@ function BackToCanvas() {
       onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.transform = 'translateY(0)' }}
     >
-      <ArrowLeft size={13} /> back to canvas
+      <ArrowLeft size={13} /> home
     </button>
   )
 }
@@ -46,17 +42,8 @@ function Chrome() {
   const onHome = pathname === '/'
   return (
     <>
-      {onHome ? (
-        <>
-          <StyleSwitcher />
-          <Tutorial />
-          <ClickSoundsToggle />
-        </>
-      ) : (
-        <BackToCanvas />
-      )}
-      <Navbar />
-      <TopBar />
+      {!onHome && <BackToCanvas />}
+      <TopNavbar />
     </>
   )
 }

@@ -428,6 +428,129 @@ export function AnnotationLabel({ data }) {
   )
 }
 
+/* ---- Generic bio card (used on /about canvas) ---- */
+export function BioCard({ data }) {
+  return (
+    <div>
+      <FrameLabel># {data.frame || 'about-me'}</FrameLabel>
+      <div style={{ ...cardBase, padding: '1.6rem 1.7rem' }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          color: 'var(--accent)', letterSpacing: '0.12em',
+          textTransform: 'uppercase', marginBottom: '0.7rem',
+        }}>
+          {data.kicker}
+        </p>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 800,
+          fontSize: '1.7rem', letterSpacing: '-0.02em',
+          color: 'var(--ink)', marginBottom: '1rem', lineHeight: 1.1,
+        }}>
+          {data.title}
+        </h3>
+        {data.paragraphs?.map((p, i) => (
+          <p key={i} style={{
+            fontSize: '0.96rem', color: 'var(--ink-soft)', lineHeight: 1.65,
+            marginBottom: '0.85rem',
+          }}>
+            {p}
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ---- Numbered principle row card ---- */
+export function PrincipleCard({ data }) {
+  return (
+    <div style={{
+      ...cardBase, padding: '1.1rem 1.2rem 1.2rem',
+      display: 'flex', flexDirection: 'column', gap: 6,
+    }}>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
+        color: 'var(--accent)', letterSpacing: '0.06em',
+      }}>
+        {data.n}
+      </span>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 700,
+        fontSize: '1.1rem', letterSpacing: '-0.01em', color: 'var(--ink)',
+        lineHeight: 1.15,
+      }}>
+        {data.title}
+      </h3>
+      <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+        {data.body}
+      </p>
+    </div>
+  )
+}
+
+/* ---- Fact chip (Based, School, Currently, …) ---- */
+export function FactCard({ data }) {
+  return (
+    <div style={{
+      ...cardBase, padding: '0.95rem 1.05rem',
+      display: 'flex', alignItems: 'flex-start', gap: 10,
+    }}>
+      <span style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        width: 32, height: 32, borderRadius: 8,
+        background: 'var(--accent-soft)', color: 'var(--accent)',
+        flexShrink: 0, fontFamily: 'var(--font-display)',
+        fontWeight: 800, fontSize: '0.85rem',
+      }}>
+        {data.icon}
+      </span>
+      <div>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+          color: 'var(--ink-faint)', textTransform: 'uppercase',
+          letterSpacing: '0.08em', marginBottom: 2,
+        }}>
+          {data.label}
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 600,
+          fontSize: '0.9rem', color: 'var(--ink)', lineHeight: 1.2,
+        }}>
+          {data.value}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ---- Big page title card (used as the hero on subpage canvases) ---- */
+export function PageTitle({ data }) {
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+        color: 'var(--accent)', letterSpacing: '0.14em',
+        textTransform: 'uppercase', marginBottom: '0.6rem',
+      }}>
+        {data.kicker}
+      </p>
+      <h1 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '3.2rem', lineHeight: 0.98, letterSpacing: '-0.03em',
+        color: 'var(--ink)', marginBottom: '0.7rem',
+      }}>
+        {data.title}
+      </h1>
+      <p style={{
+        fontSize: '1.05rem', color: 'var(--ink-soft)', lineHeight: 1.5,
+        maxWidth: 480,
+      }}>
+        {data.blurb}
+      </p>
+    </div>
+  )
+}
+
 /* ---- Long-form story card ---- */
 export function StoryCard({ data }) {
   return (
