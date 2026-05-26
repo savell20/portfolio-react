@@ -4,7 +4,8 @@ import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
-  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
+  AnnotationLabel, LongDownArrow,
+  StoryCard, PhotoPrint, PhotoBoothCabin,
   AwardCard, WorkflowStep,
 } from '../components/CanvasCards'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
@@ -63,8 +64,10 @@ const OBJECTS = [
 
   // ─── Creative space — sits well below the hero so it doesn't compete
   //     for attention. Visitors discover it as they scroll/pan down.
-  { id: 'note-down', type: 'note', x: 240, y: 1000, w: 320, h: 80, z: 8,
-    data: { text: 'explore down here', arrow: '↓', rotate: -3 } },
+  // Annotation sits right beneath the polaroid; its arrow purposely
+  // extends far past the initial viewport to suggest "there's more below".
+  { id: 'note-down', type: 'long-down', x: 280, y: 660, w: 200, h: 380, z: 8,
+    data: { text: 'explore down here', length: 360, rotate: -3 } },
   { id: 'seed-1', type: 'sticky', x: 200, y: 1140, w: 210, h: 170, z: 4, draggable: true,
     data: { text: 'drop your own sticky ✎ — grab the sticky tool in the bottom dock',
       color: 'var(--sticky-yellow)', rotate: -4, tall: true } },
@@ -119,6 +122,7 @@ function makeRenderObject(navigate) {
       )
       case 'experience': return <ExperienceCard />
       case 'note': return <AnnotationLabel data={obj.data} />
+      case 'long-down': return <LongDownArrow data={obj.data} />
       case 'story': return <StoryCard data={obj.data} />
       case 'photoprint': return <PhotoPrint data={obj.data} />
       case 'photobooth': return <PhotoBoothCabin />

@@ -404,6 +404,38 @@ function HandArrow({ direction, size = 70 }) {
   )
 }
 
+/* Tall handwritten "↓" hint — the arrow purposely runs off the bottom
+   of the initial viewport so visitors feel there's more below. */
+export function LongDownArrow({ data }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      transform: `rotate(${data.rotate || 0}deg)`,
+      userSelect: 'none',
+    }}>
+      <span style={{
+        fontFamily: 'var(--font-note)', fontSize: '1.4rem',
+        color: 'var(--accent)', whiteSpace: 'nowrap', lineHeight: 1.05,
+        marginBottom: 6,
+      }}>
+        {data.text}
+      </span>
+      <svg width="40" height={data.length || 280}
+        viewBox={`0 0 40 ${data.length || 280}`}
+        style={{ overflow: 'visible', display: 'block' }}
+      >
+        <path
+          d={`M20 4 C 16 ${(data.length || 280) * 0.3}, 24 ${(data.length || 280) * 0.65}, 20 ${(data.length || 280) - 14}
+              M 20 ${(data.length || 280) - 14} L 11 ${(data.length || 280) - 26}
+              M 20 ${(data.length || 280) - 14} L 29 ${(data.length || 280) - 26}`}
+          fill="none" stroke="var(--accent)" strokeWidth="2.6"
+          strokeLinecap="round" strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
 export function AnnotationLabel({ data }) {
   const isVertical = data.arrow === '↑' || data.arrow === '↓'
   const arrowAfter = data.arrow === '→' || data.arrow === '↓' || data.arrow === '↘'
