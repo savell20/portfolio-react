@@ -40,7 +40,7 @@ export default function TopBar() {
 
       {/* Let's talk */}
       <a
-        href={`mailto:${EMAIL}?subject=Let%27s%20talk`}
+        href={`mailto:${EMAIL}?subject=${encodeURIComponent("I'm interested in working with you!")}`}
         title="Send me an email"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
