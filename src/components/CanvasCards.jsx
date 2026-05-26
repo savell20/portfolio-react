@@ -623,107 +623,33 @@ export function StickyNote({ data }) {
   )
 }
 
-/* ---- Places I've worked (sits next to the polaroid, feeds the case studies) ---- */
-const PLACES = [
-  {
-    logo: 'yc',
-    name: 'Zolvo',
-    tag: '(YC P26)',
-    role: 'Founding Designer',
-    dates: 'Mar 2026 — Present',
-  },
-  {
-    logo: 'hubspot',
-    name: 'HubSpot',
-    role: 'UI / UX Designer',
-    dates: 'Jan 2025 — Dec 2025',
-  },
-  {
-    logo: 'captura',
-    name: 'Captura tu mundo',
-    role: 'Founder & Designer',
-    dates: '2020 — 2023',
-  },
-]
-
-function CapturaLogo({ size = 22 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
-      <rect width="24" height="24" rx="3" fill="#1F8A6E" />
-      <text x="12" y="18" textAnchor="middle"
-        fontFamily="'Helvetica Neue', Arial, sans-serif"
-        fontSize="14" fontWeight="700" fill="#fff">C</text>
-    </svg>
-  )
-}
-
-function PlaceLogo({ type }) {
-  if (type === 'yc') return <YCLogo size={26} />
-  if (type === 'hubspot') return <HubSpotLogo size={26} />
-  return <CapturaLogo size={26} />
-}
-
+/* ---- Experience header card (sits above the case studies) ---- */
 export function ExperienceCard() {
   return (
     <div>
       <FrameLabel># places I've worked</FrameLabel>
       <div style={{
         ...cardBase,
-        padding: '1.25rem 1.5rem 1rem',
+        padding: '1.5rem 1.7rem',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        height: '100%',
       }}>
         <p style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
           color: 'var(--accent)', letterSpacing: '0.12em',
-          textTransform: 'uppercase', marginBottom: '0.45rem',
+          textTransform: 'uppercase', marginBottom: '0.7rem',
         }}>
-          three teams, three arcs
+          places I've worked at
         </p>
-        <h3 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 800,
-          fontSize: '1.45rem', lineHeight: 1.1, letterSpacing: '-0.02em',
-          color: 'var(--ink)', marginBottom: '1rem',
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 600,
+          fontSize: '1.3rem', lineHeight: 1.4, letterSpacing: '-0.01em',
+          color: 'var(--ink)',
         }}>
-          Where I've shown up
-        </h3>
-
-        <div>
-          {PLACES.map((p, i) => (
-            <div
-              key={p.name}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '0.7rem 0',
-                borderTop: i === 0 ? 'none' : '1px solid var(--line)',
-              }}
-            >
-              <PlaceLogo type={p.logo} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{
-                  fontFamily: 'var(--font-display)', fontWeight: 700,
-                  fontSize: '0.96rem', color: 'var(--ink)', letterSpacing: '-0.01em',
-                  lineHeight: 1.15,
-                }}>
-                  {p.name}
-                  {p.tag && (
-                    <span style={{
-                      marginLeft: 6, color: 'var(--ink-faint)',
-                      fontWeight: 500, fontSize: '0.74rem',
-                    }}>
-                      {p.tag}
-                    </span>
-                  )}
-                </p>
-                <p style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-                  color: 'var(--ink-soft)', letterSpacing: '0.04em',
-                  marginTop: 3,
-                }}>
-                  {p.role} · {p.dates}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+          Designed at a <span style={{ color: 'var(--accent)' }}>YC-backed fintech</span>,
+          shipped at <span style={{ color: 'var(--accent)' }}>HubSpot</span>,
+          founded my own studio from scratch — three teams below&nbsp;↓
+        </p>
       </div>
     </div>
   )
