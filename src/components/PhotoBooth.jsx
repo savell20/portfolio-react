@@ -6,6 +6,53 @@ const SHOTS = 3
 const FRAME_W = 480
 const FRAME_H = 480
 
+// Mac-Photo-Booth-style effects. CSS-filter values apply both to the live
+// <video> element and (via ctx.filter) to the captured frames. SVG filters
+// drive the geometric distortions (twirl, bulge, dent, x-ray, thermal).
+const EFFECTS = [
+  { id: 'none',     label: 'Normal',  cssFilter: 'none' },
+  { id: 'bw',       label: 'B&W',     cssFilter: 'grayscale(1) contrast(1.08)' },
+  { id: 'sepia',    label: 'Sepia',   cssFilter: 'sepia(1) contrast(0.95) brightness(1.05)' },
+  { id: 'vintage',  label: 'Vintage', cssFilter: 'sepia(0.55) contrast(1.05) brightness(0.95) saturate(0.7)' },
+  { id: 'comic',    label: 'Comic',   cssFilter: 'contrast(1.6) saturate(1.7) brightness(1.05)' },
+  { id: 'pop',      label: 'Pop Art', cssFilter: 'saturate(2.5) contrast(1.4) hue-rotate(15deg)' },
+  { id: 'glow',     label: 'Glow',    cssFilter: 'brightness(1.25) contrast(0.9) blur(0.6px) saturate(1.5)' },
+  { id: 'xray',     label: 'X-Ray',   cssFilter: 'invert(1) grayscale(0.4) contrast(1.4) brightness(0.85)' },
+  { id: 'thermal',  label: 'Thermal', cssFilter: 'sepia(1) hue-rotate(180deg) saturate(5) contrast(1.25)' },
+  { id: 'pencil',   label: 'Pencil',  cssFilter: 'grayscale(0.7) contrast(1.4) brightness(1.15) saturate(0.5)' },
+  // Geometric distortions — via SVG filter url() so they work in both the
+  // live preview and ctx.filter during capture in modern browsers.
+  { id: 'twirl',    label: 'Twirl',   cssFilter: 'url(#pb-twirl)' },
+  { id: 'bulge',    label: 'Bulge',   cssFilter: 'url(#pb-bulge)' },
+  { id: 'dent',     label: 'Dent',    cssFilter: 'url(#pb-dent)' },
+]
+
+// Inline SVG filter defs reused by every effect. Mounted once inside the
+// modal so url(#...) references resolve correctly for the live preview.
+function FilterDefs() {
+  return (
+    <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden>
+      <defs>
+        {/* TWIRL — turbulence + displacement gives a soft swirl */}
+        <filter id="pb-twirl">
+          <feTurbulence type="turbulence" baseFrequency="0.012" numOctaves="2" seed="3" result="t" />
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="42" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        {/* BULGE — radial gradient pushed through displacement */}
+        <filter id="pb-bulge">
+          <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" seed="11" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        {/* DENT — same idea, negative scale for inward pinch */}
+        <filter id="pb-dent">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="-50" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+  )
+}
+
 // Brand colors — pulled from the portfolio's design tokens.
 const BRAND_ACCENT = '#2F5CFF'   // var(--accent)
 const BRAND_INK = '#18181A'      // var(--ink)
@@ -122,6 +169,7 @@ export default function PhotoBooth({ onClose, onSave }) {
   const [phase, setPhase] = useState('idle')   // idle | counting | flashing | done
   const [count, setCount] = useState(0)
   const [shotIdx, setShotIdx] = useState(0)
+  const [effect, setEffect] = useState(EFFECTS[0])
 
   useEffect(() => {
     let cancelled = false
@@ -171,8 +219,13 @@ export default function PhotoBooth({ onClose, onSave }) {
     const s = Math.min(vw, vh)
     const sx = (vw - s) / 2
     const sy = (vh - s) / 2
+    // Bake the chosen effect into the captured frame. SVG-url filters
+    // resolve fine in Chromium / WebKit; if a browser doesn't support
+    // ctx.filter for them, the live preview still has the look.
+    try { ctx.filter = effect.cssFilter } catch { /* noop */ }
     ctx.translate(c.width, 0); ctx.scale(-1, 1)
     ctx.drawImage(v, sx, sy, s, s, 0, 0, c.width, c.height)
+    ctx.filter = 'none'
     return c.toDataURL('image/jpeg', 0.85)
   }
 
@@ -323,6 +376,7 @@ export default function PhotoBooth({ onClose, onSave }) {
                 style={{
                   width: '100%', height: '100%', objectFit: 'cover',
                   transform: 'scaleX(-1)',
+                  filter: effect.cssFilter,
                 }}
               />
               {count > 0 && (
@@ -355,7 +409,59 @@ export default function PhotoBooth({ onClose, onSave }) {
               ))}
             </div>
           )}
+
+          {/* Current effect chip in the corner */}
+          {!error && phase !== 'done' && effect.id !== 'none' && (
+            <span style={{
+              position: 'absolute', top: 10, right: 10,
+              padding: '0.2rem 0.55rem', borderRadius: 999,
+              background: 'rgba(0,0,0,0.55)', color: '#fff',
+              fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+              border: '1px solid rgba(255,255,255,0.2)',
+            }}>
+              {effect.label}
+            </span>
+          )}
         </div>
+
+        {/* Effects picker — Mac Photo Booth-style. Hidden once shots start. */}
+        {!error && (phase === 'idle' || phase === 'done') && (
+          <>
+            <FilterDefs />
+            <div style={{
+              display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 6,
+              marginBottom: '0.8rem',
+              scrollbarWidth: 'thin',
+            }}>
+              {EFFECTS.map(ef => {
+                const active = ef.id === effect.id
+                return (
+                  <button
+                    key={ef.id}
+                    onClick={() => setEffect(ef)}
+                    onPointerDown={e => e.stopPropagation()}
+                    title={ef.label}
+                    style={{
+                      flex: '0 0 auto', cursor: 'none',
+                      padding: '0.35rem 0.7rem',
+                      borderRadius: 'var(--radius-pill)',
+                      background: active ? 'var(--accent)' : 'var(--canvas)',
+                      color: active ? '#fff' : 'var(--ink-soft)',
+                      border: active ? '1px solid var(--accent)' : '1px solid var(--line)',
+                      fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+                      fontWeight: 500, letterSpacing: '0.04em',
+                      transition: 'background 0.15s, color 0.15s',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {ef.label}
+                  </button>
+                )
+              })}
+            </div>
+          </>
+        )}
 
         {/* Caption (after capture) */}
         {phase === 'done' && (
