@@ -9,13 +9,10 @@ const LINKEDIN_URL = 'https://linkedin.com/in/santiagoavella'
 const RESUME_COLOR = '#FF8A1F'
 
 const LINKS = [
-  { to: '/',                label: 'Home', icon: HomeIcon },
-  { to: '/about',           label: 'About Me' },
-  { to: '/work/zolvo',      label: 'Case Study 1' },
-  { to: '/work/hubspot',    label: 'Case Study 2' },
-  { to: '/work/captura',    label: 'Case Study 3' },
-  { to: '/testimonials',    label: 'Testimonials' },
-  { to: '/photography',     label: 'Photography' },
+  { to: '/',             label: 'Home', icon: HomeIcon },
+  { to: '/about',        label: 'About Me' },
+  { to: '/testimonials', label: 'Testimonials' },
+  { to: '/photography',  label: 'Photography' },
 ]
 
 function LinkedinGlyph({ size = 14 }) {
