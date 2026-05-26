@@ -262,6 +262,13 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
 
+  // Mirror current tool mode onto the body so FigmaCursor can hide itself
+  // whenever a ghost cursor is active (sticky or pen).
+  useEffect(() => {
+    document.body.dataset.toolMode = mode
+    return () => { delete document.body.dataset.toolMode }
+  }, [mode])
+
   // Tool ghost: a yellow sticky (sticky mode) or a pen (draw mode) that
   // hovers under the cursor so the user previews their action. FigJam-style.
   const stickyGhostRef = useRef(null)
@@ -273,10 +280,10 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const onMove = (e) => {
       // For sticky: cursor lands at top-left of the note.
       // For pen: the nib (svg x:20, y:56) is anchored exactly at the cursor,
-      // with the body angled up-right like a held marker.
+      // with the body angled like a held marker.
       const tx = mode === 'sticky' ? e.clientX - 10 : e.clientX - 20
       const ty = mode === 'sticky' ? e.clientY - 10 : e.clientY - 50
-      const rot = mode === 'sticky' ? -4 : -22
+      const rot = mode === 'sticky' ? -4 : 22
       el.style.transformOrigin = mode === 'draw' ? '20px 56px' : 'top left'
       el.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`
       el.style.opacity = mode === 'sticky' ? '0.92' : '1'

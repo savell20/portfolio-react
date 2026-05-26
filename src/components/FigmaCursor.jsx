@@ -13,6 +13,9 @@ export default function FigmaCursor() {
       if (ref.current) {
         ref.current.style.transform =
           `translate(${e.clientX}px, ${e.clientY}px)`
+        // Hide the blue arrow whenever a tool ghost is taking its place.
+        const tm = document.body.dataset.toolMode
+        ref.current.style.opacity = (tm === 'sticky' || tm === 'draw') ? '0' : '1'
       }
     }
     window.addEventListener('pointermove', onMove)
