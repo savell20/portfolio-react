@@ -38,9 +38,12 @@ export default function TopBar() {
         <FileText size={13} /> résumé
       </a>
 
-      {/* Let's talk */}
+      {/* Let's talk — opens Gmail's web compose with subject pre-filled.
+          Works in every browser without needing a desktop mail client. */}
       <a
-        href={`mailto:${EMAIL}?subject=${encodeURIComponent("I'm interested in working with you!")}`}
+        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("I'm interested in working with you!")}`}
+        target="_blank"
+        rel="noopener noreferrer"
         title="Send me an email"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
