@@ -262,16 +262,24 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
 
-  // Sticky-tool ghost: a yellow sticky that hovers under the cursor so the
-  // user previews where their note will drop. FigJam-style affordance.
+  // Tool ghost: a yellow sticky (sticky mode) or a pen (draw mode) that
+  // hovers under the cursor so the user previews their action. FigJam-style.
   const stickyGhostRef = useRef(null)
+  const penGhostRef = useRef(null)
   useEffect(() => {
-    if (mode !== 'sticky') return
-    const el = stickyGhostRef.current
+    if (mode !== 'sticky' && mode !== 'draw') return
+    const el = mode === 'sticky' ? stickyGhostRef.current : penGhostRef.current
     if (!el) return
     const onMove = (e) => {
-      el.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px) rotate(-4deg)`
-      el.style.opacity = '0.92'
+      // For sticky: cursor lands at top-left of the note.
+      // For pen: the nib (svg x:20, y:56) is anchored exactly at the cursor,
+      // with the body angled up-right like a held marker.
+      const tx = mode === 'sticky' ? e.clientX - 10 : e.clientX - 20
+      const ty = mode === 'sticky' ? e.clientY - 10 : e.clientY - 50
+      const rot = mode === 'sticky' ? -4 : -22
+      el.style.transformOrigin = mode === 'draw' ? '20px 56px' : 'top left'
+      el.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`
+      el.style.opacity = mode === 'sticky' ? '0.92' : '1'
     }
     const onLeave = () => { el.style.opacity = '0' }
     window.addEventListener('pointermove', onMove)
@@ -385,6 +393,38 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         setDrawColor={setDrawColor}
         onClearDrawing={clearDrawing}
       />
+
+      {/* Ghost pen — follows the cursor while the draw tool is active. The
+          pen tip is positioned exactly at the cursor point so the stroke
+          starts where the icon "writes". */}
+      {mode === 'draw' && (
+        <div
+          ref={penGhostRef}
+          aria-hidden
+          style={{
+            position: 'fixed', top: 0, left: 0, zIndex: 99990,
+            width: 50, height: 60, pointerEvents: 'none',
+            opacity: 0, transition: 'opacity 0.15s',
+            willChange: 'transform',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))',
+          }}
+        >
+          <svg width="50" height="60" viewBox="0 0 50 60" aria-hidden>
+            {/* pen body (barrel) */}
+            <path d="M 8 5 L 32 5 L 32 38 L 20 50 L 8 38 Z"
+              fill={drawColor} stroke="rgba(0,0,0,0.25)" strokeWidth="1" strokeLinejoin="round" />
+            {/* metallic ferrule */}
+            <rect x="8" y="14" width="24" height="3" fill="rgba(255,255,255,0.55)" />
+            {/* highlight stripe */}
+            <rect x="11" y="6" width="3" height="32" fill="rgba(255,255,255,0.35)" rx="1" />
+            {/* nib (writing tip) */}
+            <path d="M 16 50 L 20 56 L 24 50 Z" fill="#222" />
+            <circle cx="20" cy="56" r="1.2" fill="#fff" />
+            {/* clicker / cap top */}
+            <rect x="14" y="2" width="12" height="4" rx="1" fill="rgba(0,0,0,0.45)" />
+          </svg>
+        </div>
+      )}
 
       {/* Ghost sticky that follows the cursor while the sticky tool is active */}
       {mode === 'sticky' && (
