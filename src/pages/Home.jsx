@@ -61,17 +61,17 @@ const OBJECTS = [
   { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Creative space below the polaroid — visitors can leave their own
-  //     stickies, draw, or just say hi. A few seed notes show what's possible.
-  { id: 'note-down', type: 'note', x: 220, y: 660, w: 320, h: 80, z: 8,
+  // ─── Creative space — sits well below the hero so it doesn't compete
+  //     for attention. Visitors discover it as they scroll/pan down.
+  { id: 'note-down', type: 'note', x: 240, y: 1000, w: 320, h: 80, z: 8,
     data: { text: 'explore down here', arrow: '↓', rotate: -3 } },
-  { id: 'seed-1', type: 'sticky', x: 180, y: 800, w: 210, h: 170, z: 4, draggable: true,
+  { id: 'seed-1', type: 'sticky', x: 200, y: 1140, w: 210, h: 170, z: 4, draggable: true,
     data: { text: 'drop your own sticky ✎ — grab the sticky tool in the bottom dock',
       color: 'var(--sticky-yellow)', rotate: -4, tall: true } },
-  { id: 'seed-2', type: 'sticky', x: 420, y: 830, w: 220, h: 170, z: 4, draggable: true,
+  { id: 'seed-2', type: 'sticky', x: 440, y: 1170, w: 220, h: 170, z: 4, draggable: true,
     data: { text: 'or doodle with the pen 🖊  — pick a color in the dock',
       color: 'var(--sticky-mint)', rotate: 3, tall: true } },
-  { id: 'seed-3', type: 'sticky', x: 680, y: 800, w: 210, h: 170, z: 4, draggable: true,
+  { id: 'seed-3', type: 'sticky', x: 700, y: 1140, w: 210, h: 170, z: 4, draggable: true,
     data: { text: 'leave me a postage — say hi, share an idea',
       color: 'var(--sticky-pink)', rotate: -2, tall: true } },
 ]
@@ -147,14 +147,15 @@ function makeRenderObject(navigate) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Polaroid (left) + Case Studies title + 3 project cards (right) + the
-  // creative-space hint just below. Content bbox: x:180–1580 (1400w),
-  // y:220–820 (600h). Centered around (880, 520).
-  const scale = Math.min(0.82, (w - 100) / 1400, (h - 240) / 620)
+  // Focus on the hero: polaroid (left) + Case Studies title + 3 project
+  // cards (right). The creative space below sits intentionally below the
+  // fold — visitors discover it by panning down.
+  // Hero bbox: x:200–1580 (1380w), y:220–720 (500h). Centered around (890, 470).
+  const scale = Math.min(0.88, (w - 100) / 1380, (h - 240) / 520)
   return {
     scale,
-    x: w / 2 - 880 * scale,
-    y: h / 2 - 520 * scale,
+    x: w / 2 - 890 * scale,
+    y: h / 2 - 470 * scale,
   }
 }
 
