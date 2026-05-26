@@ -10,7 +10,10 @@ import {
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
 import MobileHome from '../components/MobileHome'
 import Polaroid from '../components/Polaroid'
+import { DarkRoomDoor, DarkRoomModal } from '../components/DarkRoom'
+import Puzzle from '../components/Puzzle'
 import fotoPersonal from '../assets/foto-personal.jpeg'
+import { Sparkles } from 'lucide-react'
 
 const projects = {
   zolvo: {
@@ -107,6 +110,11 @@ const OBJECTS = [
     data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: -3 } },
   // Photo booth — far right, big and red
   { id: 'photobooth', type: 'photobooth', x: 2160, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
+  // Dark room door — just past the photo booth
+  { id: 'darkroom', type: 'darkroom', x: 2420, y: 240, w: 220, h: 360, z: 6, to: '__darkroom__' },
+
+  // Hidden easter-egg puzzle — way off in the top-right corner of the canvas
+  { id: 'puzzle', type: 'puzzle', x: 2380, y: -420, w: 60, h: 60, z: 6, to: '__puzzle__' },
 
   // ─── BOTTOM — how I built this portfolio with AI ───
   // Six workflow steps laid out horizontally; CONNECTORS wire them
@@ -172,6 +180,18 @@ function makeRenderObject(navigate) {
       case 'flight': return <FlightMap label={obj.data?.label} />
       case 'award': return <AwardCard data={obj.data} />
       case 'workflow': return <WorkflowStep data={obj.data} />
+      case 'darkroom': return <DarkRoomDoor />
+      case 'puzzle': return (
+        <div title="psst — click me" style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '100%', height: '100%',
+          color: 'var(--accent)',
+          filter: 'drop-shadow(0 0 14px rgba(47,92,255,0.6))',
+          animation: 'hint-pulse 2.4s ease-in-out infinite',
+        }}>
+          <Sparkles size={36} strokeWidth={1.8} />
+        </div>
+      )
       default: return null
     }
   }
@@ -197,11 +217,18 @@ export default function Home() {
   const [view] = useState(computeInitialView)
   const [renderObject] = useState(() => makeRenderObject(navigate))
 
+  const [darkRoomOpen, setDarkRoomOpen] = useState(false)
+  const [puzzleOpen, setPuzzleOpen] = useState(false)
+
   const onActivate = (id) => {
     const obj = OBJECTS.find(o => o.id === id)
     if (!obj) return
     if (obj.to === '__photobooth__') {
       window.dispatchEvent(new CustomEvent('open-photo-booth'))
+    } else if (obj.to === '__darkroom__') {
+      setDarkRoomOpen(true)
+    } else if (obj.to === '__puzzle__') {
+      setPuzzleOpen(true)
     } else if (obj.to) {
       navigate(obj.to)
     }
@@ -219,6 +246,8 @@ export default function Home() {
         onActivate={onActivate}
       />
       <MusicPlayer />
+      {darkRoomOpen && <DarkRoomModal onClose={() => setDarkRoomOpen(false)} />}
+      {puzzleOpen && <Puzzle onClose={() => setPuzzleOpen(false)} />}
     </>
   )
 }
