@@ -1,33 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import {
-  Sun, Moon, HelpCircle, Volume2, VolumeX,
-  FileText, Mail,
-} from 'lucide-react'
-import { isMuted, setMuted } from '../lib/sound'
-import Tutorial from './Tutorial'
+import { Mail, FileText, Phone, ChevronDown } from 'lucide-react'
 
 const RESUME_URL = 'https://drive.google.com/file/d/1mkUQy2AQd0vYHAqsHoGi-qibLa5ssIcC/view?usp=sharing'
 const EMAIL = 'santi.avella28@gmail.com'
+const PHONE_DISPLAY = '+1 (XXX) XXX-XXXX'
+const PHONE_TEL = '+1XXXXXXXXXX'
 const LINKEDIN_URL = 'https://linkedin.com/in/santiagoavella'
 
+// Eye-catching color for the contact button — distinct from page-active accent.
+const CONTACT_COLOR = '#FF8A1F'           // warm coral/orange
+const CONTACT_COLOR_DARK = '#E66A00'
+
 const LINKS = [
-  { to: '/about',        label: 'About' },
-  { to: '/hobbies',      label: 'Hobbies' },
-  { to: '/photography',  label: 'Photography' },
-  { to: '/testimonials', label: 'Testimonials' },
-  { to: '/story',        label: 'Story' },
+  { to: '/about',           label: 'About Me' },
+  { to: '/work/zolvo',      label: 'Case Study 1' },
+  { to: '/work/hubspot',    label: 'Case Study 2' },
+  { to: '/work/captura',    label: 'Case Study 3' },
+  { to: '/testimonials',    label: 'Testimonials' },
+  { to: '/photography',     label: 'Photography' },
 ]
-
-function initialTheme() {
-  const s = localStorage.getItem('theme')
-  if (s === 'light' || s === 'dark') return s
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
-function Divider() {
-  return <span style={{ width: 1, height: 22, background: 'var(--line)', margin: '0 4px' }} />
-}
 
 function LinkedinGlyph({ size = 14 }) {
   return (
@@ -37,48 +29,96 @@ function LinkedinGlyph({ size = 14 }) {
   )
 }
 
-function IconBtn({ onClick, title, ariaLabel, children, color }) {
+function Divider() {
+  return <span style={{ width: 1, height: 22, background: 'var(--line)', margin: '0 4px' }} />
+}
+
+function ContactPopover({ onClose }) {
   return (
-    <button
-      onClick={onClick}
-      title={title}
-      aria-label={ariaLabel || title}
+    <div
+      onClick={onClose}
       style={{
-        width: 34, height: 34, border: 'none', cursor: 'none',
-        borderRadius: 'calc(var(--radius-pill) - 2px)',
-        background: 'transparent', color: color || 'var(--ink-soft)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 0.15s, color 0.15s',
+        position: 'fixed', inset: 0, zIndex: 9550,
       }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = color || 'var(--ink-soft)' }}
     >
-      {children}
-    </button>
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          position: 'absolute', top: 62, left: '50%', transform: 'translateX(-50%)',
+          width: 280, padding: '0.9rem',
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius)', boxShadow: '0 24px 56px rgba(0,0,0,0.3)',
+          animation: 'pop-in 0.22s var(--ease) both',
+        }}
+      >
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+          color: CONTACT_COLOR_DARK, letterSpacing: '0.14em',
+          textTransform: 'uppercase', marginBottom: 8, paddingLeft: 4,
+        }}>
+          ☎ get in touch
+        </p>
+
+        <a href={`tel:${PHONE_TEL}`} style={contactRow}>
+          <span style={{ ...iconWrap, background: '#FFE2C7', color: CONTACT_COLOR_DARK }}>
+            <Phone size={14} strokeWidth={2.2} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={rowLabel}>Phone</p>
+            <p style={rowValue}>{PHONE_DISPLAY}</p>
+          </div>
+        </a>
+
+        <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("I'm interested in working with you!")}`}
+           target="_blank" rel="noopener noreferrer" style={contactRow}>
+          <span style={{ ...iconWrap, background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+            <Mail size={14} strokeWidth={2.2} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={rowLabel}>Email</p>
+            <p style={rowValue}>{EMAIL}</p>
+          </div>
+        </a>
+
+        <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" style={contactRow}>
+          <span style={{ ...iconWrap, background: 'var(--canvas)', color: 'var(--ink)' }}>
+            <FileText size={14} strokeWidth={2.2} />
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={rowLabel}>Résumé</p>
+            <p style={rowValue}>Google Drive · PDF</p>
+          </div>
+        </a>
+      </div>
+    </div>
   )
+}
+
+const contactRow = {
+  display: 'flex', alignItems: 'center', gap: 12,
+  padding: '0.55rem 0.5rem', borderRadius: 8,
+  textDecoration: 'none', cursor: 'none',
+  color: 'var(--ink)',
+}
+const iconWrap = {
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+}
+const rowLabel = {
+  fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+  color: 'var(--ink-faint)', letterSpacing: '0.1em',
+  textTransform: 'uppercase', marginBottom: 2,
+}
+const rowValue = {
+  fontFamily: 'var(--font-display)', fontWeight: 600,
+  fontSize: '0.82rem', color: 'var(--ink)', lineHeight: 1.15,
+  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
 }
 
 export default function TopNavbar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-
-  const [theme, setTheme] = useState(initialTheme)
-  const [clickMuted, setClickMutedState] = useState(isMuted())
-  const [tutorialOpen, setTutorialOpen] = useState(false)
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
-  const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))
-  const toggleClicks = () => {
-    const v = !clickMuted
-    setMuted(v); setClickMutedState(v)
-  }
-
-  const isDark = theme === 'dark'
-  const SunOrMoon = isDark ? Sun : Moon
+  const [contactOpen, setContactOpen] = useState(false)
 
   return (
     <>
@@ -94,23 +134,6 @@ export default function TopNavbar() {
           maxWidth: 'calc(100vw - 32px)',
         }}
       >
-        {/* Utility cluster */}
-        <IconBtn onClick={toggleTheme} title={isDark ? 'Switch to light' : 'Switch to dark'}>
-          <SunOrMoon size={16} strokeWidth={2.2} />
-        </IconBtn>
-        <IconBtn onClick={() => setTutorialOpen(true)} title="Show tutorial">
-          <HelpCircle size={16} strokeWidth={2.2} />
-        </IconBtn>
-        <IconBtn
-          onClick={toggleClicks}
-          title={clickMuted ? 'Click sounds: off' : 'Click sounds: on'}
-          color={clickMuted ? 'var(--ink-faint)' : 'var(--ink-soft)'}
-        >
-          {clickMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-        </IconBtn>
-
-        <Divider />
-
         {/* Nav links */}
         {LINKS.map(({ to, label }) => {
           const active = pathname === to
@@ -125,8 +148,8 @@ export default function TopNavbar() {
                 color: active ? '#fff' : 'var(--ink-soft)',
                 border: 'none', cursor: 'none',
                 fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
+                whiteSpace: 'nowrap', flexShrink: 0,
                 transition: 'background 0.15s, color 0.15s',
-                whiteSpace: 'nowrap',
               }}
               onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
               onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' } }}
@@ -138,48 +161,54 @@ export default function TopNavbar() {
 
         <Divider />
 
-        {/* Action cluster */}
+        {/* LinkedIn icon */}
         <a
-          href={LINKEDIN_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="LinkedIn"
-          aria-label="LinkedIn"
+          href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
+          title="LinkedIn" aria-label="LinkedIn"
           style={{
             width: 34, height: 34, borderRadius: 'calc(var(--radius-pill) - 2px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: 'var(--ink-soft)', cursor: 'none', textDecoration: 'none',
-            transition: 'background 0.15s, color 0.15s',
+            flexShrink: 0, transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { e.currentTarget.style.background = '#0A66C2'; e.currentTarget.style.color = '#fff' }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
         >
           <LinkedinGlyph size={15} />
         </a>
-        <a
-          href={RESUME_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Open résumé"
+
+        {/* CONTACT INFO — eye-catching orange button with popover */}
+        <button
+          onClick={() => setContactOpen(o => !o)}
+          title="Contact info"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            height: 34, padding: '0 0.7rem',
+            height: 34, padding: '0 0.85rem',
             borderRadius: 'calc(var(--radius-pill) - 2px)',
-            background: 'transparent', color: 'var(--ink)',
-            fontFamily: 'var(--font-mono)', fontSize: '0.68rem',
-            textDecoration: 'none', cursor: 'none',
-            whiteSpace: 'nowrap', flexShrink: 0,
-            transition: 'background 0.15s',
+            background: CONTACT_COLOR, color: '#fff', border: 'none',
+            fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 600,
+            cursor: 'none', whiteSpace: 'nowrap', flexShrink: 0,
+            boxShadow: '0 4px 12px rgba(255,138,31,0.45)',
+            transition: 'transform 0.15s var(--ease), filter 0.15s, box-shadow 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--canvas)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-1px)'
+            e.currentTarget.style.filter = 'brightness(1.08)'
+            e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,138,31,0.6)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.filter = 'brightness(1)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,138,31,0.45)'
+          }}
         >
-          <FileText size={13} /> résumé
-        </a>
+          <Phone size={13} /> contact info <ChevronDown size={11} style={{ marginLeft: 2 }} />
+        </button>
+
+        {/* Let's talk — keep the blue accent action */}
         <a
           href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("I'm interested in working with you!")}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          target="_blank" rel="noopener noreferrer"
           title="Send me an email"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -198,8 +227,7 @@ export default function TopNavbar() {
         </a>
       </nav>
 
-      {/* Tutorial modal — controlled from the Help icon */}
-      <Tutorial __externalOpen={tutorialOpen} __setOpen={setTutorialOpen} />
+      {contactOpen && <ContactPopover onClose={() => setContactOpen(false)} />}
     </>
   )
 }

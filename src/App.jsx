@@ -10,6 +10,7 @@ import Testimonials from './pages/Testimonials'
 import Story from './pages/Story'
 import FigmaCursor from './components/FigmaCursor'
 import TopNavbar from './components/TopNavbar'
+import ToolsFloater from './components/ToolsFloater'
 import { installClickSounds } from './lib/sound'
 
 function BackToCanvas() {
@@ -44,6 +45,7 @@ function Chrome() {
     <>
       {!onHome && <BackToCanvas />}
       <TopNavbar />
+      <ToolsFloater />
     </>
   )
 }
