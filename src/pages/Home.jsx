@@ -74,8 +74,8 @@ const OBJECTS = [
   // Sits above the cabin, pointing down at it
   { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
     data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
-  { id: 'note-workflow', type: 'note', x: 800, y: 1060, w: 360, h: 80, z: 8,
-    data: { text: 'how I built this with AI', arrow: '↓', rotate: 1 } },
+  { id: 'note-workflow', type: 'note', x: 820, y: 1060, w: 320, h: 80, z: 8,
+    data: { text: 'how I built my portfolio', arrow: '↓', rotate: 1 } },
 
   // ─── LEFT — hobbies & life: three interactive toys, each with a caption ───
   // Row 1: guitar + F1 side by side
