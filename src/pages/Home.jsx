@@ -67,7 +67,7 @@ const OBJECTS = [
   // Annotation sits right beneath the polaroid; its arrow purposely
   // extends far past the initial viewport to suggest "there's more below".
   { id: 'note-down', type: 'long-down', x: 280, y: 760, w: 200, h: 380, z: 8,
-    data: { text: 'explore down here', length: 360, rotate: -3 } },
+    data: { text: 'explore down here 👀', length: 360, rotate: -3 } },
   { id: 'seed-1', type: 'sticky', x: 200, y: 1140, w: 210, h: 170, z: 4, draggable: true,
     data: { text: 'drop your own sticky ✎ — grab the sticky tool in the bottom dock',
       color: 'var(--sticky-yellow)', rotate: -4, tall: true } },
