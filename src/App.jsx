@@ -13,6 +13,7 @@ import StyleSwitcher from './components/StyleSwitcher'
 import Tutorial from './components/Tutorial'
 import TopBar from './components/TopBar'
 import ClickSoundsToggle from './components/ClickSoundsToggle'
+import Navbar from './components/Navbar'
 import { installClickSounds } from './lib/sound'
 
 function BackToCanvas() {
@@ -54,6 +55,7 @@ function Chrome() {
       ) : (
         <BackToCanvas />
       )}
+      <Navbar />
       <TopBar />
     </>
   )

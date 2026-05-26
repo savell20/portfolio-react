@@ -62,99 +62,12 @@ const OBJECTS = [
   { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Hand-drawn waymarkers ───
-  { id: 'note-awards', type: 'note', x: 880, y: 0, w: 280, h: 80, z: 8,
-    data: { text: 'awards', arrow: '↑', rotate: -2 } },
-  // Sits right above the polaroid corner, arrow swoops diagonally down-right at it
-  { id: 'note-polaroid', type: 'note', x: 360, y: 95, w: 320, h: 80, z: 8,
-    data: { text: 'click my photo', arrow: '↘', rotate: -4 } },
-  { id: 'note-left', type: 'note', x: 200, y: 540, w: 320, h: 80, z: 8,
-    data: { text: "projects I've built", arrow: '←', rotate: -3 } },
-  // Points right at the photo print cluster — sits the same distance from
-  // the main composition that the projects waymarker sits on the opposite side
-  { id: 'note-photography', type: 'note', x: 1500, y: 420, w: 360, h: 80, z: 8,
-    data: { text: 'the world through my eyes', arrow: '→', rotate: -3 } },
-  // Sits above the cabin, pointing down at it
-  { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
-    data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
-  { id: 'note-workflow', type: 'note', x: 820, y: 1060, w: 320, h: 80, z: 8,
-    data: { text: 'how I built my portfolio', arrow: '↓', rotate: 1 } },
-
-  // ─── LEFT — hobbies & life: three interactive toys, each with a caption ───
-  // Row 1: guitar + F1 side by side
-  { id: 'toy-guitar', type: 'guitar', x: -340, y: 170, w: 200, h: 340, z: 6,
-    data: { label: 'I love guitar' } },
-  { id: 'toy-f1', type: 'f1', x: -110, y: 220, w: 260, h: 220, z: 6,
-    data: { label: 'I love Formula One' } },
-  // Row 2: plane (travel) below
-  { id: 'toy-plane', type: 'flight', x: -350, y: 540, w: 290, h: 240, z: 6,
-    data: { label: 'I love traveling' } },
-
-  // ─── TOP — awards I've won (spread across the top of the canvas) ───
-  { id: 'award-1', type: 'award', x: 460, y: -230, w: 280, h: 130, z: 5,
-    data: { icon: 'trophy', title: 'Site of the Day', org: 'Awwwards', year: '2024', rotate: -3 } },
-  { id: 'award-2', type: 'award', x: 800, y: -260, w: 280, h: 130, z: 5,
-    data: { icon: 'award', title: 'Best UX · Fintech', org: 'CSS Design Awards', year: '2024', rotate: 2 } },
-  { id: 'award-3', type: 'award', x: 1140, y: -230, w: 280, h: 130, z: 5,
-    data: { icon: 'star', title: 'Design Excellence Award', org: 'SCAD · Service Design', year: '2025', rotate: -1 } },
-
-  // ─── RIGHT — tight photography cluster (2x2) + photo booth furthest right ───
-  // Spacing matches the gap that "hobbies & life ←" has from the main composition
-  { id: 'photo-1', type: 'photoprint', x: 1800, y: 280, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
-  { id: 'photo-2', type: 'photoprint', x: 1940, y: 300, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1800, y: 470, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
-  { id: 'photo-4', type: 'photoprint', x: 1940, y: 490, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: -3 } },
-  // Photo booth — far right, big and red
-  { id: 'photobooth', type: 'photobooth', x: 2160, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
-  // Dark room door — just past the photo booth
-  { id: 'darkroom', type: 'darkroom', x: 2420, y: 240, w: 220, h: 360, z: 6, to: '__darkroom__' },
-
-  // Hidden easter-egg puzzle — way off in the top-right corner of the canvas
-  { id: 'puzzle', type: 'puzzle', x: 2380, y: -420, w: 60, h: 60, z: 6, to: '__puzzle__' },
-
-  // ─── BOTTOM — how I built this portfolio with AI ───
-  // Six workflow steps laid out horizontally; CONNECTORS wire them
-  // left → right so the diagram reads as one continuous loop.
-  { id: 'wf-1', type: 'workflow', x: 240, y: 1200, w: 210, h: 175, z: 5,
-    data: { n: '01', icon: 'lightbulb', title: 'Spark',
-      body: 'Sketched "infinite canvas portfolio" in 5 minutes. No Figma file — straight to a Notion brief.',
-      tint: '#FFE9A8', tintInk: '#8a6a18', rotate: -1 } },
-  { id: 'wf-2', type: 'workflow', x: 510, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '02', icon: 'sparkles', title: 'Claude Code',
-      body: 'Pair-programmed every component live with Claude — designer intent → working React in seconds.',
-      tint: '#EAEEFF', tintInk: '#2F5CFF', rotate: 1 } },
-  { id: 'wf-3', type: 'workflow', x: 790, y: 1200, w: 220, h: 175, z: 5,
-    data: { n: '03', icon: 'pentool', title: 'Design system',
-      body: 'CSS variables for surface, ink, accent, radius — restyle the whole canvas by editing six tokens.',
-      tint: '#C5EBD6', tintInk: '#1F8A6E', rotate: -1 } },
-  { id: 'wf-4', type: 'workflow', x: 1070, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '04', icon: 'git', title: 'Git + GitHub',
-      body: 'Every change committed to main with a clear message. Full history, free rollback, public source.',
-      tint: '#F3F3F3', tintInk: '#18181A', rotate: 1 } },
-  { id: 'wf-5', type: 'workflow', x: 1350, y: 1200, w: 220, h: 175, z: 5,
-    data: { n: '05', icon: 'rocket', title: 'Vercel',
-      body: 'Auto-deploys from main on every push. ~30 seconds from local edit to live URL.',
-      tint: '#111', tintInk: '#fff', rotate: -1 } },
-  { id: 'wf-6', type: 'workflow', x: 1630, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '06', icon: 'refresh', title: 'See & iterate',
-      body: 'Open the live site, screenshot the rough edge, paste it back to Claude. Loop until it sings.',
-      tint: '#FFD3DA', tintInk: '#B23A56', rotate: 1 } },
 ]
 
 const CONNECTORS = [
   { from: 'experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
   { from: 'experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
   { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
-  // Workflow flow: spark → claude → design → git → vercel → iterate → loop back
-  { from: 'wf-1', to: 'wf-2', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-2', to: 'wf-3', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-3', to: 'wf-4', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-4', to: 'wf-5', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-5', to: 'wf-6', fromSide: 'right', toSide: 'left' },
 ]
 
 function makeRenderObject(navigate) {
@@ -202,11 +115,13 @@ function computeInitialView() {
   const h = window.innerHeight
   // Always open at 82% on first load (clamped down on small screens so the
   // central hero still fits without scrolling).
-  const scale = Math.min(0.82, (w - 80) / 1380, (h - 140) / 990)
+  // Simplified canvas — just polaroid + experience + 3 case studies.
+  // Content bbox: x:540–1460 (920w), y:160–940 (780h). Centered around (1000, 550).
+  const scale = Math.min(0.95, (w - 100) / 920, (h - 240) / 780)
   return {
     scale,
-    x: w / 2 - 1010 * scale,
-    y: h / 2 - 535 * scale,
+    x: w / 2 - 1000 * scale,
+    y: h / 2 - 550 * scale,
   }
 }
 
