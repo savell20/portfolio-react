@@ -518,7 +518,7 @@ export function PhotoBoothCabin({ height = 320 }) {
           fontFamily: 'var(--font-note)', fontSize: '1.25rem',
           color: '#FFD84D', lineHeight: 1.15,
         }}>
-          snap a polaroid
+          snap a strip
         </span>
         <span style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',

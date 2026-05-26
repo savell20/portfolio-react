@@ -6,27 +6,64 @@ const SHOTS = 3
 const FRAME_W = 480
 const FRAME_H = 480
 
-// Compose 3 captured frames into a vertical photobooth strip with caption.
+// Brand colors — pulled from the portfolio's design tokens.
+const BRAND_ACCENT = '#2F5CFF'   // var(--accent)
+const BRAND_INK = '#18181A'      // var(--ink)
+const BRAND_PAPER = '#FAF8F2'    // polaroid cream
+
+// Compose 3 captured frames into a branded vertical photobooth strip.
+// Header carries the portfolio mark, an accent stripe runs the full height
+// on the left edge, and the footer signs the strip in handwriting.
 function buildStrip(frames, caption) {
-  const stripW = 360
-  const photoW = stripW - 28          // 14px white margin each side
+  const stripW = 380
+  const sideMargin = 16
+  const accentW = 5
+  const headerH = 46
+  const photoW = stripW - sideMargin * 2 - accentW - 2
   const photoH = Math.round(photoW * 0.78)
   const gap = 10
-  const captionH = 78
-  const stripH = 14 + (photoH + gap) * frames.length + captionH
+  const footerH = 110
+  const stripH = headerH + (photoH + gap) * frames.length + footerH
 
   const c = document.createElement('canvas')
   c.width = stripW
   c.height = stripH
   const ctx = c.getContext('2d')
-  ctx.fillStyle = '#FAF8F2'
+
+  // paper background
+  ctx.fillStyle = BRAND_PAPER
   ctx.fillRect(0, 0, stripW, stripH)
 
-  let y = 14
+  // left accent stripe (full height)
+  ctx.fillStyle = BRAND_ACCENT
+  ctx.fillRect(0, 0, accentW, stripH)
+
+  // header — brand mark in ink, accent dot, small mono URL
+  ctx.fillStyle = BRAND_INK
+  ctx.font = `700 16px "Schibsted Grotesk", system-ui, sans-serif`
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('Santiago Avella', accentW + sideMargin, headerH / 2)
+  // accent dot
+  ctx.fillStyle = BRAND_ACCENT
+  ctx.beginPath()
+  ctx.arc(accentW + sideMargin + 132, headerH / 2 + 1, 2.6, 0, Math.PI * 2)
+  ctx.fill()
+  // url, right-aligned
+  ctx.fillStyle = '#7a7a72'
+  ctx.font = `9.5px "JetBrains Mono", monospace`
+  ctx.textAlign = 'right'
+  ctx.fillText('SANTIAGOAVELLA.COM', stripW - sideMargin, headerH / 2)
+
+  // divider under header
+  ctx.fillStyle = '#e0ddd2'
+  ctx.fillRect(accentW + sideMargin, headerH - 1, photoW + 2, 1)
+
+  // photos
+  let y = headerH + 4
   for (const f of frames) {
     ctx.fillStyle = '#111'
-    ctx.fillRect(14, y, photoW, photoH)
-    // draw via Image for clean scaling
+    ctx.fillRect(accentW + sideMargin, y, photoW, photoH)
     const img = f._img
     if (img) {
       const ratio = img.width / img.height
@@ -34,24 +71,36 @@ function buildStrip(frames, caption) {
       let sx = 0, sy = 0, sw = img.width, sh = img.height
       if (ratio > target) { sw = img.height * target; sx = (img.width - sw) / 2 }
       else { sh = img.width / target; sy = (img.height - sh) / 2 }
-      ctx.drawImage(img, sx, sy, sw, sh, 14, y, photoW, photoH)
+      ctx.drawImage(img, sx, sy, sw, sh, accentW + sideMargin, y, photoW, photoH)
     }
     y += photoH + gap
   }
 
-  // caption block
-  ctx.fillStyle = '#2a2a26'
-  ctx.font = `34px "Caveat", cursive`
+  // caption — Caveat handwriting in ink
+  ctx.fillStyle = BRAND_INK
+  ctx.font = `400 32px "Caveat", cursive`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText(caption || 'photobooth ✷', stripW / 2, y + captionH / 2 - 4)
+  ctx.fillText(caption || 'photobooth ✷', stripW / 2, y + 28)
 
-  ctx.font = `11px "JetBrains Mono", monospace`
+  // accent underline beneath caption
+  const txtMetrics = ctx.measureText(caption || 'photobooth ✷')
+  const underlineW = Math.min(txtMetrics.width + 28, photoW - 30)
+  ctx.fillStyle = BRAND_ACCENT
+  ctx.fillRect((stripW - underlineW) / 2, y + 50, underlineW, 2)
+
+  // footer row: mono date on the left, "snapped on the canvas" on the right
+  ctx.font = `10px "JetBrains Mono", monospace`
+  ctx.textBaseline = 'middle'
   ctx.fillStyle = '#7a7a72'
+  ctx.textAlign = 'left'
   const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  ctx.fillText(date.toLowerCase(), stripW / 2, y + captionH - 16)
+  ctx.fillText(date.toUpperCase(), accentW + sideMargin, y + 80)
+  ctx.textAlign = 'right'
+  ctx.fillStyle = BRAND_ACCENT
+  ctx.fillText('SNAPPED ON THE CANVAS', stripW - sideMargin, y + 80)
 
-  return { dataURL: c.toDataURL('image/jpeg', 0.85), width: stripW, height: stripH }
+  return { dataURL: c.toDataURL('image/jpeg', 0.88), width: stripW, height: stripH }
 }
 
 async function loadImage(src) {
