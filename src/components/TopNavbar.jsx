@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Mail, FileText, Home as HomeIcon } from 'lucide-react'
+import { Mail, FileText, Home as HomeIcon, User, MessageSquareQuote, Camera } from 'lucide-react'
 
 const RESUME_URL = 'https://drive.google.com/file/d/1mkUQy2AQd0vYHAqsHoGi-qibLa5ssIcC/view?usp=sharing'
 const EMAIL = 'santi.avella28@gmail.com'
@@ -9,10 +9,10 @@ const LINKEDIN_URL = 'https://linkedin.com/in/santiagoavella'
 const RESUME_COLOR = '#FF8A1F'
 
 const LINKS = [
-  { to: '/',             label: 'Home', icon: HomeIcon },
-  { to: '/about',        label: 'About Me' },
-  { to: '/testimonials', label: 'Testimonials' },
-  { to: '/photography',  label: 'Photography' },
+  { to: '/',             label: 'Home',         icon: HomeIcon },
+  { to: '/about',        label: 'About Me',     icon: User },
+  { to: '/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
+  { to: '/photography',  label: 'Photography',  icon: Camera },
 ]
 
 function LinkedinGlyph({ size = 14 }) {

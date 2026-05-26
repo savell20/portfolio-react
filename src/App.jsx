@@ -9,6 +9,7 @@ import Testimonials from './pages/Testimonials'
 import Story from './pages/Story'
 import FigmaCursor from './components/FigmaCursor'
 import TopNavbar from './components/TopNavbar'
+import TopLeftTools from './components/TopLeftTools'
 import ToolsFloater from './components/ToolsFloater'
 import { installClickSounds } from './lib/sound'
 
@@ -17,6 +18,7 @@ function Chrome() {
   // link, so no separate back button is needed.
   return (
     <>
+      <TopLeftTools />
       <TopNavbar />
       <ToolsFloater />
     </>
