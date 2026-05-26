@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
 
 function Hero({ title, kicker, blurb }) {
@@ -56,12 +57,17 @@ function HobbyBlock({ children, label, body }) {
 }
 
 export default function Hobbies() {
+  const navigate = useNavigate()
   return (
-    <div style={{
-      minHeight: '100vh', background: 'var(--canvas)',
-      padding: '4.5rem 1.1rem 4rem',
-      maxWidth: 620, margin: '0 auto',
-    }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) navigate('/') }}
+      title="Click the margin to return to the canvas"
+      style={{
+        minHeight: '100vh', background: 'var(--canvas)',
+        padding: '4.5rem 1.1rem 4rem',
+      }}
+    >
+    <div style={{ maxWidth: 620, margin: '0 auto' }}>
       <Hero
         kicker="# hobbies & life"
         title="Off the clock"
@@ -94,6 +100,7 @@ export default function Hobbies() {
           <FlightMap height={200} />
         </div>
       </HobbyBlock>
+    </div>
     </div>
   )
 }

@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 const MILESTONES = [
   { year: '1998',     where: 'Bogotá, Colombia',  text: "Born and raised in a city that taught me how to design with constraints — limited resources, big ambitions, and zero tolerance for things that don't work." },
   { year: "2020 → '23", where: 'Captura tu mundo', text: 'Started my own visual-storytelling company at 18 and ran it for three years. Learned every part of building a business — finding the idea, shipping the product, talking to the first users, paying the bills.' },
@@ -7,12 +9,17 @@ const MILESTONES = [
 ]
 
 export default function Story() {
+  const navigate = useNavigate()
   return (
-    <div style={{
-      minHeight: '100vh', background: 'var(--canvas)',
-      padding: '4.5rem 1.1rem 4rem',
-      maxWidth: 720, margin: '0 auto',
-    }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) navigate('/') }}
+      title="Click the margin to return to the canvas"
+      style={{
+        minHeight: '100vh', background: 'var(--canvas)',
+        padding: '4.5rem 1.1rem 4rem',
+      }}
+    >
+    <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <p style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
@@ -76,6 +83,7 @@ export default function Story() {
           </div>
         ))}
       </div>
+    </div>
     </div>
   )
 }

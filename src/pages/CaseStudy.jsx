@@ -100,9 +100,14 @@ export default function CaseStudy() {
   if (!data) return <Navigate to="/" replace />
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 4rem' }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) navigate('/') }}
+      style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 4rem' }}
+      title="Click the margin to return to the canvas"
+    >
 
-      {/* (Back button is rendered globally in App's Chrome on non-home routes) */}
+      {/* (Back button is rendered globally in App's Chrome on non-home routes.
+           Clicking anywhere on the page margins also returns home.) */}
 
       {/* Artboard */}
       <div style={{

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { Quote } from 'lucide-react'
 
 const QUOTES = [
@@ -50,12 +51,17 @@ function QuoteCard({ text, name, role, color, delay }) {
 }
 
 export default function Testimonials() {
+  const navigate = useNavigate()
   return (
-    <div style={{
-      minHeight: '100vh', background: 'var(--canvas)',
-      padding: '4.5rem 1.1rem 4rem',
-      maxWidth: 620, margin: '0 auto',
-    }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) navigate('/') }}
+      title="Click the margin to return to the canvas"
+      style={{
+        minHeight: '100vh', background: 'var(--canvas)',
+        padding: '4.5rem 1.1rem 4rem',
+      }}
+    >
+    <div style={{ maxWidth: 620, margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <p style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
@@ -82,6 +88,7 @@ export default function Testimonials() {
       {QUOTES.map((q, i) => (
         <QuoteCard key={q.name} {...q} delay={i * 0.1} />
       ))}
+    </div>
     </div>
   )
 }

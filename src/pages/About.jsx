@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { MapPin, GraduationCap, Briefcase, Sparkles } from 'lucide-react'
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
@@ -23,8 +24,13 @@ const FACTS = [
 ]
 
 export default function About() {
+  const navigate = useNavigate()
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 6rem' }}>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) navigate('/') }}
+      title="Click the margin to return to the canvas"
+      style={{ minHeight: '100vh', background: 'var(--canvas)', padding: '0 1.2rem 6rem' }}
+    >
 
       {/* Hero */}
       <div style={{
