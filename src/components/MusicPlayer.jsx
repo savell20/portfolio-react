@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  X, Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
+  X, Play, Pause, SkipBack, SkipForward, Volume2,
 } from 'lucide-react'
-import { isMuted, setMuted } from '../lib/sound'
 
 const LS_VOL = 'music-volume-v1'
 
@@ -90,7 +89,6 @@ export default function MusicPlayer() {
     const v = Number(localStorage.getItem(LS_VOL))
     return Number.isFinite(v) && v >= 0 && v <= 100 ? v : 70
   })
-  const [clickMuted, setClickMutedState] = useState(isMuted())
 
   const ytHostRef = useRef(null)
   const playerRef = useRef(null)
@@ -148,7 +146,6 @@ export default function MusicPlayer() {
   }
   const next = () => { const p = playerRef.current; if (p && p.nextVideo) p.nextVideo() }
   const prev = () => { const p = playerRef.current; if (p && p.previousVideo) p.previousVideo() }
-  const toggleClickMute = () => { const v = !clickMuted; setMuted(v); setClickMutedState(v) }
 
   const cover = videoId
     ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
@@ -251,20 +248,6 @@ export default function MusicPlayer() {
             </span>
           </div>
 
-          {/* Footer: click-sound mute */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <button
-              onClick={toggleClickMute}
-              title={clickMuted ? 'Click sounds: off' : 'Click sounds: on'}
-              style={{
-                ...iconBtn, gap: 5, padding: '0.25rem 0.45rem',
-                fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em',
-              }}
-            >
-              {clickMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
-              clicks {clickMuted ? 'off' : 'on'}
-            </button>
-          </div>
         </div>
       )}
     </>

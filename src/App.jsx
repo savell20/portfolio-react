@@ -12,6 +12,7 @@ import FigmaCursor from './components/FigmaCursor'
 import StyleSwitcher from './components/StyleSwitcher'
 import Tutorial from './components/Tutorial'
 import TopBar from './components/TopBar'
+import ClickSoundsToggle from './components/ClickSoundsToggle'
 import { installClickSounds } from './lib/sound'
 
 function BackToCanvas() {
@@ -48,6 +49,7 @@ function Chrome() {
         <>
           <StyleSwitcher />
           <Tutorial />
+          <ClickSoundsToggle />
         </>
       ) : (
         <BackToCanvas />
