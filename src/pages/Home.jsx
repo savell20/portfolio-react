@@ -50,9 +50,9 @@ const OBJECTS = [
   // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
   { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5, to: '/about' },
 
-  // Experience card — right edge at x:1460 (aligned with Captura below)
-  // h matches the card's natural rendered height so the connector lands flush
-  { id: 'experience', type: 'experience', x: 880, y: 240, w: 580, h: 170, z: 4 },
+  // Places-I've-worked card — right edge at x:1460 (aligned with Captura).
+  // Tall enough to fit 3 rows of company logos + header.
+  { id: 'experience', type: 'experience', x: 880, y: 170, w: 580, h: 320, z: 4 },
 
   // Case studies — centered trio at canvas x:540 → x:1460
   { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
