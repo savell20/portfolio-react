@@ -50,29 +50,49 @@ const projects = {
 //   - Sticky right edge aligns with Captura (x:1460)
 //   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
-  // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
-  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5, to: '/about' },
+  // Polaroid on the left
+  { id: 'me', type: 'identity', x: 200, y: 220, w: 320, h: 400, z: 5, to: '/about' },
 
-  // Experience header card — right edge at x:1460 (aligned with Captura below)
-  // h matches the card's natural rendered height so the connector lands flush
-  { id: 'experience', type: 'experience', x: 880, y: 240, w: 580, h: 170, z: 4 },
+  // Case Studies header — top of the right column
+  { id: 'cs-title', type: 'cs-title', x: 640, y: 220, w: 940, h: 100 },
 
-  // Case studies — centered trio at canvas x:540 → x:1460
-  { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
-
+  // Three case studies in a row to the right of the polaroid
+  { id: 'zolvo',   type: 'project', x: 640,  y: 360, w: 296, h: 360, z: 6, to: '/work/zolvo',   data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 ]
 
-const CONNECTORS = [
-  { from: 'experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
-  { from: 'experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
-  { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
-]
+const CONNECTORS = []
+
+function CaseStudiesTitle() {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+      height: '100%', paddingBottom: 12,
+    }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+        color: 'var(--accent)', letterSpacing: '0.16em',
+        textTransform: 'uppercase', marginBottom: 8,
+      }}>
+        # selected work
+      </p>
+      <h2 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',
+        color: 'var(--ink)',
+      }}>
+        Case Studies
+      </h2>
+    </div>
+  )
+}
 
 function makeRenderObject(navigate) {
   return function renderObject(obj) {
     switch (obj.type) {
+      case 'cs-title': return <CaseStudiesTitle />
+
       case 'project': return <ProjectCard data={obj.data} />
       case 'sticky': return <StickyNote data={obj.data} />
       case 'identity': return (
@@ -113,15 +133,13 @@ function makeRenderObject(navigate) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Always open at 82% on first load (clamped down on small screens so the
-  // central hero still fits without scrolling).
-  // Simplified canvas — just polaroid + experience + 3 case studies.
-  // Content bbox: x:540–1460 (920w), y:160–940 (780h). Centered around (1000, 550).
-  const scale = Math.min(0.95, (w - 100) / 920, (h - 240) / 780)
+  // Polaroid (left) + Case Studies title + 3 project cards (right).
+  // Content bbox: x:200–1580 (1380w), y:220–720 (500h). Centered around (890, 470).
+  const scale = Math.min(0.85, (w - 100) / 1380, (h - 240) / 500)
   return {
     scale,
-    x: w / 2 - 1000 * scale,
-    y: h / 2 - 550 * scale,
+    x: w / 2 - 890 * scale,
+    y: h / 2 - 470 * scale,
   }
 }
 
