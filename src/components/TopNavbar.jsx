@@ -85,7 +85,7 @@ export default function TopNavbar() {
         onMouseEnter={e => { e.currentTarget.style.background = '#0A66C2'; e.currentTarget.style.color = '#fff' }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
       >
-        <LinkedinGlyph size={15} />
+        <LinkedinGlyph size={19} />
       </a>
 
       {/* Résumé — eye-catching orange */}
