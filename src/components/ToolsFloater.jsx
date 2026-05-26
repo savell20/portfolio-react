@@ -13,7 +13,7 @@ export default function ToolsFloater() {
         title="Show tutorial"
         aria-label="Show tutorial"
         style={{
-          position: 'fixed', bottom: 64, right: 16, zIndex: 9500,
+          position: 'fixed', top: 16, right: 16, zIndex: 9500,
           width: 40, height: 40, padding: 0, cursor: 'none',
           background: 'var(--surface)', border: 'var(--border-card)',
           borderRadius: 'var(--radius-pill)',
