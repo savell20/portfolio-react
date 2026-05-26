@@ -262,6 +262,28 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
 
+  // Sticky-tool ghost: a yellow sticky that hovers under the cursor so the
+  // user previews where their note will drop. FigJam-style affordance.
+  const stickyGhostRef = useRef(null)
+  useEffect(() => {
+    if (mode !== 'sticky') return
+    const el = stickyGhostRef.current
+    if (!el) return
+    const onMove = (e) => {
+      el.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px) rotate(-4deg)`
+      el.style.opacity = '0.92'
+    }
+    const onLeave = () => { el.style.opacity = '0' }
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerleave', onLeave)
+    document.addEventListener('mouseleave', onLeave)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerleave', onLeave)
+      document.removeEventListener('mouseleave', onLeave)
+    }
+  }, [mode])
+
   const g = GRID_UNIT * view.scale
   const cursor = mode === 'draw' ? 'crosshair' : mode === 'sticky' ? 'copy' : 'default'
 
@@ -363,6 +385,32 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         setDrawColor={setDrawColor}
         onClearDrawing={clearDrawing}
       />
+
+      {/* Ghost sticky that follows the cursor while the sticky tool is active */}
+      {mode === 'sticky' && (
+        <div
+          ref={stickyGhostRef}
+          aria-hidden
+          style={{
+            position: 'fixed', top: 0, left: 0, zIndex: 99990,
+            width: 170, height: 145,
+            background: 'var(--sticky-yellow)',
+            padding: '0.9rem 1rem',
+            boxShadow: '0 14px 28px rgba(24,24,26,0.22)',
+            pointerEvents: 'none',
+            display: 'flex', alignItems: 'flex-start',
+            opacity: 0, transition: 'opacity 0.15s',
+            willChange: 'transform',
+          }}
+        >
+          <span style={{
+            fontFamily: 'var(--font-note)', fontSize: '1rem',
+            color: '#2a2a26', lineHeight: 1.2, opacity: 0.65,
+          }}>
+            drop me anywhere ✎
+          </span>
+        </div>
+      )}
 
       {booth && <PhotoBooth onClose={() => setBooth(false)} onSave={addPolaroid} />}
     </div>

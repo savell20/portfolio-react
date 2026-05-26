@@ -65,12 +65,12 @@ const OBJECTS = [
   // Sits right above the polaroid corner, arrow swoops diagonally down-right at it
   { id: 'note-polaroid', type: 'note', x: 360, y: 95, w: 320, h: 80, z: 8,
     data: { text: 'click my photo', arrow: '↘', rotate: -4 } },
-  { id: 'note-left', type: 'note', x: 240, y: 540, w: 240, h: 80, z: 8,
-    data: { text: 'hobbies & life', arrow: '←', rotate: -3 } },
+  { id: 'note-left', type: 'note', x: 200, y: 540, w: 320, h: 80, z: 8,
+    data: { text: "projects I've built", arrow: '←', rotate: -3 } },
   // Points right at the photo print cluster — sits the same distance from
-  // the main composition that "hobbies & life ←" sits on the opposite side
-  { id: 'note-photography', type: 'note', x: 1540, y: 420, w: 240, h: 80, z: 8,
-    data: { text: 'my photography', arrow: '→', rotate: -3 } },
+  // the main composition that the projects waymarker sits on the opposite side
+  { id: 'note-photography', type: 'note', x: 1500, y: 420, w: 360, h: 80, z: 8,
+    data: { text: 'the world through my eyes', arrow: '→', rotate: -3 } },
   // Sits above the cabin, pointing down at it
   { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
     data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
