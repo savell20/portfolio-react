@@ -72,22 +72,6 @@ export default function TopNavbar() {
 
       <Divider />
 
-      {/* LinkedIn icon */}
-      <a
-        href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
-        title="LinkedIn" aria-label="LinkedIn"
-        style={{
-          width: 34, height: 34, borderRadius: 'calc(var(--radius-pill) - 2px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'var(--ink-soft)', cursor: 'none', textDecoration: 'none',
-          flexShrink: 0, transition: 'background 0.15s, color 0.15s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.background = '#0A66C2'; e.currentTarget.style.color = '#fff' }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
-      >
-        <LinkedinGlyph size={19} />
-      </a>
-
       {/* Résumé — eye-catching orange */}
       <a
         href={RESUME_URL} target="_blank" rel="noopener noreferrer"
@@ -136,6 +120,22 @@ export default function TopNavbar() {
         onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
       >
         <Mail size={13} /> let&rsquo;s talk
+      </a>
+
+      {/* LinkedIn icon — rightmost */}
+      <a
+        href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
+        title="LinkedIn" aria-label="LinkedIn"
+        style={{
+          width: 34, height: 34, borderRadius: 'calc(var(--radius-pill) - 2px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--ink-soft)', cursor: 'none', textDecoration: 'none',
+          flexShrink: 0, transition: 'background 0.15s, color 0.15s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = '#0A66C2'; e.currentTarget.style.color = '#fff' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
+      >
+        <LinkedinGlyph size={19} />
       </a>
     </nav>
   )
