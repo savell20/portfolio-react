@@ -14,9 +14,9 @@ const STEPS = [
   {
     id: 'welcome',
     Icon: Hand,
-    title: 'Welcome to my canvas',
-    body: "Quick tour — under a minute. I'll point at things, you try them.",
-    cta: "Let's go",
+    title: 'Hey — quick intro',
+    body: "I built this as a FigJam-style canvas because I'm a designer who lives in FigJam every other day — and a PDF résumé felt like the wrong way to introduce myself. I wanted it to feel interactive: take a picture in the photo booth, play my favorite music, drag my stickies around. Spend a minute and let me show you around.",
+    cta: 'Show me around',
   },
   {
     id: 'pan',
@@ -156,67 +156,77 @@ function TutorialPanel({ onClose }) {
   return createPortal(
     <div
       onPointerDown={e => e.stopPropagation()}
+      onClick={onClose}
       style={{
-        position: 'fixed', top: 70, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 99980, width: 'min(440px, calc(100vw - 32px))',
-        pointerEvents: 'auto',
-        animation: 'pop-in 0.32s var(--ease) both',
+        position: 'fixed', inset: 0, zIndex: 99980,
+        background: 'rgba(8,8,12,0.72)', backdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '1.5rem',
+        animation: 'fade-in 0.22s ease both',
       }}
     >
-      <div style={{
-        position: 'relative',
-        background: 'var(--surface)', border: 'var(--border-card)',
-        borderRadius: 'var(--radius)', padding: '1.1rem 1.25rem 1rem',
-        boxShadow: '0 22px 48px rgba(0,0,0,0.25)',
-      }}>
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          position: 'relative',
+          width: 'min(500px, calc(100vw - 32px))',
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius)',
+          padding: '1.6rem 1.7rem 1.4rem',
+          boxShadow: '0 36px 90px rgba(0,0,0,0.5)',
+          animation: 'pop-in 0.32s var(--ease) both',
+        }}
+      >
         {/* Close */}
         <button
           onClick={onClose}
           aria-label="Close tutorial"
           style={{
-            position: 'absolute', top: 10, right: 10,
-            width: 24, height: 24, borderRadius: '50%', cursor: 'none',
+            position: 'absolute', top: 14, right: 14,
+            width: 28, height: 28, borderRadius: '50%', cursor: 'none',
             background: 'var(--canvas)', border: '1px solid var(--line)',
             color: 'var(--ink-soft)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          <X size={11} />
+          <X size={12} />
         </button>
 
-        {/* Header row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-          <span style={{
-            width: 36, height: 36, borderRadius: 8,
-            background: justCompleted ? '#28C76F' : 'var(--accent-soft)',
-            color: justCompleted ? '#fff' : 'var(--accent)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'background 0.3s, color 0.3s',
-            flexShrink: 0,
-          }}>
-            {justCompleted ? <Check size={18} /> : <Icon size={18} />}
-          </span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
-              color: 'var(--ink-faint)', letterSpacing: '0.12em',
-              textTransform: 'uppercase', marginBottom: 2,
-            }}>
-              Step {step + 1} / {STEPS.length}
-            </p>
-            <h3 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: '1.05rem', letterSpacing: '-0.01em',
-              color: 'var(--ink)', lineHeight: 1.15,
-            }}>
-              {title}
-            </h3>
-          </div>
-        </div>
+        {/* Icon */}
+        <span style={{
+          width: 52, height: 52, borderRadius: 12,
+          background: justCompleted ? '#28C76F' : 'var(--accent-soft)',
+          color: justCompleted ? '#fff' : 'var(--accent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.3s, color 0.3s',
+          marginBottom: '1rem',
+        }}>
+          {justCompleted ? <Check size={24} /> : <Icon size={24} />}
+        </span>
 
+        {/* Step counter */}
         <p style={{
-          fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.5,
-          marginTop: 6, marginBottom: hint ? 8 : 10,
+          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+          color: 'var(--ink-faint)', letterSpacing: '0.14em',
+          textTransform: 'uppercase', marginBottom: 6,
+        }}>
+          Step {step + 1} / {STEPS.length}
+        </p>
+
+        {/* Title */}
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 800,
+          fontSize: '1.5rem', letterSpacing: '-0.02em',
+          color: 'var(--ink)', lineHeight: 1.1,
+          marginBottom: 12,
+        }}>
+          {title}
+        </h3>
+
+        {/* Body */}
+        <p style={{
+          fontSize: '0.95rem', color: 'var(--ink-soft)', lineHeight: 1.6,
+          marginBottom: hint ? 14 : 18,
         }}>
           {body}
         </p>
