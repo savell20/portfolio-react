@@ -71,75 +71,68 @@ export default function TopNavbar() {
 
       <Divider />
 
-      {/* Résumé — eye-catching orange */}
+      {/* Résumé — outline style in coral/orange */}
       <a
         href={RESUME_URL} target="_blank" rel="noopener noreferrer"
         title="Open résumé (Google Drive PDF)"
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-          height: 34, padding: '0 0.85rem',
-          borderRadius: 'calc(var(--radius-pill) - 2px)',
-          background: RESUME_COLOR, color: '#fff',
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 600,
-          textDecoration: 'none', cursor: 'none',
-          whiteSpace: 'nowrap', flexShrink: 0,
-          boxShadow: '0 4px 12px rgba(255,138,31,0.45)',
-          transition: 'transform 0.15s var(--ease), filter 0.15s, box-shadow 0.15s',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-1px)'
-          e.currentTarget.style.filter = 'brightness(1.08)'
-          e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,138,31,0.6)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.filter = 'brightness(1)'
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,138,31,0.45)'
-        }}
+        style={outlineBtn(RESUME_COLOR, 600)}
+        onMouseEnter={fillOnHover(RESUME_COLOR)}
+        onMouseLeave={restoreOutline(RESUME_COLOR)}
       >
         <FileText size={13} /> résumé
       </a>
 
-      {/* Let's talk — blue accent CTA */}
+      {/* Let's talk — outline style in accent blue */}
       <a
         href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("I'm interested in working with you!")}`}
         target="_blank" rel="noopener noreferrer"
         title="Send me an email"
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-          height: 34, padding: '0 0.85rem',
-          borderRadius: 'calc(var(--radius-pill) - 2px)',
-          background: 'var(--accent)', color: '#fff',
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
-          textDecoration: 'none', cursor: 'none',
-          whiteSpace: 'nowrap', flexShrink: 0,
-          transition: 'transform 0.15s var(--ease), filter 0.15s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.08)' }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
+        style={outlineBtn('var(--accent)')}
+        onMouseEnter={fillOnHover('var(--accent)')}
+        onMouseLeave={restoreOutline('var(--accent)')}
       >
         <Mail size={13} /> let&rsquo;s talk
       </a>
 
-      {/* LinkedIn — filled brand-blue button with icon + text */}
+      {/* LinkedIn — outline style in LinkedIn brand blue */}
       <a
         href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
         title="LinkedIn" aria-label="LinkedIn"
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          height: 34, padding: '0 0.85rem',
-          borderRadius: 'calc(var(--radius-pill) - 2px)',
-          background: LINKEDIN_BLUE, color: '#fff',
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
-          textDecoration: 'none', cursor: 'none',
-          whiteSpace: 'nowrap', flexShrink: 0,
-          transition: 'transform 0.15s var(--ease), filter 0.15s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.08)' }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
+        style={outlineBtn(LINKEDIN_BLUE)}
+        onMouseEnter={fillOnHover(LINKEDIN_BLUE)}
+        onMouseLeave={restoreOutline(LINKEDIN_BLUE)}
       >
         <LinkedinGlyph size={14} /> LinkedIn
       </a>
     </nav>
   )
+}
+
+/* Outlined pill: transparent fill, colored border + text. Hover fills it. */
+function outlineBtn(color, weight = 500) {
+  return {
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    height: 34, padding: '0 0.85rem', boxSizing: 'border-box',
+    borderRadius: 'calc(var(--radius-pill) - 2px)',
+    background: 'transparent', color,
+    border: `1.6px solid ${color}`,
+    fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: weight,
+    textDecoration: 'none', cursor: 'none',
+    whiteSpace: 'nowrap', flexShrink: 0,
+    transition: 'background 0.18s, color 0.18s, transform 0.15s var(--ease)',
+  }
+}
+function fillOnHover(color) {
+  return (e) => {
+    e.currentTarget.style.background = color
+    e.currentTarget.style.color = '#fff'
+    e.currentTarget.style.transform = 'translateY(-1px)'
+  }
+}
+function restoreOutline(color) {
+  return (e) => {
+    e.currentTarget.style.background = 'transparent'
+    e.currentTarget.style.color = color
+    e.currentTarget.style.transform = 'translateY(0)'
+  }
 }
