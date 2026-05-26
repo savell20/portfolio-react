@@ -627,29 +627,46 @@ export function StickyNote({ data }) {
 export function ExperienceCard() {
   return (
     <div>
-      <FrameLabel># places I've worked</FrameLabel>
+      <FrameLabel># who am I</FrameLabel>
       <div style={{
         ...cardBase,
-        padding: '1.5rem 1.7rem',
+        padding: '1.4rem 1.7rem 1.25rem',
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
         height: '100%',
       }}>
         <p style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
           color: 'var(--accent)', letterSpacing: '0.12em',
-          textTransform: 'uppercase', marginBottom: '0.7rem',
+          textTransform: 'uppercase', marginBottom: '0.55rem',
         }}>
-          places I've worked at
+          . hello
         </p>
         <p style={{
-          fontFamily: 'var(--font-display)', fontWeight: 600,
-          fontSize: '1.3rem', lineHeight: 1.4, letterSpacing: '-0.01em',
-          color: 'var(--ink)',
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          fontSize: '1.4rem', lineHeight: 1.3, letterSpacing: '-0.02em',
+          color: 'var(--ink)', marginBottom: '0.9rem',
         }}>
-          Designed at a <span style={{ color: 'var(--accent)' }}>YC-backed fintech</span>,
-          shipped at <span style={{ color: 'var(--accent)' }}>HubSpot</span>,
-          founded my own studio from scratch — three teams below&nbsp;↓
+          I'm an <span style={{ color: 'var(--accent)' }}>optimist</span> who
+          finds order in chaos.
         </p>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          paddingTop: '0.6rem',
+          borderTop: '1px solid var(--line)',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+            color: 'var(--ink-soft)', letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+          }}>
+            places I've worked at
+          </span>
+          <span style={{
+            flex: 1, height: 1,
+            background: 'repeating-linear-gradient(90deg, var(--line-strong) 0 4px, transparent 4px 8px)',
+          }} />
+          <span style={{ color: 'var(--accent)', fontSize: '0.9rem' }}>↓</span>
+        </div>
       </div>
     </div>
   )
