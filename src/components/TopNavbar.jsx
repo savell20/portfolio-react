@@ -1,18 +1,19 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Mail, FileText, Home as HomeIcon, User, MessageSquareQuote, Camera } from 'lucide-react'
+import { Mail, FileText } from 'lucide-react'
 
 const RESUME_URL = 'https://drive.google.com/file/d/1mkUQy2AQd0vYHAqsHoGi-qibLa5ssIcC/view?usp=sharing'
 const EMAIL = 'santi.avella28@gmail.com'
 const LINKEDIN_URL = 'https://linkedin.com/in/santiagoavella'
 
-// Eye-catching orange for the résumé button — distinct from the active-page blue.
-const RESUME_COLOR = '#FF8A1F'
+// Action-button colors — picked so each CTA owns a distinct hue.
+const RESUME_COLOR = '#FF8A1F'      // warm coral / orange
+const LINKEDIN_BLUE = '#0A66C2'     // LinkedIn brand blue
 
 const LINKS = [
-  { to: '/',             label: 'Home',         icon: HomeIcon },
-  { to: '/about',        label: 'About Me',     icon: User },
-  { to: '/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
-  { to: '/photography',  label: 'Photography',  icon: Camera },
+  { to: '/',             label: 'Home' },
+  { to: '/about',        label: 'About Me' },
+  { to: '/testimonials', label: 'Testimonials' },
+  { to: '/photography',  label: 'Photography' },
 ]
 
 function LinkedinGlyph({ size = 14 }) {
@@ -44,15 +45,14 @@ export default function TopNavbar() {
         maxWidth: 'calc(100vw - 32px)',
       }}
     >
-      {LINKS.map(({ to, label, icon: Icon }) => {
+      {LINKS.map(({ to, label }) => {
         const active = pathname === to
         return (
           <button
             key={to}
             onClick={() => navigate(to)}
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              height: 34, padding: Icon ? '0 0.65rem' : '0 0.75rem',
+              height: 34, padding: '0 0.85rem',
               borderRadius: 'calc(var(--radius-pill) - 2px)',
               background: active ? 'var(--accent)' : 'transparent',
               color: active ? '#fff' : 'var(--ink-soft)',
@@ -64,7 +64,6 @@ export default function TopNavbar() {
             onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
             onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' } }}
           >
-            {Icon && <Icon size={13} strokeWidth={2.2} />}
             {label}
           </button>
         )
@@ -122,20 +121,24 @@ export default function TopNavbar() {
         <Mail size={13} /> let&rsquo;s talk
       </a>
 
-      {/* LinkedIn icon — rightmost */}
+      {/* LinkedIn — filled brand-blue button with icon + text */}
       <a
         href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
         title="LinkedIn" aria-label="LinkedIn"
         style={{
-          width: 34, height: 34, borderRadius: 'calc(var(--radius-pill) - 2px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'var(--ink-soft)', cursor: 'none', textDecoration: 'none',
-          flexShrink: 0, transition: 'background 0.15s, color 0.15s',
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          height: 34, padding: '0 0.85rem',
+          borderRadius: 'calc(var(--radius-pill) - 2px)',
+          background: LINKEDIN_BLUE, color: '#fff',
+          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
+          textDecoration: 'none', cursor: 'none',
+          whiteSpace: 'nowrap', flexShrink: 0,
+          transition: 'transform 0.15s var(--ease), filter 0.15s',
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = '#0A66C2'; e.currentTarget.style.color = '#fff' }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.08)' }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
       >
-        <LinkedinGlyph size={19} />
+        <LinkedinGlyph size={14} /> LinkedIn
       </a>
     </nav>
   )
