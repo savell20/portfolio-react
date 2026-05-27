@@ -4,7 +4,8 @@ import Canvas from '../components/Canvas'
 import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
-  AnnotationLabel, StoryCard, PhotoPrint, PhotoBoothCabin,
+  AnnotationLabel, LongDownArrow,
+  StoryCard, PhotoPrint, PhotoBoothCabin,
   AwardCard, WorkflowStep,
 } from '../components/CanvasCards'
 import { Guitar, F1Car, FlightMap } from '../components/HobbyToys'
@@ -50,116 +51,65 @@ const projects = {
 //   - Sticky right edge aligns with Captura (x:1460)
 //   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
-  // Identity polaroid — left edge at x:540 (aligned with Zolvo below)
-  { id: 'me', type: 'identity', x: 540, y: 160, w: 300, h: 360, z: 5, to: '/about' },
+  // Polaroid on the left
+  { id: 'me', type: 'identity', x: 200, y: 220, w: 320, h: 400, z: 5, to: '/about' },
 
-  // Experience header card — right edge at x:1460 (aligned with Captura below)
-  // h matches the card's natural rendered height so the connector lands flush
-  { id: 'experience', type: 'experience', x: 880, y: 240, w: 580, h: 170, z: 4 },
+  // Case Studies header — top of the right column
+  { id: 'cs-title', type: 'cs-title', x: 640, y: 220, w: 940, h: 100 },
 
-  // Case studies — centered trio at canvas x:540 → x:1460
-  { id: 'zolvo', type: 'project', x: 540, y: 580, w: 296, h: 360, z: 6, to: '/work/zolvo', data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 852, y: 580, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1164, y: 580, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
+  // Three case studies in a row to the right of the polaroid
+  { id: 'zolvo',   type: 'project', x: 640,  y: 360, w: 296, h: 360, z: 6, to: '/work/zolvo',   data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Hand-drawn waymarkers ───
-  { id: 'note-awards', type: 'note', x: 880, y: 0, w: 280, h: 80, z: 8,
-    data: { text: 'awards', arrow: '↑', rotate: -2 } },
-  // Sits right above the polaroid corner, arrow swoops diagonally down-right at it
-  { id: 'note-polaroid', type: 'note', x: 360, y: 95, w: 320, h: 80, z: 8,
-    data: { text: 'click my photo', arrow: '↘', rotate: -4 } },
-  { id: 'note-left', type: 'note', x: 200, y: 540, w: 320, h: 80, z: 8,
-    data: { text: "projects I've built", arrow: '←', rotate: -3 } },
-  // Points right at the photo print cluster — sits the same distance from
-  // the main composition that the projects waymarker sits on the opposite side
-  { id: 'note-photography', type: 'note', x: 1500, y: 420, w: 360, h: 80, z: 8,
-    data: { text: 'the world through my eyes', arrow: '→', rotate: -3 } },
-  // Sits above the cabin, pointing down at it
-  { id: 'note-booth', type: 'note', x: 2110, y: 130, w: 340, h: 80, z: 8,
-    data: { text: 'snap a photobooth strip', arrow: '↓', rotate: 2 } },
-  { id: 'note-workflow', type: 'note', x: 820, y: 1060, w: 320, h: 80, z: 8,
-    data: { text: 'how I built my portfolio', arrow: '↓', rotate: 1 } },
-
-  // ─── LEFT — hobbies & life: three interactive toys, each with a caption ───
-  // Row 1: guitar + F1 side by side
-  { id: 'toy-guitar', type: 'guitar', x: -340, y: 170, w: 200, h: 340, z: 6,
-    data: { label: 'I love guitar' } },
-  { id: 'toy-f1', type: 'f1', x: -110, y: 220, w: 260, h: 220, z: 6,
-    data: { label: 'I love Formula One' } },
-  // Row 2: plane (travel) below
-  { id: 'toy-plane', type: 'flight', x: -350, y: 540, w: 290, h: 240, z: 6,
-    data: { label: 'I love traveling' } },
-
-  // ─── TOP — awards I've won (spread across the top of the canvas) ───
-  { id: 'award-1', type: 'award', x: 460, y: -230, w: 280, h: 130, z: 5,
-    data: { icon: 'trophy', title: 'Site of the Day', org: 'Awwwards', year: '2024', rotate: -3 } },
-  { id: 'award-2', type: 'award', x: 800, y: -260, w: 280, h: 130, z: 5,
-    data: { icon: 'award', title: 'Best UX · Fintech', org: 'CSS Design Awards', year: '2024', rotate: 2 } },
-  { id: 'award-3', type: 'award', x: 1140, y: -230, w: 280, h: 130, z: 5,
-    data: { icon: 'star', title: 'Design Excellence Award', org: 'SCAD · Service Design', year: '2025', rotate: -1 } },
-
-  // ─── RIGHT — tight photography cluster (2x2) + photo booth furthest right ───
-  // Spacing matches the gap that "hobbies & life ←" has from the main composition
-  { id: 'photo-1', type: 'photoprint', x: 1800, y: 280, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80', caption: 'peaks', rotate: -4 } },
-  { id: 'photo-2', type: 'photoprint', x: 1940, y: 300, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80', caption: 'dusk', rotate: 5 } },
-  { id: 'photo-3', type: 'photoprint', x: 1800, y: 470, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&q=80', caption: 'coast', rotate: 3 } },
-  { id: 'photo-4', type: 'photoprint', x: 1940, y: 490, w: 170, h: 190, z: 5, draggable: true,
-    data: { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&q=80', caption: 'road', rotate: -3 } },
-  // Photo booth — far right, big and red
-  { id: 'photobooth', type: 'photobooth', x: 2160, y: 240, w: 220, h: 360, z: 6, to: '__photobooth__' },
-  // Dark room door — just past the photo booth
-  { id: 'darkroom', type: 'darkroom', x: 2420, y: 240, w: 220, h: 360, z: 6, to: '__darkroom__' },
-
-  // Hidden easter-egg puzzle — way off in the top-right corner of the canvas
-  { id: 'puzzle', type: 'puzzle', x: 2380, y: -420, w: 60, h: 60, z: 6, to: '__puzzle__' },
-
-  // ─── BOTTOM — how I built this portfolio with AI ───
-  // Six workflow steps laid out horizontally; CONNECTORS wire them
-  // left → right so the diagram reads as one continuous loop.
-  { id: 'wf-1', type: 'workflow', x: 240, y: 1200, w: 210, h: 175, z: 5,
-    data: { n: '01', icon: 'lightbulb', title: 'Spark',
-      body: 'Sketched "infinite canvas portfolio" in 5 minutes. No Figma file — straight to a Notion brief.',
-      tint: '#FFE9A8', tintInk: '#8a6a18', rotate: -1 } },
-  { id: 'wf-2', type: 'workflow', x: 510, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '02', icon: 'sparkles', title: 'Claude Code',
-      body: 'Pair-programmed every component live with Claude — designer intent → working React in seconds.',
-      tint: '#EAEEFF', tintInk: '#2F5CFF', rotate: 1 } },
-  { id: 'wf-3', type: 'workflow', x: 790, y: 1200, w: 220, h: 175, z: 5,
-    data: { n: '03', icon: 'pentool', title: 'Design system',
-      body: 'CSS variables for surface, ink, accent, radius — restyle the whole canvas by editing six tokens.',
-      tint: '#C5EBD6', tintInk: '#1F8A6E', rotate: -1 } },
-  { id: 'wf-4', type: 'workflow', x: 1070, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '04', icon: 'git', title: 'Git + GitHub',
-      body: 'Every change committed to main with a clear message. Full history, free rollback, public source.',
-      tint: '#F3F3F3', tintInk: '#18181A', rotate: 1 } },
-  { id: 'wf-5', type: 'workflow', x: 1350, y: 1200, w: 220, h: 175, z: 5,
-    data: { n: '05', icon: 'rocket', title: 'Vercel',
-      body: 'Auto-deploys from main on every push. ~30 seconds from local edit to live URL.',
-      tint: '#111', tintInk: '#fff', rotate: -1 } },
-  { id: 'wf-6', type: 'workflow', x: 1630, y: 1180, w: 220, h: 175, z: 5,
-    data: { n: '06', icon: 'refresh', title: 'See & iterate',
-      body: 'Open the live site, screenshot the rough edge, paste it back to Claude. Loop until it sings.',
-      tint: '#FFD3DA', tintInk: '#B23A56', rotate: 1 } },
+  // ─── Creative space — sits well below the hero so it doesn't compete
+  //     for attention. Visitors discover it as they scroll/pan down.
+  // Annotation sits right beneath the polaroid; its arrow purposely
+  // extends far past the initial viewport to suggest "there's more below".
+  { id: 'note-down', type: 'long-down', x: 280, y: 760, w: 200, h: 380, z: 8,
+    data: { text: 'explore down here 👀', length: 360, rotate: -3 } },
+  { id: 'seed-1', type: 'sticky', x: 200, y: 1140, w: 210, h: 170, z: 4, draggable: true,
+    data: { text: 'drop your own sticky ✎ — grab the sticky tool in the bottom dock',
+      color: 'var(--sticky-yellow)', rotate: -4, tall: true } },
+  { id: 'seed-2', type: 'sticky', x: 440, y: 1170, w: 220, h: 170, z: 4, draggable: true,
+    data: { text: 'or doodle with the pen 🖊  — pick a color in the dock',
+      color: 'var(--sticky-mint)', rotate: 3, tall: true } },
+  { id: 'seed-3', type: 'sticky', x: 700, y: 1140, w: 210, h: 170, z: 4, draggable: true,
+    data: { text: 'leave me a postage — say hi, share an idea',
+      color: 'var(--sticky-pink)', rotate: -2, tall: true } },
 ]
 
-const CONNECTORS = [
-  { from: 'experience', to: 'zolvo', label: '01', fromSide: 'bottom', toSide: 'top' },
-  { from: 'experience', to: 'hubspot', label: '02', fromSide: 'bottom', toSide: 'top' },
-  { from: 'experience', to: 'captura', label: '03', fromSide: 'bottom', toSide: 'top' },
-  // Workflow flow: spark → claude → design → git → vercel → iterate → loop back
-  { from: 'wf-1', to: 'wf-2', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-2', to: 'wf-3', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-3', to: 'wf-4', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-4', to: 'wf-5', fromSide: 'right', toSide: 'left' },
-  { from: 'wf-5', to: 'wf-6', fromSide: 'right', toSide: 'left' },
-]
+const CONNECTORS = []
+
+function CaseStudiesTitle() {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+      height: '100%', paddingBottom: 12,
+    }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+        color: 'var(--accent)', letterSpacing: '0.16em',
+        textTransform: 'uppercase', marginBottom: 8,
+      }}>
+        # selected work
+      </p>
+      <h2 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',
+        color: 'var(--ink)',
+      }}>
+        Case Studies
+      </h2>
+    </div>
+  )
+}
 
 function makeRenderObject(navigate) {
   return function renderObject(obj) {
     switch (obj.type) {
+      case 'cs-title': return <CaseStudiesTitle />
+
       case 'project': return <ProjectCard data={obj.data} />
       case 'sticky': return <StickyNote data={obj.data} />
       case 'identity': return (
@@ -172,6 +122,7 @@ function makeRenderObject(navigate) {
       )
       case 'experience': return <ExperienceCard />
       case 'note': return <AnnotationLabel data={obj.data} />
+      case 'long-down': return <LongDownArrow data={obj.data} />
       case 'story': return <StoryCard data={obj.data} />
       case 'photoprint': return <PhotoPrint data={obj.data} />
       case 'photobooth': return <PhotoBoothCabin />
@@ -200,13 +151,15 @@ function makeRenderObject(navigate) {
 function computeInitialView() {
   const w = window.innerWidth
   const h = window.innerHeight
-  // Always open at 82% on first load (clamped down on small screens so the
-  // central hero still fits without scrolling).
-  const scale = Math.min(0.82, (w - 80) / 1380, (h - 140) / 990)
+  // Focus on the hero: polaroid (left) + Case Studies title + 3 project
+  // cards (right). The creative space below sits intentionally below the
+  // fold — visitors discover it by panning down.
+  // Hero bbox: x:200–1580 (1380w), y:220–720 (500h). Centered around (890, 470).
+  const scale = Math.min(0.88, (w - 100) / 1380, (h - 240) / 520)
   return {
     scale,
-    x: w / 2 - 1010 * scale,
-    y: h / 2 - 535 * scale,
+    x: w / 2 - 890 * scale,
+    y: h / 2 - 470 * scale,
   }
 }
 

@@ -282,35 +282,14 @@ function TutorialPanel({ onClose }) {
   )
 }
 
-export default function Tutorial() {
-  const [open, setOpen] = useState(false)
-  // Do NOT auto-open on first visit anymore. Help button is the only trigger.
+// External-controlled variant: TopNavbar passes __externalOpen / __setOpen
+// so the help icon in the navbar can mount/unmount the modal without rendering
+// a separate help button on the page.
+export default function Tutorial({ __externalOpen, __setOpen }) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const controlled = typeof __externalOpen === 'boolean'
+  const open = controlled ? __externalOpen : internalOpen
+  const setOpen = controlled ? (__setOpen || (() => {})) : setInternalOpen
 
-  return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Show tutorial"
-        title="Show tutorial"
-        style={{
-          position: 'fixed', top: 16, left: 88, zIndex: 9500,
-          width: 36, height: 36,
-          background: 'var(--surface)',
-          border: 'var(--border-card)',
-          borderRadius: 'var(--radius-pill)',
-          boxShadow: 'var(--shadow-card)',
-          cursor: 'none', color: 'var(--ink-soft)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          animation: 'fade-in 0.5s var(--ease) both',
-          transition: 'color 0.18s, background 0.18s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.color = 'var(--ink)'; e.currentTarget.style.background = 'var(--canvas)' }}
-        onMouseLeave={e => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.background = 'var(--surface)' }}
-      >
-        <HelpCircle size={16} strokeWidth={2.2} />
-      </button>
-
-      {open && <TutorialPanel onClose={() => setOpen(false)} />}
-    </>
-  )
+  return open ? <TutorialPanel onClose={() => setOpen(false)} /> : null
 }

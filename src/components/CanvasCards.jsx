@@ -404,6 +404,38 @@ function HandArrow({ direction, size = 70 }) {
   )
 }
 
+/* Tall handwritten "↓" hint — the arrow purposely runs off the bottom
+   of the initial viewport so visitors feel there's more below. */
+export function LongDownArrow({ data }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      transform: `rotate(${data.rotate || 0}deg)`,
+      userSelect: 'none',
+    }}>
+      <span style={{
+        fontFamily: 'var(--font-note)', fontSize: '1.4rem',
+        color: 'var(--accent)', whiteSpace: 'nowrap', lineHeight: 1.05,
+        marginBottom: 6,
+      }}>
+        {data.text}
+      </span>
+      <svg width="40" height={data.length || 280}
+        viewBox={`0 0 40 ${data.length || 280}`}
+        style={{ overflow: 'visible', display: 'block' }}
+      >
+        <path
+          d={`M20 4 C 16 ${(data.length || 280) * 0.3}, 24 ${(data.length || 280) * 0.65}, 20 ${(data.length || 280) - 14}
+              M 20 ${(data.length || 280) - 14} L 11 ${(data.length || 280) - 26}
+              M 20 ${(data.length || 280) - 14} L 29 ${(data.length || 280) - 26}`}
+          fill="none" stroke="var(--accent)" strokeWidth="2.6"
+          strokeLinecap="round" strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
 export function AnnotationLabel({ data }) {
   const isVertical = data.arrow === '↑' || data.arrow === '↓'
   const arrowAfter = data.arrow === '→' || data.arrow === '↓' || data.arrow === '↘'
@@ -424,6 +456,129 @@ export function AnnotationLabel({ data }) {
         {data.text}
       </span>
       {arrowAfter && <HandArrow direction={data.arrow} />}
+    </div>
+  )
+}
+
+/* ---- Generic bio card (used on /about canvas) ---- */
+export function BioCard({ data }) {
+  return (
+    <div>
+      <FrameLabel># {data.frame || 'about-me'}</FrameLabel>
+      <div style={{ ...cardBase, padding: '1.6rem 1.7rem' }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          color: 'var(--accent)', letterSpacing: '0.12em',
+          textTransform: 'uppercase', marginBottom: '0.7rem',
+        }}>
+          {data.kicker}
+        </p>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 800,
+          fontSize: '1.7rem', letterSpacing: '-0.02em',
+          color: 'var(--ink)', marginBottom: '1rem', lineHeight: 1.1,
+        }}>
+          {data.title}
+        </h3>
+        {data.paragraphs?.map((p, i) => (
+          <p key={i} style={{
+            fontSize: '0.96rem', color: 'var(--ink-soft)', lineHeight: 1.65,
+            marginBottom: '0.85rem',
+          }}>
+            {p}
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ---- Numbered principle row card ---- */
+export function PrincipleCard({ data }) {
+  return (
+    <div style={{
+      ...cardBase, padding: '1.1rem 1.2rem 1.2rem',
+      display: 'flex', flexDirection: 'column', gap: 6,
+    }}>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
+        color: 'var(--accent)', letterSpacing: '0.06em',
+      }}>
+        {data.n}
+      </span>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 700,
+        fontSize: '1.1rem', letterSpacing: '-0.01em', color: 'var(--ink)',
+        lineHeight: 1.15,
+      }}>
+        {data.title}
+      </h3>
+      <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+        {data.body}
+      </p>
+    </div>
+  )
+}
+
+/* ---- Fact chip (Based, School, Currently, …) ---- */
+export function FactCard({ data }) {
+  return (
+    <div style={{
+      ...cardBase, padding: '0.95rem 1.05rem',
+      display: 'flex', alignItems: 'flex-start', gap: 10,
+    }}>
+      <span style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        width: 32, height: 32, borderRadius: 8,
+        background: 'var(--accent-soft)', color: 'var(--accent)',
+        flexShrink: 0, fontFamily: 'var(--font-display)',
+        fontWeight: 800, fontSize: '0.85rem',
+      }}>
+        {data.icon}
+      </span>
+      <div>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+          color: 'var(--ink-faint)', textTransform: 'uppercase',
+          letterSpacing: '0.08em', marginBottom: 2,
+        }}>
+          {data.label}
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 600,
+          fontSize: '0.9rem', color: 'var(--ink)', lineHeight: 1.2,
+        }}>
+          {data.value}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ---- Big page title card (used as the hero on subpage canvases) ---- */
+export function PageTitle({ data }) {
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+        color: 'var(--accent)', letterSpacing: '0.14em',
+        textTransform: 'uppercase', marginBottom: '0.6rem',
+      }}>
+        {data.kicker}
+      </p>
+      <h1 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '3.2rem', lineHeight: 0.98, letterSpacing: '-0.03em',
+        color: 'var(--ink)', marginBottom: '0.7rem',
+      }}>
+        {data.title}
+      </h1>
+      <p style={{
+        fontSize: '1.05rem', color: 'var(--ink-soft)', lineHeight: 1.5,
+        maxWidth: 480,
+      }}>
+        {data.blurb}
+      </p>
     </div>
   )
 }
