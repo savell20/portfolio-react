@@ -15,14 +15,25 @@ function anchor(side, x, y, w, h, tx, ty) {
   return [x + w / 2, y + h / 2]
 }
 
-/* Lightweight Canvas for subpage routes. Pan + zoom only — no tools,
-   stickies, drawing, or persistence. Just an exploratory board. */
-export default function MiniCanvas({ objects, connectors = [], initialView, renderObject, onActivate }) {
+/* Lightweight Canvas for subpage routes. Pan + zoom; objects with
+   `draggable: true` can be moved around (stays in memory only). */
+export default function MiniCanvas({ objects: initialObjects, connectors = [], initialView, renderObject, onActivate }) {
+  const [objects, setObjects] = useState(initialObjects)
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
+  const topZ = useRef(initialObjects.length + 50)
   const rootRef = useRef(null)
   const pan = useRef(null)
   const viewRef = useRef(view)
   viewRef.current = view
+
+  const onObjMove = (id, x, y) => {
+    setObjects(objs => objs.map(o => (o.id === id ? { ...o, x, y } : o)))
+  }
+  const onObjFront = (id) => {
+    topZ.current += 1
+    const z = topZ.current
+    setObjects(objs => objs.map(o => (o.id === id ? { ...o, z } : o)))
+  }
 
   useEffect(() => {
     const el = rootRef.current
@@ -118,7 +129,7 @@ export default function MiniCanvas({ objects, connectors = [], initialView, rend
           <CanvasObject
             key={obj.id} obj={obj} index={i} scale={view.scale}
             locked={!obj.draggable} mode="select"
-            onMove={() => {}} onFront={() => {}}
+            onMove={onObjMove} onFront={onObjFront}
             onActivate={onActivate || (() => {})}
           >
             {renderObject(obj)}

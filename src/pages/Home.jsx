@@ -62,26 +62,43 @@ const OBJECTS = [
   { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── Creative space — sits well below the hero so it doesn't compete
-  //     for attention. Visitors discover it as they scroll/pan down.
-  // Annotation sits right beneath the polaroid; its arrow purposely
-  // extends far past the initial viewport to suggest "there's more below".
+  // ─── "My place for fun" — sits well below the hero. Visitors discover
+  //     it as they scroll/pan down. Two interactive widgets + two play
+  //     areas (stickies + drawing) + a privacy note.
   { id: 'note-down', type: 'long-down', x: 280, y: 760, w: 200, h: 380, z: 8,
-    data: { text: 'explore down here 👀', length: 360, rotate: -3 } },
-  { id: 'seed-1', type: 'sticky', x: 200, y: 1140, w: 210, h: 170, z: 4, draggable: true,
-    data: { text: 'drop your own sticky ✎ — grab the sticky tool in the bottom dock',
-      color: 'var(--sticky-yellow)', rotate: -4, tall: true } },
-  { id: 'seed-2', type: 'sticky', x: 440, y: 1170, w: 220, h: 170, z: 4, draggable: true,
-    data: { text: 'or doodle with the pen 🖊  — pick a color in the dock',
-      color: 'var(--sticky-mint)', rotate: 3, tall: true } },
-  { id: 'seed-3', type: 'sticky', x: 700, y: 1140, w: 210, h: 170, z: 4, draggable: true,
-    data: { text: 'leave me a postage — say hi, share an idea',
-      color: 'var(--sticky-pink)', rotate: -2, tall: true } },
+    data: { text: 'my place for fun 👀', length: 360, rotate: -3 } },
+
+  // Section header (zone title) at the top of the fun row
+  { id: 'fun-title', type: 'cs-title', x: 600, y: 1120, w: 800, h: 100,
+    data: { kicker: '# my place for fun', title: 'Play around.' } },
+
+  // Privacy hint sticky — pinned at the start of the zone
+  { id: 'privacy', type: 'sticky', x: 200, y: 1240, w: 240, h: 160, z: 5, draggable: true,
+    data: { text: '🔒 your stickies & drawings only live in your browser — nobody else sees them, promise',
+      color: 'var(--sticky-yellow)', rotate: -3, tall: true } },
+
+  // Photo booth cabin
+  { id: 'home-booth', type: 'photobooth', x: 480, y: 1240, w: 220, h: 340, z: 6, to: '__photobooth__' },
+  { id: 'note-booth', type: 'note', x: 460, y: 1170, w: 260, h: 70, z: 8,
+    data: { text: 'snap a strip', arrow: '↓', rotate: 2 } },
+
+  // Dark room door
+  { id: 'home-dark', type: 'darkroom', x: 740, y: 1240, w: 220, h: 340, z: 6, to: '__darkroom__' },
+  { id: 'note-dark', type: 'note', x: 720, y: 1170, w: 260, h: 70, z: 8,
+    data: { text: 'enter the darkroom', arrow: '↓', rotate: -2 } },
+
+  // Sticky-notes zone (a labelled wall/board for visitors to drop notes)
+  { id: 'stickies-zone', type: 'play-zone', x: 1000, y: 1240, w: 320, h: 340, z: 3,
+    data: { icon: '✎', title: 'Sticky wall', body: 'Use the sticky tool in the bottom dock to drop notes anywhere — they save only to your browser.', tint: '#FFF6CC' } },
+
+  // Drawing zone
+  { id: 'drawing-zone', type: 'play-zone', x: 1360, y: 1240, w: 320, h: 340, z: 3,
+    data: { icon: '🖊', title: 'Doodle space', body: 'Switch to the pen tool in the bottom dock and scribble. Trash icon clears your strokes.', tint: '#D9EFFF' } },
 ]
 
 const CONNECTORS = []
 
-function CaseStudiesTitle() {
+function SectionTitle({ kicker, title }) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
@@ -92,15 +109,50 @@ function CaseStudiesTitle() {
         color: 'var(--accent)', letterSpacing: '0.16em',
         textTransform: 'uppercase', marginBottom: 8,
       }}>
-        # selected work
+        {kicker}
       </p>
       <h2 style={{
         fontFamily: 'var(--font-display)', fontWeight: 800,
         fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',
         color: 'var(--ink)',
       }}>
-        Case Studies
+        {title}
       </h2>
+    </div>
+  )
+}
+
+function PlayZone({ data }) {
+  return (
+    <div style={{
+      width: '100%', height: '100%',
+      background: data.tint || 'var(--surface)',
+      border: '2px dashed rgba(0,0,0,0.18)',
+      borderRadius: 'var(--radius)',
+      padding: '1.4rem 1.5rem',
+      display: 'flex', flexDirection: 'column', gap: 12,
+    }}>
+      <span style={{ fontSize: '2rem', lineHeight: 1 }}>{data.icon}</span>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '1.3rem', letterSpacing: '-0.02em',
+        color: 'var(--ink)', lineHeight: 1.1,
+      }}>
+        {data.title}
+      </h3>
+      <p style={{
+        fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.55,
+        marginTop: 'auto',
+      }}>
+        {data.body}
+      </p>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.55rem',
+        color: 'var(--ink-faint)', letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+      }}>
+        🔒 private to you
+      </p>
     </div>
   )
 }
@@ -108,7 +160,10 @@ function CaseStudiesTitle() {
 function makeRenderObject(navigate) {
   return function renderObject(obj) {
     switch (obj.type) {
-      case 'cs-title': return <CaseStudiesTitle />
+      case 'cs-title': return <SectionTitle
+        kicker={obj.data?.kicker || '# selected work'}
+        title={obj.data?.title || 'Case Studies'} />
+      case 'play-zone': return <PlayZone data={obj.data} />
 
       case 'project': return <ProjectCard data={obj.data} />
       case 'sticky': return <StickyNote data={obj.data} />
