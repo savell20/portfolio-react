@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Canvas from '../components/Canvas'
-import MusicPlayer from '../components/MusicPlayer'
 import {
   ProjectCard, StickyNote, ExperienceCard,
   AnnotationLabel, LongDownArrow,
@@ -20,7 +19,7 @@ const projects = {
   zolvo: {
     company: 'Zolvo (YC P26)', frame: 'zolvo.case', year: "'26",
     role: 'Founding Designer',
-    blurb: 'Designed five core fintech modules — AI invoice verification, reconciliation, collections — in eight weeks.',
+    blurb: 'Designed five core fintech modules, AI invoice verification, reconciliation, collections, in eight weeks.',
     tags: ['Fintech', 'AI', '0→1'],
     cover: 'linear-gradient(135deg,#2F3BC9,#5B6CF5)',
     badge: { type: 'yc', label: 'YC P26' },
@@ -36,7 +35,7 @@ const projects = {
   captura: {
     company: 'Captura tu mundo', frame: 'captura.case', year: "'20",
     role: 'Founder & Designer',
-    blurb: 'Founded a visual-storytelling startup — designed and built the entire product.',
+    blurb: 'Founded a visual-storytelling startup, designed and built the entire product.',
     tags: ['Founder', 'Brand', 'Product'],
     cover: 'linear-gradient(135deg,#1F8A6E,#3FBE96)',
   },
@@ -52,48 +51,33 @@ const projects = {
 //   - Whole composition is centered on canvas around x = 1000
 const OBJECTS = [
   // Polaroid on the left
-  { id: 'me', type: 'identity', x: 200, y: 220, w: 320, h: 400, z: 5, to: '/about' },
+  { id: 'me', type: 'identity', x: 200, y: 220, w: 340, h: 460, z: 5, to: '/about' },
 
-  // Case Studies header — top of the right column
-  { id: 'cs-title', type: 'cs-title', x: 640, y: 220, w: 940, h: 100 },
+  // Featured Projects header, top of the right column
+  // Uses its own type so we can render a 'View all →' button next to the title.
+  { id: 'cs-title', type: 'featured-title', x: 640, y: 220, w: 940, h: 100,
+    data: { kicker: '# featured', title: 'Featured Projects' } },
 
   // Three case studies in a row to the right of the polaroid
   { id: 'zolvo',   type: 'project', x: 640,  y: 360, w: 296, h: 360, z: 6, to: '/work/zolvo',   data: projects.zolvo },
   { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
   { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
-  // ─── "My place for fun" — sits well below the hero. Visitors discover
-  //     it as they scroll/pan down. Two interactive widgets + two play
-  //     areas (stickies + drawing) + a privacy note.
-  { id: 'note-down', type: 'long-down', x: 280, y: 760, w: 200, h: 380, z: 8,
-    data: { text: 'my place for fun 👀', length: 360, rotate: -3 } },
+  // Hand-drawn annotation arrow that points from the hero down to the
+  // fun zone — tells visitors there's more below the fold.
+  { id: 'note-down', type: 'long-down', x: 280, y: 760, w: 200, h: 160, z: 8,
+    data: { text: 'my place for fun 👀', length: 120, rotate: -3 } },
 
-  // Section header (zone title) at the top of the fun row
-  { id: 'fun-title', type: 'cs-title', x: 600, y: 1120, w: 800, h: 100,
+  // ─── "Play around" zone — aligned to the hero bounds (x:200 → x:1580).
+  //     Five tiles in one row, equal width, equal height. One section
+  //     header above. No floating annotations — clean grid.
+  { id: 'fun-title', type: 'cs-title', x: 200, y: 920, w: 800, h: 100,
     data: { kicker: '# my place for fun', title: 'Play around.' } },
 
-  // Privacy hint sticky — pinned at the start of the zone
-  { id: 'privacy', type: 'sticky', x: 200, y: 1240, w: 240, h: 160, z: 5, draggable: true,
-    data: { text: '🔒 your stickies & drawings only live in your browser — nobody else sees them, promise',
-      color: 'var(--sticky-yellow)', rotate: -3, tall: true } },
-
-  // Photo booth cabin
-  { id: 'home-booth', type: 'photobooth', x: 480, y: 1240, w: 220, h: 340, z: 6, to: '__photobooth__' },
-  { id: 'note-booth', type: 'note', x: 460, y: 1170, w: 260, h: 70, z: 8,
-    data: { text: 'snap a strip', arrow: '↓', rotate: 2 } },
-
-  // Dark room door
-  { id: 'home-dark', type: 'darkroom', x: 740, y: 1240, w: 220, h: 340, z: 6, to: '__darkroom__' },
-  { id: 'note-dark', type: 'note', x: 720, y: 1170, w: 260, h: 70, z: 8,
-    data: { text: 'enter the darkroom', arrow: '↓', rotate: -2 } },
-
-  // Sticky-notes zone (a labelled wall/board for visitors to drop notes)
-  { id: 'stickies-zone', type: 'play-zone', x: 1000, y: 1240, w: 320, h: 340, z: 3,
-    data: { icon: '✎', title: 'Sticky wall', body: 'Use the sticky tool in the bottom dock to drop notes anywhere — they save only to your browser.', tint: '#FFF6CC' } },
-
-  // Drawing zone
-  { id: 'drawing-zone', type: 'play-zone', x: 1360, y: 1240, w: 320, h: 340, z: 3,
-    data: { icon: '🖊', title: 'Doodle space', body: 'Switch to the pen tool in the bottom dock and scribble. Trash icon clears your strokes.', tint: '#D9EFFF' } },
+  // Two tiles: photobooth + darkroom, centered under the hero width.
+  // w = 240, gap = 45 → 2·240 + 45 = 525. Centered in 1380px → start x = 627.5
+  { id: 'home-booth', type: 'photobooth', x: 628, y: 1080, w: 240, h: 340, z: 6, to: '__photobooth__' },
+  { id: 'home-dark',  type: 'darkroom',   x: 913, y: 1080, w: 240, h: 340, z: 6, to: '__darkroom__' },
 ]
 
 const CONNECTORS = []
@@ -118,6 +102,50 @@ function SectionTitle({ kicker, title }) {
       }}>
         {title}
       </h2>
+    </div>
+  )
+}
+
+function FeaturedTitle({ data, navigate }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+      height: '100%', paddingBottom: 12, gap: 16,
+    }}>
+      <div>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+          color: 'var(--accent)', letterSpacing: '0.16em',
+          textTransform: 'uppercase', marginBottom: 8,
+        }}>
+          {data.kicker}
+        </p>
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 800,
+          fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',
+          color: 'var(--ink)',
+        }}>
+          {data.title}
+        </h2>
+      </div>
+      <button
+        onClick={(e) => { e.stopPropagation(); navigate('/projects') }}
+        onPointerDown={(e) => e.stopPropagation()}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          height: 38, padding: '0 1rem', cursor: 'none',
+          background: 'var(--surface)', color: 'var(--ink)',
+          border: 'var(--border-card)', borderRadius: 'var(--radius-pill)',
+          boxShadow: 'var(--shadow-card)',
+          fontFamily: 'var(--font-mono)', fontSize: '0.72rem', fontWeight: 600,
+          whiteSpace: 'nowrap',
+          transition: 'background 0.15s, color 0.15s, transform 0.15s var(--ease)',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.color = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)' }}
+      >
+        view all →
+      </button>
     </div>
   )
 }
@@ -163,6 +191,7 @@ function makeRenderObject(navigate) {
       case 'cs-title': return <SectionTitle
         kicker={obj.data?.kicker || '# selected work'}
         title={obj.data?.title || 'Case Studies'} />
+      case 'featured-title': return <FeaturedTitle data={obj.data} navigate={navigate} />
       case 'play-zone': return <PlayZone data={obj.data} />
 
       case 'project': return <ProjectCard data={obj.data} />
@@ -171,6 +200,7 @@ function makeRenderObject(navigate) {
         <Polaroid
           src={fotoPersonal}
           caption="Santiago Avella"
+          tags={['🇺🇸 US citizen', '📍 SF']}
           rotate={-4}
           clickable
         />
@@ -188,7 +218,7 @@ function makeRenderObject(navigate) {
       case 'workflow': return <WorkflowStep data={obj.data} />
       case 'darkroom': return <DarkRoomDoor />
       case 'puzzle': return (
-        <div title="psst — click me" style={{
+        <div title="psst, click me" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           width: '100%', height: '100%',
           color: 'var(--accent)',
@@ -208,7 +238,7 @@ function computeInitialView() {
   const h = window.innerHeight
   // Focus on the hero: polaroid (left) + Case Studies title + 3 project
   // cards (right). The creative space below sits intentionally below the
-  // fold — visitors discover it by panning down.
+  // fold, visitors discover it by panning down.
   // Hero bbox: x:200–1580 (1380w), y:220–720 (500h). Centered around (890, 470).
   const scale = Math.min(0.88, (w - 100) / 1380, (h - 240) / 520)
   return {
@@ -253,7 +283,6 @@ export default function Home() {
         renderObject={renderObject}
         onActivate={onActivate}
       />
-      <MusicPlayer />
       {darkRoomOpen && <DarkRoomModal onClose={() => setDarkRoomOpen(false)} />}
       {puzzleOpen && <Puzzle onClose={() => setPuzzleOpen(false)} />}
     </>

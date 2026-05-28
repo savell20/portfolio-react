@@ -1,4 +1,4 @@
-// A FigJam-style connector — curved dashed line between two canvas points.
+// A FigJam-style connector, curved dashed line between two canvas points.
 // Rendered as an SVG <g>; place inside the Canvas SVG layer.
 // Colors use the `style` prop so CSS vars resolve (and theme-switch works).
 export default function Connector({ x1, y1, x2, y2, label }) {

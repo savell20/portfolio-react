@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { HelpCircle } from 'lucide-react'
 import Tutorial from './Tutorial'
 
-/* Bottom-right floater — just the Help button. Sits above the zoom Toolbar. */
+/* Bottom-right floater, just the Help button. Sits above the zoom Toolbar. */
 export default function ToolsFloater() {
   const [tutOpen, setTutOpen] = useState(false)
 

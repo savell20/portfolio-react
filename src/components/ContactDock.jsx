@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Mail, Phone, FileText } from 'lucide-react'
 
-// lucide dropped brand icons — inline LinkedIn glyph.
+// lucide dropped brand icons, inline LinkedIn glyph.
 function Linkedin({ size = 17 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -11,7 +11,7 @@ function Linkedin({ size = 17 }) {
 }
 
 /* ───────────────────────────────────────────────────────────
-   SANTIAGO — edit these two:
+   SANTIAGO, edit these two:
    PHONE      : your number (digits, for the tel: link)
    RESUME_URL : a link to your résumé PDF
    ─────────────────────────────────────────────────────────── */

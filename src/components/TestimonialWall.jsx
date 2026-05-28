@@ -105,7 +105,7 @@ export default function TestimonialWall() {
             Worked with me? Pin a note.
           </h2>
           <p style={{ fontSize: '0.9rem', color: 'var(--ink-soft)', marginTop: '0.35rem' }}>
-            Past teammates, clients, collaborators — leave an honest word.
+            Past teammates, clients, collaborators, leave an honest word.
           </p>
         </div>
         <button
@@ -138,13 +138,13 @@ export default function TestimonialWall() {
               readOnly
               text={t.message}
               color={t.color || COLORS[idx % COLORS.length]}
-              footer={`— ${t.name}${t.role ? ' · ' + t.role : ''}`}
+              footer={`${t.name}${t.role ? ' · ' + t.role : ''}`}
             />
           </div>
         ))}
       </div>
 
-      {/* Add modal — portaled to body so position:fixed escapes the
+      {/* Add modal, portaled to body so position:fixed escapes the
           canvas's transformed layer */}
       {open && createPortal(
         <div
@@ -206,7 +206,7 @@ export default function TestimonialWall() {
                 fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
                 color: 'var(--ink-faint)', marginTop: '0.8rem', textAlign: 'center',
               }}>
-                saved locally — connect Supabase to share it with everyone
+                saved locally, connect Supabase to share it with everyone
               </p>
             )}
           </div>

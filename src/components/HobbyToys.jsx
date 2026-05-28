@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { playGuitarChord } from '../lib/sound'
 
 /* ─────────────────────────────────────────────────────────────
-   GUITAR — click to strum, plays a C-major arpeggio + the
+   GUITAR, click to strum, plays a C-major arpeggio + the
    strings briefly twitch.
    ───────────────────────────────────────────────────────────── */
 function ToyCaption({ children }) {
@@ -61,7 +61,7 @@ export function Guitar({ height = 270, label }) {
         {/* Bridge */}
         <rect x="62" y="180" width="36" height="5" rx="1" fill="#2a1810" />
 
-        {/* Strings (6) — vibrate on pluck */}
+        {/* Strings (6), vibrate on pluck */}
         {[0, 1, 2, 3, 4, 5].map(i => {
           const x = 73 + i * 2.8
           return (
@@ -93,7 +93,7 @@ export function Guitar({ height = 270, label }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   F1 CAR — drives across the frame in a loop, wheels spinning,
+   F1 CAR, drives across the frame in a loop, wheels spinning,
    tiny smoke puffs trailing behind.
    ───────────────────────────────────────────────────────────── */
 export function F1Car({ height = 150, label }) {
@@ -111,7 +111,7 @@ export function F1Car({ height = 150, label }) {
         position: 'absolute', bottom: 0, left: 0, right: 0, height: '38%',
         background: 'linear-gradient(180deg,#2a2520 0%,#1a1612 100%)',
       }} />
-      {/* lane markings — sliding to fake speed */}
+      {/* lane markings, sliding to fake speed */}
       <div style={{
         position: 'absolute', bottom: '17%', left: 0, right: 0, height: 4,
         background: 'repeating-linear-gradient(90deg, #FFD800 0 22px, transparent 22px 44px)',
@@ -141,7 +141,7 @@ export function F1Car({ height = 150, label }) {
           {/* front wing */}
           <rect x="200" y="62" width="34" height="3" rx="1" fill="#222" />
           <rect x="216" y="55" width="4" height="10" fill="#222" />
-          {/* wheels — spin */}
+          {/* wheels, spin */}
           <g style={{ transformOrigin: '46px 76px', animation: 'f1-wheel 0.18s linear infinite' }}>
             <circle cx="46" cy="76" r="14" fill="#1a1a1a" stroke="#444" strokeWidth="2" />
             <circle cx="46" cy="76" r="5" fill="#777" />
@@ -173,7 +173,7 @@ export function F1Car({ height = 150, label }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   FLIGHT MAP — a tiny stylized world with a plane looping
+   FLIGHT MAP, a tiny stylized world with a plane looping
    between cities I've lived in or want to visit.
    ───────────────────────────────────────────────────────────── */
 const STOPS = [

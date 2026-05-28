@@ -105,7 +105,7 @@ export default function Puzzle({ onClose }) {
           marginBottom: '1rem',
         }}>
           {solved
-            ? "Thanks for poking around. Here's one of my photos in HD — a wallpaper from me to you."
+            ? "Thanks for poking around. Here's one of my photos in HD, a wallpaper from me to you."
             : 'Tap two tiles to swap them. Reassemble the photo to unlock a little gift.'}
         </p>
 

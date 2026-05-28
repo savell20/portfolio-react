@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import Connector from './Connector'
 import CanvasObject from './CanvasObject'
 import Toolbar from './Toolbar'
-import ToolDock from './ToolDock'
 import EditableSticky from './EditableSticky'
 import Polaroid from './Polaroid'
 import PhotoBooth from './PhotoBooth'
@@ -117,7 +116,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     return () => el.removeEventListener('wheel', onWheel)
   }, [])
 
-  // Window-level move/up — handles both panning and freehand drawing.
+  // Window-level move/up, handles both panning and freehand drawing.
   useEffect(() => {
     const onMove = (e) => {
       if (pan.current) {
@@ -141,7 +140,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
       if (drawing.current) {
         drawing.current = null
         setStrokes(s => {
-          // Drop any 1-point "tap" strokes — they render as a stray dot.
+          // Drop any 1-point "tap" strokes, they render as a stray dot.
           const cleaned = s.filter(st => st.points.length >= 2)
           save(STROKE_KEY, cleaned)
           return cleaned
@@ -269,6 +268,22 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     return () => { delete document.body.dataset.toolMode }
   }, [mode])
 
+  // Sync state with the global ToolDock mounted in App.jsx.
+  useEffect(() => {
+    const onMode = (e) => {
+      const { mode: m, drawColor: c } = e.detail || {}
+      if (typeof m === 'string') setMode(m)
+      if (typeof c === 'string') setDrawColor(c)
+    }
+    const onClear = () => { setStrokes([]); save(STROKE_KEY, []) }
+    window.addEventListener('tool-mode', onMode)
+    window.addEventListener('tool-clear', onClear)
+    return () => {
+      window.removeEventListener('tool-mode', onMode)
+      window.removeEventListener('tool-clear', onClear)
+    }
+  }, [])
+
   // Tool ghost: a yellow sticky (sticky mode) or a pen (draw mode) that
   // hovers under the cursor so the user previews their action. FigJam-style.
   const stickyGhostRef = useRef(null)
@@ -316,7 +331,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         cursor,
       }}
     >
-      {/* Content layer — panned & zoomed */}
+      {/* Content layer, panned & zoomed */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
         transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
@@ -393,15 +408,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         onReset={reset}
       />
 
-      <ToolDock
-        mode={mode}
-        setMode={setMode}
-        drawColor={drawColor}
-        setDrawColor={setDrawColor}
-        onClearDrawing={clearDrawing}
-      />
-
-      {/* Ghost pen — follows the cursor while the draw tool is active. The
+      {/* Ghost pen, follows the cursor while the draw tool is active. The
           pen tip is positioned exactly at the cursor point so the stroke
           starts where the icon "writes". */}
       {mode === 'draw' && (

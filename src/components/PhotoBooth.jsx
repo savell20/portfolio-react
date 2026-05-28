@@ -20,7 +20,7 @@ const EFFECTS = [
   { id: 'xray',     label: 'X-Ray',   cssFilter: 'invert(1) grayscale(0.4) contrast(1.4) brightness(0.85)' },
   { id: 'thermal',  label: 'Thermal', cssFilter: 'sepia(1) hue-rotate(180deg) saturate(5) contrast(1.25)' },
   { id: 'pencil',   label: 'Pencil',  cssFilter: 'grayscale(0.7) contrast(1.4) brightness(1.15) saturate(0.5)' },
-  // Geometric distortions — via SVG filter url() so they work in both the
+  // Geometric distortions, via SVG filter url() so they work in both the
   // live preview and ctx.filter during capture in modern browsers.
   { id: 'twirl',    label: 'Twirl',   cssFilter: 'url(#pb-twirl)' },
   { id: 'bulge',    label: 'Bulge',   cssFilter: 'url(#pb-bulge)' },
@@ -33,17 +33,17 @@ function FilterDefs() {
   return (
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden>
       <defs>
-        {/* TWIRL — turbulence + displacement gives a soft swirl */}
+        {/* TWIRL, turbulence + displacement gives a soft swirl */}
         <filter id="pb-twirl">
           <feTurbulence type="turbulence" baseFrequency="0.012" numOctaves="2" seed="3" result="t" />
           <feDisplacementMap in="SourceGraphic" in2="t" scale="42" xChannelSelector="R" yChannelSelector="G" />
         </filter>
-        {/* BULGE — radial gradient pushed through displacement */}
+        {/* BULGE, radial gradient pushed through displacement */}
         <filter id="pb-bulge">
           <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" seed="11" result="n" />
           <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G" />
         </filter>
-        {/* DENT — same idea, negative scale for inward pinch */}
+        {/* DENT, same idea, negative scale for inward pinch */}
         <filter id="pb-dent">
           <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n" />
           <feDisplacementMap in="SourceGraphic" in2="n" scale="-50" xChannelSelector="R" yChannelSelector="G" />
@@ -53,8 +53,8 @@ function FilterDefs() {
   )
 }
 
-// Brand colors — pulled from the portfolio's design tokens.
-const BRAND_ACCENT = '#2F5CFF'   // var(--accent)
+// Brand colors, pulled from the portfolio's design tokens.
+const BRAND_ACCENT = '#2F5CFF'   // var(--accent), primary brand blue
 const BRAND_INK = '#18181A'      // var(--ink)
 const BRAND_PAPER = '#FAF8F2'    // polaroid cream
 
@@ -85,7 +85,7 @@ function buildStrip(frames, caption) {
   ctx.fillStyle = BRAND_ACCENT
   ctx.fillRect(0, 0, accentW, stripH)
 
-  // header — brand mark in ink, accent dot, small mono URL
+  // header, brand mark in ink, accent dot, small mono URL
   ctx.fillStyle = BRAND_INK
   ctx.font = `700 16px "Schibsted Grotesk", system-ui, sans-serif`
   ctx.textAlign = 'left'
@@ -123,7 +123,7 @@ function buildStrip(frames, caption) {
     y += photoH + gap
   }
 
-  // caption — Caveat handwriting in ink
+  // caption, Caveat handwriting in ink
   ctx.fillStyle = BRAND_INK
   ctx.font = `400 32px "Caveat", cursive`
   ctx.textAlign = 'center'
@@ -346,7 +346,7 @@ export default function PhotoBooth({ onClose, onSave }) {
           {phase === 'done'
             ? 'Looking good 👌'
             : phase === 'idle'
-              ? 'Smile — three quick shots'
+              ? 'Smile, three quick shots'
               : `Shot ${shotIdx} of ${SHOTS}`}
         </h3>
 
@@ -425,7 +425,7 @@ export default function PhotoBooth({ onClose, onSave }) {
           )}
         </div>
 
-        {/* Effects picker — Mac Photo Booth-style. Hidden once shots start. */}
+        {/* Effects picker, Mac Photo Booth-style. Hidden once shots start. */}
         {!error && (phase === 'idle' || phase === 'done') && (
           <>
             <FilterDefs />
@@ -543,7 +543,7 @@ export default function PhotoBooth({ onClose, onSave }) {
               color: 'var(--ink-faint)', textAlign: 'center',
               padding: '0.55rem 0',
             }}>
-              hold still — capturing {SHOTS - frames.length} more…
+              hold still, capturing {SHOTS - frames.length} more…
             </p>
           )
         )}

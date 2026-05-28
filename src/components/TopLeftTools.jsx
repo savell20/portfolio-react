@@ -30,7 +30,7 @@ function IconBtn({ onClick, title, children, dim }) {
   )
 }
 
-/* Top-left utility pill — theme toggle + click-sound mute. */
+/* Top-left utility pill, theme toggle + click-sound mute. */
 export default function TopLeftTools() {
   const [theme, setTheme] = useState(initialTheme)
   const [clickMuted, setClickMutedState] = useState(isMuted())

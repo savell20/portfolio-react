@@ -11,7 +11,7 @@ const WORKFLOW_ICONS = {
 }
 import fotoPersonal from '../assets/foto-personal.jpeg'
 
-/* Shared arrow chip — points right by default, rotates to diagonal
+/* Shared arrow chip, points right by default, rotates to diagonal
    top-right (↗) on hover. Same animation on every interactive card. */
 export function ArrowChip({ hover, size = 26 }) {
   return (
@@ -43,7 +43,7 @@ const cardBase = {
 }
 
 // FrameLabel floats above the card via absolute positioning so it doesn't
-// add height to the card's bounding box — keeps connector anchors flush
+// add height to the card's bounding box, keeps connector anchors flush
 // with the card's actual visible edges.
 /* Brand logo chips for the project covers. */
 function YCLogo({ size = 18 }) {
@@ -120,23 +120,34 @@ export function ProjectCard({ data }) {
         transform: hover ? 'translate(-2px, -3px)' : 'translate(0, 0)',
         transition: 'transform 0.22s var(--ease)',
       }}>
-        {/* Cover — monogram + optional brand badge */}
+        {/* Cover — real image if provided, otherwise gradient + monogram */}
         <div style={{
-          height: 132, background: data.cover,
+          height: 132,
+          background: data.coverImage ? '#222' : data.cover,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative', overflow: 'hidden',
         }}>
-          <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
-            fontSize: '5.5rem', color: 'rgba(255,255,255,0.16)',
-            lineHeight: 1, userSelect: 'none',
-          }}>
-            {data.company[0]}
-          </span>
+          {data.coverImage ? (
+            <img
+              src={data.coverImage}
+              alt={data.company}
+              draggable={false}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <span style={{
+              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontSize: '5.5rem', color: 'rgba(255,255,255,0.16)',
+              lineHeight: 1, userSelect: 'none',
+            }}>
+              {data.company[0]}
+            </span>
+          )}
           <span style={{
             position: 'absolute', top: 10, left: 12,
             fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-            color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em',
+            color: 'rgba(255,255,255,0.85)', letterSpacing: '0.06em',
+            textShadow: data.coverImage ? '0 1px 2px rgba(0,0,0,0.4)' : 'none',
           }}>
             {data.year}
           </span>
@@ -272,7 +283,7 @@ export function PhotographyCard() {
             fontSize: '0.9rem', color: 'var(--ink-soft)',
             lineHeight: 1.6, marginBottom: '0.9rem',
           }}>
-            A slow roll — film snapshots from weekends, in-betweens, and the trips
+            A slow roll, film snapshots from weekends, in-betweens, and the trips
             I almost forgot to bring a camera on. Color, grain, mistakes left in.
           </p>
 
@@ -374,7 +385,7 @@ export function AwardCard({ data }) {
   )
 }
 
-/* ---- Annotation label — feels like marker writing on the canvas grid ---- */
+/* ---- Annotation label, feels like marker writing on the canvas grid ---- */
 // All arrows share an identical sweep so the waymarkers feel consistent.
 const ARROW_PATHS = {
   '↑': 'M50 90 C 46 70, 56 50, 50 12 M 50 12 L 41 22 M 50 12 L 59 22',
@@ -404,7 +415,7 @@ function HandArrow({ direction, size = 70 }) {
   )
 }
 
-/* Tall handwritten "↓" hint — the arrow purposely runs off the bottom
+/* Tall handwritten "↓" hint, the arrow purposely runs off the bottom
    of the initial viewport so visitors feel there's more below. */
 export function LongDownArrow({ data }) {
   return (
@@ -460,12 +471,193 @@ export function AnnotationLabel({ data }) {
   )
 }
 
+/* ---- Resume entry (company logo + role + dates) ---- */
+function AmazonLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#FF9900" />
+      <text x="14" y="17" textAnchor="middle"
+        fontFamily="'Helvetica Neue', Arial, sans-serif"
+        fontSize="14" fontWeight="800" fill="#232F3E">a</text>
+      <path d="M 7 21 Q 14 24, 21 21" fill="none" stroke="#232F3E" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M 19 21 L 21 21 L 21 19" fill="none" stroke="#232F3E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function BMWLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <circle cx="14" cy="14" r="13" fill="#fff" stroke="#000" strokeWidth="1.5" />
+      <circle cx="14" cy="14" r="9.5" fill="#000" />
+      <path d="M 14 4.5 A 9.5 9.5 0 0 1 23.5 14 L 14 14 Z" fill="#fff" />
+      <path d="M 14 23.5 A 9.5 9.5 0 0 1 4.5 14 L 14 14 Z" fill="#fff" />
+      <path d="M 14 4.5 A 9.5 9.5 0 0 0 4.5 14 L 14 14 Z" fill="#2A9DF4" />
+      <path d="M 14 23.5 A 9.5 9.5 0 0 0 23.5 14 L 14 14 Z" fill="#2A9DF4" />
+    </svg>
+  )
+}
+function OshkoshLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#000" />
+      <path d="M 9 8 L 19 8 L 14 14 L 19 20 L 9 20 L 14 14 Z" fill="#fff" />
+    </svg>
+  )
+}
+function SCADLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#FFD400" />
+      <text x="14" y="19" textAnchor="middle"
+        fontFamily="'Helvetica Neue', Arial, sans-serif"
+        fontSize="11" fontWeight="800" fill="#000">SCAD</text>
+    </svg>
+  )
+}
+
+function ZolvoLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#2F3BC9" />
+      <text x="14" y="20" textAnchor="middle"
+        fontFamily="'Helvetica Neue', Arial, sans-serif"
+        fontSize="16" fontWeight="800" fill="#fff">Z</text>
+    </svg>
+  )
+}
+function ThinkerfaceLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#6B3FFF" />
+      <text x="14" y="20" textAnchor="middle"
+        fontFamily="'Helvetica Neue', Arial, sans-serif"
+        fontSize="16" fontWeight="800" fill="#fff">T</text>
+    </svg>
+  )
+}
+function CapturaLogo({ size = 28 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden>
+      <rect width="28" height="28" rx="6" fill="#1F8A6E" />
+      <circle cx="14" cy="15" r="5.5" fill="none" stroke="#fff" strokeWidth="1.8" />
+      <circle cx="14" cy="15" r="2" fill="#fff" />
+      <rect x="11" y="8" width="6" height="2.2" rx="0.5" fill="#fff" />
+    </svg>
+  )
+}
+
+const RESUME_LOGOS = {
+  amazon: AmazonLogo, bmw: BMWLogo, oshkosh: OshkoshLogo, scad: SCADLogo,
+  yc: YCLogo, hubspot: HubSpotLogo,
+  zolvo: ZolvoLogo, thinkerface: ThinkerfaceLogo, captura: CapturaLogo,
+}
+
+export function ResumeEntry({ data }) {
+  const Logo = RESUME_LOGOS[data.logo] || YCLogo
+  const hasBullets = Array.isArray(data.bullets) && data.bullets.length > 0
+  return (
+    <div style={{
+      ...cardBase, padding: '1.05rem 1.2rem',
+      display: 'flex', alignItems: 'flex-start', gap: 14,
+    }}>
+      <Logo size={36} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          fontSize: '0.98rem', color: 'var(--ink)', letterSpacing: '-0.01em',
+          lineHeight: 1.2,
+        }}>
+          {data.role} <span style={{ color: 'var(--ink-faint)', fontWeight: 500 }}> @ </span>
+          <span style={{ color: 'var(--ink)' }}>{data.company}</span>
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+          color: 'var(--ink-soft)', letterSpacing: '0.04em', marginTop: 3,
+        }}>
+          {data.dates}{data.location ? ` · ${data.location}` : ''}
+        </p>
+        {hasBullets && (
+          <ul style={{
+            listStyle: 'none', padding: 0,
+            margin: '0.7rem 0 0',
+            display: 'flex', flexDirection: 'column', gap: '0.35rem',
+          }}>
+            {data.bullets.map((b, i) => (
+              <li key={i} style={{
+                display: 'flex', gap: 8, alignItems: 'flex-start',
+                fontSize: '0.82rem', color: 'var(--ink-soft)', lineHeight: 1.5,
+              }}>
+                <span style={{
+                  flexShrink: 0, marginTop: 7,
+                  width: 4, height: 4, borderRadius: '50%',
+                  background: 'var(--accent)',
+                }} />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ---- Goals card ---- */
+export function GoalsCard({ data, height }) {
+  return (
+    <div style={{
+      ...cardBase, padding: '1.4rem 1.55rem',
+      minHeight: height || 'auto',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+        color: 'var(--accent)', letterSpacing: '0.12em',
+        textTransform: 'uppercase', marginBottom: '0.55rem',
+      }}>
+        # my goals
+      </p>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontWeight: 800,
+        fontSize: '1.5rem', letterSpacing: '-0.02em',
+        color: 'var(--ink)', marginBottom: '1rem', lineHeight: 1.1,
+      }}>
+        Where I’m headed
+      </h3>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {data.items?.map((it, i) => (
+          <li key={i} style={{
+            display: 'flex', alignItems: 'flex-start', gap: 10,
+            padding: '0.6rem 0',
+            borderTop: i === 0 ? 'none' : '1px solid var(--line)',
+          }}>
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
+              color: 'var(--accent)', flexShrink: 0, paddingTop: 1,
+            }}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span style={{
+              fontSize: '0.92rem', color: 'var(--ink)', lineHeight: 1.55,
+            }}>
+              {it}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 /* ---- Generic bio card (used on /about canvas) ---- */
-export function BioCard({ data }) {
+export function BioCard({ data, height }) {
   return (
     <div>
       <FrameLabel># {data.frame || 'about-me'}</FrameLabel>
-      <div style={{ ...cardBase, padding: '1.6rem 1.7rem' }}>
+      <div style={{
+        ...cardBase, padding: '1.6rem 1.7rem',
+        minHeight: height || 'auto',
+      }}>
         <p style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
           color: 'var(--accent)', letterSpacing: '0.12em',
@@ -575,7 +767,7 @@ export function PageTitle({ data }) {
       </h1>
       <p style={{
         fontSize: '1.05rem', color: 'var(--ink-soft)', lineHeight: 1.5,
-        maxWidth: 480,
+        maxWidth: data.blurbWidth || 480,
       }}>
         {data.blurb}
       </p>
@@ -616,7 +808,7 @@ export function StoryCard({ data }) {
   )
 }
 
-/* ---- Photo booth cabin — curtains open on hover ---- */
+/* ---- Photo booth cabin, curtains open on hover ---- */
 export function PhotoBoothCabin({ height = 320 }) {
   const [hover, setHover] = useState(false)
   return (
@@ -695,7 +887,7 @@ export function PhotoBoothCabin({ height = 320 }) {
         boxShadow: '0 1px 2px rgba(0,0,0,0.4)',
       }} />
 
-      {/* Curtain — left half */}
+      {/* Curtain, left half */}
       <div style={{
         position: 'absolute', top: 49, bottom: 6, left: 6,
         width: 'calc(50% - 6px)',
@@ -705,7 +897,7 @@ export function PhotoBoothCabin({ height = 320 }) {
         transition: 'transform 0.55s var(--ease)',
         zIndex: 5,
       }} />
-      {/* Curtain — right half */}
+      {/* Curtain, right half */}
       <div style={{
         position: 'absolute', top: 49, bottom: 6, right: 6,
         width: 'calc(50% - 6px)',
@@ -841,7 +1033,7 @@ export function AboutCard() {
     <div>
       <FrameLabel># about</FrameLabel>
       <div style={{ ...cardBase, padding: '1.9rem 2rem', position: 'relative' }}>
-        {/* LinkedIn — corner */}
+        {/* LinkedIn, corner */}
         <a
           href="https://linkedin.com/in/santiagoavella"
           target="_blank"
@@ -891,7 +1083,7 @@ export function AboutCard() {
               color: 'var(--ink-faint)', letterSpacing: '0.1em',
               textTransform: 'uppercase', marginBottom: '0.4rem',
             }}>
-              Portfolio — 2026
+              Portfolio, 2026
             </p>
             <h1 style={{
               fontFamily: 'var(--font-display)', fontWeight: 800,
@@ -908,13 +1100,13 @@ export function AboutCard() {
           fontSize: '1.35rem', lineHeight: 1.4, letterSpacing: '-0.01em',
           color: 'var(--ink)', marginTop: '1.4rem',
         }}>
-          Product designer crafting <span style={{ color: 'var(--accent)' }}>AI-native interfaces</span> —
+          Product designer crafting <span style={{ color: 'var(--accent)' }}>AI-native interfaces</span>
           turning complex systems into things that feel obvious.
         </p>
 
         <p style={{ fontSize: '1.05rem', color: 'var(--ink-soft)', lineHeight: 1.65, marginTop: '0.8rem' }}>
           Designed at a YC-backed startup, shipped at HubSpot, and built my own
-          company from scratch. The best interfaces disappear — leaving only the outcome.
+          company from scratch. The best interfaces disappear, leaving only the outcome.
         </p>
       </div>
     </div>

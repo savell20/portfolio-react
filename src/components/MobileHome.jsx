@@ -216,7 +216,7 @@ export default function MobileHome() {
               color: 'var(--accent)', letterSpacing: '0.1em',
               textTransform: 'uppercase', marginBottom: 4,
             }}>
-              hello — I'm
+              hello, I'm
             </p>
             <h1 style={{
               fontFamily: 'var(--font-display)', fontWeight: 800,
@@ -231,7 +231,7 @@ export default function MobileHome() {
           fontFamily: 'var(--font-display)', fontWeight: 600,
           fontSize: '1.02rem', lineHeight: 1.45, color: 'var(--ink)',
         }}>
-          Product designer crafting <span style={{ color: 'var(--accent)' }}>AI-native interfaces</span> —
+          Product designer crafting <span style={{ color: 'var(--accent)' }}>AI-native interfaces</span>
           turning complex systems into things that feel obvious.
         </p>
         <button

@@ -12,7 +12,7 @@ const NEGATIVES = [
 ]
 
 /* ─────────────────────────────────────────────────────────────
-   DARK ROOM DOOR — canvas object. Opens on hover, click to enter.
+   DARK ROOM DOOR, canvas object. Opens on hover, click to enter.
    ───────────────────────────────────────────────────────────── */
 export function DarkRoomDoor({ height = 320 }) {
   const [hover, setHover] = useState(false)
@@ -70,7 +70,7 @@ export function DarkRoomDoor({ height = 320 }) {
         </span>
       </div>
 
-      {/* Left door panel — hinges left, swings out */}
+      {/* Left door panel, hinges left, swings out */}
       <div style={{
         position: 'absolute', top: 42, bottom: 8, left: 8,
         width: 'calc(50% - 8px)',
@@ -91,7 +91,7 @@ export function DarkRoomDoor({ height = 320 }) {
           boxShadow: '0 0 4px rgba(0,0,0,0.7)',
         }} />
       </div>
-      {/* Right door panel — hinges right, swings out */}
+      {/* Right door panel, hinges right, swings out */}
       <div style={{
         position: 'absolute', top: 42, bottom: 8, right: 8,
         width: 'calc(50% - 8px)',
@@ -116,7 +116,7 @@ export function DarkRoomDoor({ height = 320 }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   DARK ROOM MODAL — drag negatives into the developer tray to
+   DARK ROOM MODAL, drag negatives into the developer tray to
    reveal the photos. Stays revealed once developed.
    ───────────────────────────────────────────────────────────── */
 function Negative({ neg, developed, onDevelop, containerRef }) {
@@ -206,7 +206,7 @@ function Negative({ neg, developed, onDevelop, containerRef }) {
         color: '#5a5a52', letterSpacing: '0.1em',
         textTransform: 'uppercase',
       }}>
-        {developed ? neg.caption : '— — —'}
+        {developed ? neg.caption : '· · ·'}
       </p>
     </div>
   )
@@ -298,7 +298,7 @@ export function DarkRoomModal({ onClose }) {
           />
         ))}
 
-        {/* Developer tray — center-bottom */}
+        {/* Developer tray, center-bottom */}
         <div
           data-tray
           style={{

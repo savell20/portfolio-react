@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import MiniCanvas from '../components/MiniCanvas'
 import { PageTitle, BioCard } from '../components/CanvasCards'
+import { PAGE, FIRST_MODULE_Y, pageInitialView } from '../lib/layout'
 
 const MILESTONES = [
   { year: '1998',         where: 'Bogotá, Colombia', text: 'Born and raised in a city that taught me how to design with constraints.' },
@@ -10,17 +12,21 @@ const MILESTONES = [
   { year: "2026 →",       where: 'Zolvo (YC P26)',   text: 'Founding designer for the financial OS for Latin American SMEs. Five core modules shipped in eight weeks.' },
 ]
 
+const MILE_H = 180
+const MILE_GAP = PAGE.ROW_GAP
+
 const OBJECTS = [
-  { id: 'title', type: 'title', x: 80, y: 80, w: 600, h: 240,
+  { id: 'title', type: 'title', x: PAGE.X, y: PAGE.TITLE_Y, w: PAGE.W, h: PAGE.TITLE_H,
     data: {
       kicker: '# my story',
       title: 'Bogotá → SCAD → here.',
-      blurb: 'Every chapter that landed me at this canvas — laid out as a timeline.',
+      blurb: 'Every chapter that landed me at this canvas, laid out as a timeline.',
     } },
 
-  // Vertical stack of milestone cards on the right; left column for the title
   ...MILESTONES.map((m, i) => ({
-    id: `milestone-${i}`, type: 'milestone', x: 700, y: 80 + i * 200, w: 600, h: 180,
+    id: `milestone-${i}`, type: 'milestone',
+    x: PAGE.X, y: FIRST_MODULE_Y + i * (MILE_H + MILE_GAP),
+    w: PAGE.W, h: MILE_H,
     data: {
       frame: m.where.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       kicker: m.year,
@@ -43,20 +49,8 @@ function renderObject(obj) {
   }
 }
 
-function initialView() {
-  const w = window.innerWidth
-  const h = window.innerHeight
-  // Tall content (5 milestones). Fit width, allow vertical scrolling/panning.
-  const scale = Math.min(0.85, (w - 100) / 1300, (h - 160) / 700)
-  return {
-    scale,
-    x: w / 2 - 700 * scale,
-    y: 110,
-  }
-}
-
 export default function Story() {
-  const [view] = useState(initialView)
+  const [view] = useState(pageInitialView)
   return (
     <MiniCanvas
       objects={OBJECTS}

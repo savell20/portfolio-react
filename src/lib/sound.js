@@ -1,4 +1,4 @@
-// Tiny Web Audio click/pop sounds — no asset files.
+// Tiny Web Audio click/pop sounds, no asset files.
 let ctx = null
 let muted = localStorage.getItem('sound-muted') === '1'
 
@@ -9,7 +9,7 @@ function ac() {
     try { ctx = new AC() } catch { return null }
   }
   // Browsers ship the context in "suspended" until a user gesture unlocks it.
-  // Resume returns a Promise we don't need to await — once the gesture has
+  // Resume returns a Promise we don't need to await, once the gesture has
   // happened, subsequent calls will be running.
   if (ctx.state === 'suspended') { try { ctx.resume() } catch { /* noop */ } }
   return ctx

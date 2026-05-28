@@ -1,4 +1,4 @@
-import { Minus, Plus, Maximize2 } from 'lucide-react'
+import { Minus, Plus, RotateCcw } from 'lucide-react'
 
 const stopPan = (e) => e.stopPropagation()
 
@@ -6,6 +6,7 @@ function ZoomBtn({ onClick, children, label }) {
   return (
     <button
       aria-label={label}
+      title={label}
       onClick={onClick}
       style={{
         background: 'none', border: 'none', cursor: 'none',
@@ -29,7 +30,7 @@ function ZoomBtn({ onClick, children, label }) {
   )
 }
 
-export default function Toolbar({ scale, onZoomIn, onZoomOut, onReset }) {
+export default function Toolbar({ onZoomIn, onZoomOut, onReset }) {
   return (
     <div
       onPointerDown={stopPan}
@@ -43,19 +44,9 @@ export default function Toolbar({ scale, onZoomIn, onZoomOut, onReset }) {
       }}
     >
       <ZoomBtn onClick={onZoomOut} label="Zoom out"><Minus size={15} /></ZoomBtn>
-      <button
-        onClick={onReset}
-        style={{
-          background: 'none', border: 'none', cursor: 'none',
-          fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
-          color: 'var(--ink)', minWidth: 46, padding: '0 0.2rem',
-        }}
-      >
-        {Math.round(scale * 100)}%
-      </button>
       <ZoomBtn onClick={onZoomIn} label="Zoom in"><Plus size={15} /></ZoomBtn>
       <div style={{ width: 1, height: 18, background: 'var(--line)', margin: '0 2px' }} />
-      <ZoomBtn onClick={onReset} label="Reset view"><Maximize2 size={14} /></ZoomBtn>
+      <ZoomBtn onClick={onReset} label="Reset view"><RotateCcw size={13} /></ZoomBtn>
     </div>
   )
 }

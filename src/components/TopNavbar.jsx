@@ -1,19 +1,19 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Mail, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 
 const RESUME_URL = 'https://drive.google.com/file/d/1mkUQy2AQd0vYHAqsHoGi-qibLa5ssIcC/view?usp=sharing'
-const EMAIL = 'santi.avella28@gmail.com'
 const LINKEDIN_URL = 'https://linkedin.com/in/santiagoavella'
 
-// Action-button colors — picked so each CTA owns a distinct hue.
+// Action-button colors, each CTA owns a distinct hue.
 const RESUME_COLOR = '#FF8A1F'      // warm coral / orange
 const LINKEDIN_BLUE = '#0A66C2'     // LinkedIn brand blue
 
 const LINKS = [
-  { to: '/',             label: 'Home' },
-  { to: '/about',        label: 'About Me' },
-  { to: '/testimonials', label: 'Testimonials' },
-  { to: '/photography',  label: 'Photography' },
+  { to: '/',            label: 'Home' },
+  { to: '/projects',    label: 'Projects' },
+  { to: '/about',       label: 'About Me' },
+  { to: '/photography', label: 'Photography' },
+  { to: '/contact',     label: 'Contact' },
 ]
 
 function LinkedinGlyph({ size = 14 }) {
@@ -71,7 +71,7 @@ export default function TopNavbar() {
 
       <Divider />
 
-      {/* Résumé — outline style in coral/orange */}
+      {/* Résumé, outline style in coral/orange */}
       <a
         href={RESUME_URL} target="_blank" rel="noopener noreferrer"
         title="Open résumé (Google Drive PDF)"
@@ -82,19 +82,7 @@ export default function TopNavbar() {
         <FileText size={13} /> résumé
       </a>
 
-      {/* Let's talk — outline style in accent blue */}
-      <a
-        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}&su=${encodeURIComponent("I'm interested in working with you!")}`}
-        target="_blank" rel="noopener noreferrer"
-        title="Send me an email"
-        style={outlineBtn('var(--accent)')}
-        onMouseEnter={fillOnHover('var(--accent)')}
-        onMouseLeave={restoreOutline('var(--accent)')}
-      >
-        <Mail size={13} /> let&rsquo;s talk
-      </a>
-
-      {/* LinkedIn — outline style in LinkedIn brand blue */}
+      {/* LinkedIn, outline style in LinkedIn brand blue */}
       <a
         href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
         title="LinkedIn" aria-label="LinkedIn"

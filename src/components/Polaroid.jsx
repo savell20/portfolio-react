@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X, ArrowRight } from 'lucide-react'
 
-export default function Polaroid({ src, caption, rotate = 0, isStrip = false, clickable = false, onDelete }) {
+export default function Polaroid({ src, caption, tags, rotate = 0, isStrip = false, clickable = false, onDelete }) {
   const [hover, setHover] = useState(false)
   // Photobooth strips already include the caption baked into the image,
   // so render the whole frame without a separate white caption band.
@@ -41,18 +41,41 @@ export default function Polaroid({ src, caption, rotate = 0, isStrip = false, cl
           }}
         />
       </div>
-      {!isStrip && (
+      {!isStrip && (caption || clickable) && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <p style={{
-            flex: 1,
-            textAlign: clickable ? 'left' : 'center',
-            fontFamily: 'var(--font-hand)', fontSize: '1.85rem',
-            fontWeight: 600,
-            color: '#2a2a26', lineHeight: 1.1,
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>
-            {caption}
-          </p>
+          {caption && (
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                textAlign: clickable ? 'left' : 'center',
+                fontFamily: 'var(--font-hand)', fontSize: '1.85rem',
+                fontWeight: 600,
+                color: '#2a2a26', lineHeight: 1.1,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                {caption}
+              </p>
+              {tags && tags.length > 0 && (
+                <div style={{
+                  display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10,
+                  justifyContent: clickable ? 'flex-start' : 'center',
+                }}>
+                  {tags.map((t, i) => (
+                    <span key={i} style={{
+                      display: 'inline-block',
+                      padding: '5px 11px',
+                      background: '#2a2a26', color: '#FAF8F2',
+                      fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+                      fontWeight: 600, letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      borderRadius: 5,
+                    }}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {clickable && (
             <span style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',

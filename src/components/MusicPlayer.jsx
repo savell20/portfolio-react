@@ -178,7 +178,7 @@ export default function MusicPlayer() {
 
   return (
     <>
-      {/* Vinyl — always visible (bottom-left, compact) */}
+      {/* Vinyl, always visible (bottom-left, compact) */}
       <div style={{
         position: 'fixed', bottom: 16, left: 16, zIndex: 9500,
         animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.2s',

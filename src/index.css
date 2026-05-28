@@ -14,7 +14,7 @@
   --ink-faint: #9C9CA2;
   --line: #E2E1DD;
   --line-strong: #D2D1CC;
-  --accent: #2F5CFF;
+  --accent: #2F5CFF;          /* primary brand blue, kickers, accents, connectors */
   --accent-soft: #EAEEFF;
 
   --sticky-yellow: #FFE9A8;
@@ -45,7 +45,7 @@
   --ink-faint: #66666D;
   --line: #323237;
   --line-strong: #41414A;
-  --accent: #5B7CFF;
+  --accent: #5B7CFF;          /* lighter brand blue for dark mode */
   --accent-soft: #20233E;
 
   --shadow-card: 0 6px 22px rgba(0, 0, 0, 0.4);
