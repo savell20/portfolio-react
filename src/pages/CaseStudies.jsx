@@ -31,19 +31,26 @@ const PROFESSIONAL = {
 }
 
 const SCHOOL = {
-  loomi: {
-    company: 'Loomi', frame: 'loomi.case', year: "'24",
-    role: 'Solo SCAD Project',
-    blurb: 'A reading buddy app for kids, designed and prototyped a gamified reading flow with adaptive difficulty.',
-    tags: ['Student', 'Edtech', 'Mobile'],
-    cover: 'linear-gradient(135deg,#8A4FFF,#B47BFF)',
-  },
-  greenstep: {
-    company: 'GreenStep', frame: 'greenstep.case', year: "'23",
-    role: 'SCAD Service Design',
-    blurb: 'A carbon-footprint tracker for everyday choices, researched, designed, and tested with 12 students.',
-    tags: ['Student', 'Climate', 'Research'],
+  sage: {
+    company: 'Sage', frame: 'sage.case', year: "'24",
+    role: 'SCAD · AI Product Design',
+    blurb: 'An AI-powered gardening companion that diagnoses plants and coaches you season by season.',
+    tags: ['Student', 'AI', 'Mobile'],
     cover: 'linear-gradient(135deg,#1F8A6E,#7CCFB4)',
+  },
+  surroundings: {
+    company: 'Surroundings', frame: 'surroundings.case', year: "'24",
+    role: 'SCAD · Future-Facing Tech',
+    blurb: 'A future-facing consumer technology concept exploring how ambient devices reshape everyday environments.',
+    tags: ['Student', 'Speculative', 'Concept'],
+    cover: 'linear-gradient(135deg,#5B3FFF,#9A7BFF)',
+  },
+  copago: {
+    company: 'CoPago', frame: 'copago.case', year: "'23",
+    role: 'SCAD · Fintech',
+    blurb: 'Digital payments made easy. A co-payment flow built around shared bills between friends and roommates.',
+    tags: ['Student', 'Fintech', 'Mobile'],
+    cover: 'linear-gradient(135deg,#FF8A3D,#FFD166)',
   },
 }
 
@@ -62,7 +69,7 @@ const OBJECTS = [
     data: {
       kicker: '# all projects',
       title: 'Projects.',
-      blurb: 'Three professional projects I’ve led design on, plus two SCAD school deep-dives.',
+      blurb: 'Three professional projects I’ve led design on, plus three SCAD school deep-dives.',
     } },
 
   { id: 'sec-pro', type: 'section', x: PAGE.X, y: PRO_LABEL, w: 600, h: PAGE.LABEL_H,
@@ -73,8 +80,9 @@ const OBJECTS = [
 
   { id: 'sec-school', type: 'section', x: PAGE.X, y: SCHOOL_LABEL, w: 600, h: PAGE.LABEL_H,
     data: { kicker: '#', title: 'School projects · SCAD' } },
-  { id: 'loomi',     type: 'project', x: colX(0), y: SCHOOL_ROW, w: COL, h: CARD_H, to: '/work/loomi',     data: SCHOOL.loomi },
-  { id: 'greenstep', type: 'project', x: colX(1), y: SCHOOL_ROW, w: COL, h: CARD_H, to: '/work/greenstep', data: SCHOOL.greenstep },
+  { id: 'sage',         type: 'project', x: colX(0), y: SCHOOL_ROW, w: COL, h: CARD_H, to: '/work/sage',         data: SCHOOL.sage },
+  { id: 'surroundings', type: 'project', x: colX(1), y: SCHOOL_ROW, w: COL, h: CARD_H, to: '/work/surroundings', data: SCHOOL.surroundings },
+  { id: 'copago',       type: 'project', x: colX(2), y: SCHOOL_ROW, w: COL, h: CARD_H, to: '/work/copago',       data: SCHOOL.copago },
 ]
 
 function SectionLabel({ data }) {

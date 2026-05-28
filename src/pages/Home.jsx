@@ -200,7 +200,7 @@ function makeRenderObject(navigate) {
         <Polaroid
           src={fotoPersonal}
           caption="Santiago Avella"
-          tags={['🇺🇸 US citizen', '📍 SF']}
+          tags={['🇺🇸 US citizen', '📍 San Francisco, CA']}
           rotate={-4}
           clickable
         />
