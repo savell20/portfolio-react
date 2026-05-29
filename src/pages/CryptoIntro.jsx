@@ -92,13 +92,13 @@ export default function CryptoIntro() {
               View my presentation <ArrowUpRight size={15} />
             </a>
 
-            <button
-              onClick={() => navigate('/')}
+            <a
+              href="https://santiagoavella.com/" target="_blank" rel="noopener noreferrer"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
                 background: 'var(--surface)', color: 'var(--ink)',
                 border: 'var(--border-card)', borderRadius: 'var(--radius-pill)',
-                boxShadow: 'var(--shadow-card)', cursor: 'none',
+                boxShadow: 'var(--shadow-card)', cursor: 'none', textDecoration: 'none',
                 fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 600,
                 padding: '0.85rem 1.4rem',
                 transition: 'background 0.15s, color 0.15s, transform 0.15s var(--ease)',
@@ -106,7 +106,24 @@ export default function CryptoIntro() {
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.color = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)' }}
             >
-              Check my whole portfolio (in progress) <ArrowRight size={15} />
+              Check my current portfolio <ArrowUpRight size={15} />
+            </a>
+
+            <button
+              onClick={() => navigate('/')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                background: 'transparent', color: 'var(--ink-soft)',
+                border: 'none', borderRadius: 'var(--radius-pill)',
+                cursor: 'none',
+                fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 600,
+                padding: '0.85rem 1.4rem',
+                transition: 'color 0.15s, transform 0.15s var(--ease)',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--ink-soft)'; e.currentTarget.style.transform = 'translateY(0)' }}
+            >
+              Check my new portfolio (in progress) <ArrowRight size={15} />
             </button>
           </div>
         </div>
