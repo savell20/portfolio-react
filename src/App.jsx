@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import CaseStudy from './pages/CaseStudy'
 import CaseStudies from './pages/CaseStudies'
@@ -9,6 +9,7 @@ import Hobbies from './pages/Hobbies'
 import Testimonials from './pages/Testimonials'
 import Story from './pages/Story'
 import Contact from './pages/Contact'
+import CryptoIntro from './pages/CryptoIntro'
 import FigmaCursor from './components/FigmaCursor'
 import TopNavbar from './components/TopNavbar'
 import TopLeftTools from './components/TopLeftTools'
@@ -34,10 +35,15 @@ function Chrome() {
 export default function App() {
   useEffect(() => { installClickSounds() }, [])
 
+  const { pathname } = useLocation()
+  // Hidden standalone routes render without the global chrome (navbar,
+  // tool dock, music player) for a clean presentation surface.
+  const bare = pathname === '/crypto.com'
+
   return (
     <>
       <FigmaCursor />
-      <Chrome />
+      {!bare && <Chrome />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<CaseStudies />} />
@@ -48,6 +54,7 @@ export default function App() {
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/story" element={<Story />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/crypto.com" element={<CryptoIntro />} />
       </Routes>
     </>
   )
