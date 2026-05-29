@@ -15,7 +15,6 @@ import TopNavbar from './components/TopNavbar'
 import TopLeftTools from './components/TopLeftTools'
 import ToolsFloater from './components/ToolsFloater'
 import MusicPlayer from './components/MusicPlayer'
-import GlobalToolDock from './components/GlobalToolDock'
 import { installClickSounds } from './lib/sound'
 
 function Chrome() {
@@ -27,7 +26,6 @@ function Chrome() {
       <TopNavbar />
       <ToolsFloater />
       <MusicPlayer />
-      <GlobalToolDock />
     </>
   )
 }

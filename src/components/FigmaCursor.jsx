@@ -5,24 +5,28 @@ import { useEffect, useRef, useState } from 'react'
 export default function FigmaCursor() {
   const ref = useRef(null)
   const [enabled, setEnabled] = useState(false)
-  const [mode, setMode] = useState('default') // 'default' | 'grab' | 'grabbing'
+  const [mode, setMode] = useState('default') // 'default' | 'grab' | 'grabbing' | 'pointer'
 
   useEffect(() => {
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     setEnabled(true)
 
-    let isDown = false
+    // `dragging` latches to true the moment a drag STARTS on a grabbable
+    // item, and stays true until pointer-up. While latched we force the
+    // closed-fist hand and stop hit-testing — otherwise a fast drag whose
+    // element lags a frame behind the cursor makes the hand flicker back
+    // to the open/arrow state.
+    let dragging = false
 
-    const overGrabbable = (x, y) => {
-      // elementFromPoint is more reliable than e.target when the pointer
-      // is captured by a dragging element (target stays pinned).
+    const CLICKABLE = 'button, a, [role="button"], [data-clickable], label, summary'
+
+    // Returns 'grab' | 'pointer' | 'default' for the element under (x,y).
+    const hitMode = (x, y) => {
       const el = document.elementFromPoint(x, y)
-      return !!(el && el.closest && el.closest('[data-grab]'))
-    }
-
-    const updateMode = (x, y) => {
-      if (overGrabbable(x, y)) setMode(isDown ? 'grabbing' : 'grab')
-      else setMode('default')
+      if (!el || !el.closest) return 'default'
+      if (el.closest('[data-grab]')) return 'grab'
+      if (el.closest(CLICKABLE)) return 'pointer'
+      return 'default'
     }
 
     const onMove = (e) => {
@@ -31,18 +35,34 @@ export default function FigmaCursor() {
         const tm = document.body.dataset.toolMode
         ref.current.style.opacity = (tm === 'sticky' || tm === 'draw') ? '0' : '1'
       }
-      updateMode(e.clientX, e.clientY)
+      if (dragging) { setMode('grabbing'); return }
+      setMode(hitMode(e.clientX, e.clientY))
     }
-    const onDown = (e) => { isDown = true; updateMode(e.clientX, e.clientY) }
-    const onUp   = (e) => { isDown = false; updateMode(e.clientX, e.clientY) }
+
+    const onDown = (e) => {
+      // Only grabbable items latch into a drag; clickable ones just click.
+      const el = document.elementFromPoint(e.clientX, e.clientY)
+      if (el && el.closest && el.closest('[data-grab]')) {
+        dragging = true
+        setMode('grabbing')
+      }
+    }
+
+    const onUp = (e) => {
+      dragging = false
+      setMode(hitMode(e.clientX, e.clientY))
+    }
 
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerdown', onDown)
     window.addEventListener('pointerup', onUp)
+    // Pointer can be released outside the window during a fast drag.
+    window.addEventListener('pointercancel', onUp)
     return () => {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)
       window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onUp)
     }
   }, [])
 
@@ -56,8 +76,54 @@ export default function FigmaCursor() {
         pointerEvents: 'none', willChange: 'transform',
       }}
     >
-      {mode === 'default' ? <ArrowGlyph /> : mode === 'grab' ? <HandOpen /> : <HandClosed />}
+      {mode === 'default' ? <ArrowGlyph />
+        : mode === 'pointer' ? <HandPoint />
+        : mode === 'grab' ? <HandOpen />
+        : <HandClosed />}
     </div>
+  )
+}
+
+/* Pointing-finger hand — the classic "this is a link/button" cursor.
+   White fill, dark outline, index finger extended up. Hotspot at the
+   fingertip. */
+function HandPoint() {
+  return (
+    <svg width="26" height="30" viewBox="0 0 26 30" fill="none"
+      style={{ display: 'block', transform: 'translate(-7px, -1px)',
+        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.35))' }}>
+      <path
+        d="
+          M9 12
+          V4.5
+          C9 3.1 10.1 2 11.5 2
+          C12.9 2 14 3.1 14 4.5
+          V11
+
+          C14 11 14.4 9.6 16 9.6
+          C17.3 9.6 18 10.5 18 11.8
+          V12.2
+
+          C18 12.2 18.6 11.2 20 11.2
+          C21.2 11.2 22 12 22 13.2
+          V13.6
+
+          C22 13.6 22.6 12.8 23.8 12.8
+          C25 12.8 25.6 13.7 25.6 14.9
+          V20
+          C25.6 24.4 22.4 28 18 28
+          H15
+          C11.5 28 9.6 26.4 8 23.5
+          L4 17.2
+          C3.4 16 4.1 14.7 5.4 14.4
+          C6.3 14.2 7.2 14.6 7.6 15.4
+          L9 18
+          Z
+        "
+        stroke="#1a1f3a" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
+        fill="#fff"
+      />
+    </svg>
   )
 }
 

@@ -59,9 +59,9 @@ const OBJECTS = [
     data: { kicker: '# featured', title: 'Featured Projects' } },
 
   // Three case studies in a row to the right of the polaroid
-  { id: 'zolvo',   type: 'project', x: 640,  y: 360, w: 296, h: 360, z: 6, to: '/work/zolvo',   data: projects.zolvo },
-  { id: 'hubspot', type: 'project', x: 962,  y: 360, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
-  { id: 'captura', type: 'project', x: 1284, y: 360, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
+  { id: 'zolvo',   type: 'project', x: 640,  y: 320, w: 296, h: 360, z: 6, to: '/work/zolvo',   data: projects.zolvo },
+  { id: 'hubspot', type: 'project', x: 962,  y: 320, w: 296, h: 360, z: 6, to: '/work/hubspot', data: projects.hubspot },
+  { id: 'captura', type: 'project', x: 1284, y: 320, w: 296, h: 360, z: 6, to: '/work/captura', data: projects.captura },
 
   // Hand-drawn annotation arrow that points from the hero down to the
   // fun zone — tells visitors there's more below the fold.
@@ -82,19 +82,12 @@ const OBJECTS = [
 
 const CONNECTORS = []
 
-function SectionTitle({ kicker, title }) {
+function SectionTitle({ title }) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       height: '100%', paddingBottom: 12,
     }}>
-      <p style={{
-        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
-        color: 'var(--accent)', letterSpacing: '0.16em',
-        textTransform: 'uppercase', marginBottom: 8,
-      }}>
-        {kicker}
-      </p>
       <h2 style={{
         fontFamily: 'var(--font-display)', fontWeight: 800,
         fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',
@@ -113,13 +106,6 @@ function FeaturedTitle({ data, navigate }) {
       height: '100%', paddingBottom: 12, gap: 16,
     }}>
       <div>
-        <p style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
-          color: 'var(--accent)', letterSpacing: '0.16em',
-          textTransform: 'uppercase', marginBottom: 8,
-        }}>
-          {data.kicker}
-        </p>
         <h2 style={{
           fontFamily: 'var(--font-display)', fontWeight: 800,
           fontSize: '2.6rem', lineHeight: 1, letterSpacing: '-0.03em',

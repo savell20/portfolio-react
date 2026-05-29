@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Connector from './Connector'
 import CanvasObject from './CanvasObject'
 import Toolbar from './Toolbar'
@@ -56,12 +56,12 @@ function strokePath(points) {
 export default function Canvas({ initialObjects, connectors = [], initialView, renderObject, onActivate }) {
   const [objects, setObjects] = useState(initialObjects)
   const [stickies, setStickies] = useState(() => load(STICKY_KEY, []))
+  // The freehand drawing tool was removed, so we no longer restore any
+  // previously-saved strokes — start clean and wipe the stored key so old
+  // doodles (e.g. a stray line under the hero) don't linger.
   const [strokes, setStrokes] = useState(() => {
-    const loaded = load(STROKE_KEY, [])
-    // Strip stray single-point strokes (accidental taps in pen mode).
-    const cleaned = Array.isArray(loaded) ? loaded.filter(s => s && Array.isArray(s.points) && s.points.length >= 2) : []
-    if (cleaned.length !== (loaded?.length || 0)) save(STROKE_KEY, cleaned)
-    return cleaned
+    save(STROKE_KEY, [])
+    return []
   })
   const [polaroids, setPolaroids] = useState(() => load(POLAROID_KEY, []))
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
@@ -96,16 +96,16 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
           const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.012)))
           const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
           const k = ns / v.scale
-          return {
+          return clampView({
             scale: ns,
             x: e.clientX - (e.clientX - v.x) * k,
             y: e.clientY - (e.clientY - v.y) * k,
-          }
+          })
         })
       } else {
         // Scroll to pan. Shift+wheel mice flip deltaY into deltaX
         // automatically, so horizontal scrolling works for free.
-        setView(v => ({
+        setView(v => clampView({
           ...v,
           x: v.x - e.deltaX,
           y: v.y - e.deltaY,
@@ -121,7 +121,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const onMove = (e) => {
       if (pan.current) {
         const p = pan.current
-        setView(v => ({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
+        setView(v => clampView({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
       } else if (drawing.current) {
         const v = viewRef.current
         drawing.current.points.push({
@@ -257,6 +257,50 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     return { scale: ns, x: cx - (cx - v.x) * k, y: cy - (cy - v.y) * k }
   })
   const reset = () => setView(initialView || { x: 0, y: 0, scale: 1 })
+
+  // Bounding box of all base content — used to keep the user tethered to
+  // the canvas (soft pan bounds) and to detect when they've wandered off.
+  const contentBounds = useMemo(() => {
+    if (!objects.length) return null
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    objects.forEach(o => {
+      minX = Math.min(minX, o.x)
+      minY = Math.min(minY, o.y)
+      maxX = Math.max(maxX, o.x + (o.w || 0))
+      maxY = Math.max(maxY, o.y + (o.h || 200))
+    })
+    return { minX, minY, maxX, maxY }
+  }, [objects])
+
+  // Soft border: clamp a view so at least KEEP px of content always stays
+  // on screen. Prevents panning into an empty void.
+  const clampView = useCallback((v) => {
+    if (!contentBounds) return v
+    const KEEP = 160
+    const vw = window.innerWidth, vh = window.innerHeight
+    const lowerX = KEEP - contentBounds.maxX * v.scale
+    const upperX = vw - KEEP - contentBounds.minX * v.scale
+    const lowerY = KEEP - contentBounds.maxY * v.scale
+    const upperY = vh - KEEP - contentBounds.minY * v.scale
+    return {
+      ...v,
+      x: Math.min(Math.max(v.x, lowerX), upperX),
+      y: Math.min(Math.max(v.y, lowerY), upperY),
+    }
+  }, [contentBounds])
+
+  // "Are you lost?" — true when almost no content is visible on screen.
+  const lost = useMemo(() => {
+    if (!contentBounds) return false
+    const vw = window.innerWidth, vh = window.innerHeight
+    const left = contentBounds.minX * view.scale + view.x
+    const top = contentBounds.minY * view.scale + view.y
+    const right = contentBounds.maxX * view.scale + view.x
+    const bottom = contentBounds.maxY * view.scale + view.y
+    const visW = Math.min(right, vw) - Math.max(left, 0)
+    const visH = Math.min(bottom, vh) - Math.max(top, 0)
+    return visW < 140 || visH < 140
+  }, [contentBounds, view])
 
   const byId = {}
   objects.forEach(o => { byId[o.id] = o })
@@ -407,6 +451,55 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
         onZoomOut={() => zoomBy(1 / 1.2)}
         onReset={reset}
       />
+
+      {/* "Feeling lost?" nudge — appears when the user has panned so far
+          that almost no content is on screen. */}
+      {lost && (
+        <div
+          onPointerDown={(e) => e.stopPropagation()}
+          style={{
+            position: 'fixed', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)', zIndex: 9100,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+            background: 'var(--surface)', border: 'var(--border-card)',
+            borderRadius: 16, padding: '1.6rem 1.8rem',
+            boxShadow: '0 24px 60px rgba(24,24,26,0.22)',
+            animation: 'pop-in 0.25s var(--ease) both',
+            textAlign: 'center', maxWidth: 320,
+          }}
+        >
+          <span style={{ fontSize: '2rem', lineHeight: 1 }}>🧭</span>
+          <p style={{
+            fontFamily: 'var(--font-display)', fontWeight: 800,
+            fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--ink)',
+            lineHeight: 1.2,
+          }}>
+            Feeling lost?
+          </p>
+          <p style={{
+            fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.5,
+            marginTop: -4,
+          }}>
+            You’ve wandered off the canvas. Jump back to where everything is.
+          </p>
+          <button
+            onClick={reset}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'var(--accent)', color: '#fff',
+              border: 'none', borderRadius: 'var(--radius-pill)',
+              boxShadow: 'var(--shadow-card)', cursor: 'none',
+              fontFamily: 'var(--font-mono)', fontSize: '0.74rem', fontWeight: 600,
+              padding: '0.7rem 1.2rem', marginTop: 4,
+              transition: 'transform 0.15s var(--ease), filter 0.15s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
+          >
+            ← Back to main view
+          </button>
+        </div>
+      )}
 
       {/* Ghost pen, follows the cursor while the draw tool is active. The
           pen tip is positioned exactly at the cursor point so the stroke

@@ -47,6 +47,7 @@ export default function CanvasObject({ obj, scale, index, locked, mode = 'select
       onPointerMove={handleMove}
       onPointerUp={handleUp}
       {...(grabbable ? { 'data-grab': '' } : {})}
+      {...(!grabbable && obj.to ? { 'data-clickable': '' } : {})}
       style={{
         position: 'absolute',
         left: obj.x, top: obj.y, width: obj.w,

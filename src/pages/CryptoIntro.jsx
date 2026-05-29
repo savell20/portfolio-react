@@ -44,7 +44,7 @@ export default function CryptoIntro() {
             color: 'var(--accent)', letterSpacing: '0.16em',
             textTransform: 'uppercase', marginBottom: '0.9rem',
           }}>
-            # hello crypto.com
+hello crypto.com
           </p>
 
           <h1 style={{

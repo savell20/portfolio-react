@@ -46,7 +46,6 @@ function StickyGlyph() {
 const TOOLS = [
   { id: 'select', label: 'Select & move', render: () => <MousePointer2 size={22} strokeWidth={2.2} /> },
   { id: 'draw',   label: 'Draw',          render: () => <PencilGlyph /> },
-  { id: 'sticky', label: 'Add a sticky',  render: () => <StickyGlyph /> },
 ]
 
 function ToolBtn({ active, onClick, title, children }) {

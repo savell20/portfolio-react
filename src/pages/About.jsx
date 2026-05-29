@@ -224,13 +224,6 @@ const OBJECTS = [
 function SectionLabel({ data }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', paddingBottom: 4 }}>
-      <p style={{
-        fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-        color: 'var(--accent)', letterSpacing: '0.14em',
-        textTransform: 'uppercase', marginBottom: 4,
-      }}>
-        {data.kicker}
-      </p>
       <h2 style={{
         fontFamily: 'var(--font-display)', fontWeight: 800,
         fontSize: '1.7rem', letterSpacing: '-0.02em',

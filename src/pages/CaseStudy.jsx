@@ -514,7 +514,7 @@ export default function CaseStudy() {
                   color: 'var(--accent)', letterSpacing: '0.14em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
-                  # impact
+                  impact
                 </p>
                 <h3 style={{
                   fontFamily: 'var(--font-display)', fontWeight: 800,
@@ -587,7 +587,7 @@ export default function CaseStudy() {
           {data.designSystem && (
             <Reveal delay={0.16}>
               <div style={{ marginTop: '2.5rem' }}>
-                <p style={labelCss}># {data.designSystem.label.toLowerCase()}</p>
+                <p style={labelCss}>{data.designSystem.label.toLowerCase()}</p>
                 <h3 style={{
                   fontFamily: 'var(--font-display)', fontWeight: 800,
                   fontSize: '1.6rem', letterSpacing: '-0.02em',

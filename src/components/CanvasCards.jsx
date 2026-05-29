@@ -100,7 +100,7 @@ function FrameLabel({ children }) {
       color: 'var(--ink-faint)', letterSpacing: '0.04em', userSelect: 'none',
       whiteSpace: 'nowrap',
     }}>
-      {children}
+      {typeof children === 'string' ? children.replace(/^#\s*/, '') : children}
     </div>
   )
 }
@@ -113,7 +113,6 @@ export function ProjectCard({ data }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <FrameLabel>▸ {data.frame}</FrameLabel>
       <div style={{
         ...cardBase,
         overflow: 'hidden',
@@ -122,7 +121,7 @@ export function ProjectCard({ data }) {
       }}>
         {/* Cover — real image if provided, otherwise gradient + monogram */}
         <div style={{
-          height: 132,
+          height: 240,
           background: data.coverImage ? '#222' : data.cover,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           position: 'relative', overflow: 'hidden',
@@ -137,21 +136,12 @@ export function ProjectCard({ data }) {
           ) : (
             <span style={{
               fontFamily: 'var(--font-display)', fontWeight: 900,
-              fontSize: '5.5rem', color: 'rgba(255,255,255,0.16)',
+              fontSize: '8rem', color: 'rgba(255,255,255,0.18)',
               lineHeight: 1, userSelect: 'none',
             }}>
               {data.company[0]}
             </span>
           )}
-          <span style={{
-            position: 'absolute', top: 10, left: 12,
-            fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-            color: 'rgba(255,255,255,0.85)', letterSpacing: '0.06em',
-            textShadow: data.coverImage ? '0 1px 2px rgba(0,0,0,0.4)' : 'none',
-          }}>
-            {data.year}
-          </span>
-          <BadgeChip badge={data.badge} />
         </div>
         {/* Body */}
         <div style={{ padding: '1.05rem 1.15rem 1.2rem' }}>
@@ -164,28 +154,9 @@ export function ProjectCard({ data }) {
             </h3>
             <ArrowChip hover={hover} size={26} />
           </div>
-          <p style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
-            color: 'var(--accent)', letterSpacing: '0.04em', margin: '0.2rem 0 0.7rem',
-          }}>
-            {data.role}
-          </p>
-          <p style={{ fontSize: '0.94rem', color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: '0.95rem' }}>
+          <p style={{ fontSize: '0.94rem', color: 'var(--ink-soft)', lineHeight: 1.6, marginTop: '0.5rem' }}>
             {data.blurb}
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-            {data.tags.map(t => (
-              <span key={t} style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
-                color: 'var(--ink-soft)', background: 'var(--canvas)',
-                border: '1px solid var(--line)', borderRadius: 5,
-                padding: '0.18rem 0.4rem', textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}>
-                {t}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -663,7 +634,7 @@ export function BioCard({ data, height }) {
           color: 'var(--accent)', letterSpacing: '0.12em',
           textTransform: 'uppercase', marginBottom: '0.7rem',
         }}>
-          {data.kicker}
+          {(data.kicker || '').replace(/^#\s*/, '')}
         </p>
         <h3 style={{
           fontFamily: 'var(--font-display)', fontWeight: 800,
@@ -751,13 +722,6 @@ export function FactCard({ data }) {
 export function PageTitle({ data }) {
   return (
     <div style={{ textAlign: 'left' }}>
-      <p style={{
-        fontFamily: 'var(--font-mono)', fontSize: '0.7rem',
-        color: 'var(--accent)', letterSpacing: '0.14em',
-        textTransform: 'uppercase', marginBottom: '0.6rem',
-      }}>
-        {data.kicker}
-      </p>
       <h1 style={{
         fontFamily: 'var(--font-display)', fontWeight: 800,
         fontSize: '3.2rem', lineHeight: 0.98, letterSpacing: '-0.03em',

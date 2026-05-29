@@ -56,21 +56,16 @@ export default function Polaroid({ src, caption, tags, rotate = 0, isStrip = fal
               </p>
               {tags && tags.length > 0 && (
                 <div style={{
-                  display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10,
-                  justifyContent: clickable ? 'flex-start' : 'center',
+                  marginTop: 8,
+                  textAlign: clickable ? 'left' : 'center',
                 }}>
                   {tags.map((t, i) => (
-                    <span key={i} style={{
-                      display: 'inline-block',
-                      padding: '5px 11px',
-                      background: '#2a2a26', color: '#FAF8F2',
-                      fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
-                      fontWeight: 600, letterSpacing: '0.04em',
-                      textTransform: 'uppercase',
-                      borderRadius: 5,
+                    <p key={i} style={{
+                      fontFamily: 'var(--font-mono)', fontSize: '0.92rem',
+                      color: '#4a4a44', letterSpacing: '0.01em', lineHeight: 1.5,
                     }}>
                       {t}
-                    </span>
+                    </p>
                   ))}
                 </div>
               )}

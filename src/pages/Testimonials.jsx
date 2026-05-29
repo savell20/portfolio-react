@@ -72,7 +72,7 @@ function SectionLabel({ data }) {
         color: 'var(--accent)', letterSpacing: '0.16em',
         textTransform: 'uppercase', marginBottom: 4,
       }}>
-        {data.kicker}
+        {(data.kicker || '').replace(/^#\s*/, '')}
       </p>
       <h2 style={{
         fontFamily: 'var(--font-display)', fontWeight: 800,
