@@ -6,7 +6,7 @@ import EditableSticky from './EditableSticky'
 import Polaroid from './Polaroid'
 import PhotoBooth from './PhotoBooth'
 import { playPop } from '../lib/sound'
-import { KEEP_X, KEEP_Y, MIN_SCALE as MIN, MAX_SCALE as MAX, MIN_SCALE_FACTOR, LOST_THRESHOLD } from '../lib/canvasBounds'
+import { clampCanvasView, MIN_SCALE as MIN, MAX_SCALE as MAX, MIN_SCALE_FACTOR, LOST_THRESHOLD } from '../lib/canvasBounds'
 
 const GRID_UNIT = 26
 const STICKY_KEY = 'canvas-stickies-v1'
@@ -277,19 +277,10 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
 
   // Soft border: clamp a view so at least KEEP px of content always stays
   // on screen. Prevents panning into an empty void.
-  const clampView = useCallback((v) => {
-    if (!contentBounds) return v
-    const vw = window.innerWidth, vh = window.innerHeight
-    const lowerX = KEEP_X - contentBounds.maxX * v.scale
-    const upperX = vw - KEEP_X - contentBounds.minX * v.scale
-    const lowerY = KEEP_Y - contentBounds.maxY * v.scale
-    const upperY = vh - KEEP_Y - contentBounds.minY * v.scale
-    return {
-      ...v,
-      x: Math.min(Math.max(v.x, lowerX), upperX),
-      y: Math.min(Math.max(v.y, lowerY), upperY),
-    }
-  }, [contentBounds])
+  const clampView = useCallback(
+    (v) => clampCanvasView(v, contentBounds, window.innerWidth, window.innerHeight),
+    [contentBounds],
+  )
 
   // "Are you lost?" — true when almost no content is visible on screen.
   const lost = useMemo(() => {
