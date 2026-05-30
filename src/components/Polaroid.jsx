@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X, ArrowRight } from 'lucide-react'
 
-export default function Polaroid({ src, caption, tags, rotate = 0, isStrip = false, clickable = false, onDelete }) {
+export default function Polaroid({ src, caption, role, tags, rotate = 0, isStrip = false, clickable = false, onDelete }) {
   const [hover, setHover] = useState(false)
   // Photobooth strips already include the caption baked into the image,
   // so render the whole frame without a separate white caption band.
@@ -54,6 +54,17 @@ export default function Polaroid({ src, caption, tags, rotate = 0, isStrip = fal
               }}>
                 {caption}
               </p>
+              {role && (
+                <p style={{
+                  marginTop: 4,
+                  textAlign: clickable ? 'left' : 'center',
+                  fontFamily: 'var(--font-display)', fontWeight: 700,
+                  fontSize: '1.05rem', color: 'var(--accent)',
+                  letterSpacing: '-0.01em', lineHeight: 1.2,
+                }}>
+                  {role}
+                </p>
+              )}
               {tags && tags.length > 0 && (
                 <div style={{
                   marginTop: 8,

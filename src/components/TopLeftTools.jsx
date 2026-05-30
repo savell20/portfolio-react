@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sun, Moon, Volume2, VolumeX } from 'lucide-react'
-import { isMuted, setMuted } from '../lib/sound'
+import { Sun, Moon } from 'lucide-react'
 
 function initialTheme() {
   const s = localStorage.getItem('theme')
@@ -8,32 +7,9 @@ function initialTheme() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-function IconBtn({ onClick, title, children, dim }) {
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      aria-label={title}
-      style={{
-        width: 32, height: 32, border: 'none', cursor: 'none',
-        borderRadius: 'calc(var(--radius-pill) - 3px)',
-        background: 'transparent',
-        color: dim ? 'var(--ink-faint)' : 'var(--ink-soft)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 0.15s, color 0.15s',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = dim ? 'var(--ink-faint)' : 'var(--ink-soft)' }}
-    >
-      {children}
-    </button>
-  )
-}
-
-/* Top-left utility pill, theme toggle + click-sound mute. */
+/* Top-right utility pill — light / dark theme toggle. */
 export default function TopLeftTools() {
   const [theme, setTheme] = useState(initialTheme)
-  const [clickMuted, setClickMutedState] = useState(isMuted())
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -46,7 +22,7 @@ export default function TopLeftTools() {
   return (
     <div
       style={{
-        position: 'fixed', top: 16, left: 16, zIndex: 9500,
+        position: 'fixed', top: 16, right: 16, zIndex: 9500,
         display: 'flex', alignItems: 'center', gap: 1,
         background: 'var(--surface)', border: 'var(--border-card)',
         borderRadius: 'var(--radius-pill)', padding: 4,
@@ -54,17 +30,22 @@ export default function TopLeftTools() {
         animation: 'fade-in 0.5s var(--ease) both',
       }}
     >
-      <IconBtn onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
-               title={isDark ? 'Switch to light' : 'Switch to dark'}>
-        <SunOrMoon size={15} strokeWidth={2.2} />
-      </IconBtn>
-      <IconBtn
-        onClick={() => { const v = !clickMuted; setMuted(v); setClickMutedState(v) }}
-        title={clickMuted ? 'Click sounds: off' : 'Click sounds: on'}
-        dim={clickMuted}
+      <button
+        onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        style={{
+          width: 36, height: 36, border: 'none', cursor: 'none',
+          borderRadius: 'calc(var(--radius-pill) - 3px)',
+          background: 'transparent', color: 'var(--ink-soft)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s, color 0.15s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' }}
       >
-        {clickMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-      </IconBtn>
+        <SunOrMoon size={16} strokeWidth={2.2} />
+      </button>
     </div>
   )
 }

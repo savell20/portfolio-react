@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import fotoPersonal from '../assets/foto-personal.jpeg'
 import MiniCanvas from '../components/MiniCanvas'
 import {
   PageTitle, PrincipleCard, ResumeEntry,
@@ -16,7 +18,13 @@ const AWARD_H = 130
 const STICKY_H = 200
 const CONF_H = 230
 
-const P_Y         = FIRST_MODULE_Y
+// Snapshots — a draggable photo band right after the hero. Each card is a
+// FIXED height (cover-cropped) so the layout below never overlaps them.
+const SNAP_H      = 300
+const SNAP_LABEL  = FIRST_MODULE_Y
+const SNAP_ROW    = moduleYAfterLabel(SNAP_LABEL)
+
+const P_Y         = labelYAfter(SNAP_ROW + SNAP_H)
 const EDU_LABEL   = labelYAfter(P_Y + P_H)
 const EDU_ROW     = moduleYAfterLabel(EDU_LABEL)
 const EXP_LABEL   = labelYAfter(EDU_ROW + EDU_H)
@@ -54,14 +62,27 @@ const OBJECTS = [
       blurb: 'Product designer with Colombian roots, based in San Francisco and US citizen (no visa sponsorship needed). Bilingual in English and Spanish, with 3 years of experience turning complex systems into things that feel obvious.',
       blurbWidth: 820,
     } },
-  // Bilingual badge — top-right of the title row to signal languages at a glance.
-  { id: 'bilingual', type: 'bilingual', x: PAGE.X + 940, y: PAGE.TITLE_Y + 24, w: 260, h: 132,
+  // Bilingual badge — right of the title to signal languages at a glance.
+  { id: 'bilingual', type: 'bilingual', x: PAGE.X + 940, y: PAGE.TITLE_Y + 24, w: 264, h: 108,
     data: {
       languages: [
         { flag: '🇺🇸', label: 'English', note: 'Native' },
         { flag: '🇨🇴', label: 'Spanish', note: 'Native' },
       ],
     } },
+
+  // Snapshots — a draggable photo band (swap these for real photos).
+  { id: 'sec-snaps', type: 'section', x: PAGE.X, y: SNAP_LABEL, w: 600, h: PAGE.LABEL_H,
+    data: { kicker: '#', title: 'A few snapshots' } },
+  { id: 'snap-1', type: 'snapshot', x: PAGE.X,                                     y: SNAP_ROW,      w: QUARTER_W, h: SNAP_H, draggable: true,
+    data: { src: fotoPersonal, caption: 'that’s me', rotate: -3 } },
+  { id: 'snap-2', type: 'snapshot', x: PAGE.X + (QUARTER_W + PAGE.COL_GAP),        y: SNAP_ROW + 12, w: QUARTER_W, h: SNAP_H, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&q=80', caption: 'chasing light', rotate: 2 } },
+  { id: 'snap-3', type: 'snapshot', x: PAGE.X + (QUARTER_W + PAGE.COL_GAP) * 2,    y: SNAP_ROW,      w: QUARTER_W, h: SNAP_H, draggable: true,
+    data: { src: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=600&q=80', caption: 'on the road', rotate: -2 } },
+  { id: 'snap-4', type: 'photo-teaser', x: PAGE.X + (QUARTER_W + PAGE.COL_GAP) * 3,    y: SNAP_ROW + 12, w: QUARTER_W, h: SNAP_H,
+    data: { src: 'https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?w=600&q=80',
+      caption: 'I love photography', cta: 'Check my photography', to: '/photography', rotate: 3 } },
 
   // Row 2, Three principle cards
   { id: 'p-1', type: 'principle', x: PAGE.X, y: P_Y, w: PCARD_W, h: P_H,
@@ -326,17 +347,88 @@ function BilingualCard({ data }) {
   )
 }
 
+function Snapshot({ data }) {
+  return (
+    <div style={{
+      width: '100%', height: SNAP_H, boxSizing: 'border-box',
+      background: '#FAF8F2', padding: '8px 8px 20px',
+      boxShadow: '0 12px 28px rgba(0,0,0,0.18)',
+      transform: `rotate(${data.rotate || 0}deg)`,
+      display: 'flex', flexDirection: 'column',
+    }}>
+      <div style={{ flex: 1, overflow: 'hidden', background: '#222', minHeight: 0 }}>
+        <img src={data.src} alt={data.caption} draggable={false} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      </div>
+      <p style={{
+        textAlign: 'center', marginTop: 6,
+        fontFamily: 'var(--font-mono)', fontSize: '0.52rem',
+        color: '#5a5a52', letterSpacing: '0.08em', textTransform: 'uppercase',
+      }}>
+        {data.caption}
+      </p>
+    </div>
+  )
+}
+
+function PhotographyTeaser({ data }) {
+  const navigate = useNavigate()
+  const [hover, setHover] = useState(false)
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); navigate(data.to) }}
+      onPointerDown={(e) => e.stopPropagation()}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      title={data.cta}
+      style={{
+        width: '100%', height: SNAP_H, boxSizing: 'border-box', cursor: 'none', border: 'none',
+        background: '#FAF8F2', padding: '8px 8px 12px',
+        boxShadow: hover ? '0 22px 40px rgba(0,0,0,0.28)' : '0 12px 28px rgba(0,0,0,0.18)',
+        transform: `rotate(${data.rotate || 0}deg) ${hover ? 'translateY(-3px)' : ''}`,
+        transition: 'transform 0.2s var(--ease), box-shadow 0.2s',
+        display: 'flex', flexDirection: 'column',
+      }}
+    >
+      <div style={{ flex: 1, overflow: 'hidden', background: '#222', position: 'relative', minHeight: 0 }}>
+        <img src={data.src} alt={data.caption} draggable={false} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <span style={{
+          position: 'absolute', left: 8, top: 8,
+          background: 'rgba(0,0,0,0.55)', color: '#fff',
+          fontFamily: 'var(--font-note)', fontSize: '1rem',
+          padding: '3px 9px', borderRadius: 4,
+        }}>
+          {data.caption}
+        </span>
+      </div>
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+        marginTop: 8, padding: '0.5rem',
+        background: hover ? 'var(--accent)' : 'var(--ink)', color: '#fff',
+        borderRadius: 'var(--radius-pill)',
+        fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 600,
+        transition: 'background 0.18s',
+      }}>
+        {data.cta} →
+      </span>
+    </button>
+  )
+}
+
 function renderObject(obj) {
   switch (obj.type) {
-    case 'title':      return <PageTitle data={obj.data} />
-    case 'principle':  return <PrincipleCard data={obj.data} />
-    case 'section':    return <SectionLabel data={obj.data} />
-    case 'resume':     return <ResumeEntry data={obj.data} />
-    case 'skills':     return <SkillsCard data={obj.data} />
-    case 'award':      return <AwardCard data={obj.data} />
-    case 'sticky':     return <StickyNote data={obj.data} />
-    case 'photoprint': return <PhotoPrint data={obj.data} />
-    case 'bilingual':  return <BilingualCard data={obj.data} />
+    case 'title':        return <PageTitle data={obj.data} />
+    case 'principle':    return <PrincipleCard data={obj.data} />
+    case 'section':      return <SectionLabel data={obj.data} />
+    case 'resume':       return <ResumeEntry data={obj.data} />
+    case 'skills':       return <SkillsCard data={obj.data} />
+    case 'award':        return <AwardCard data={obj.data} />
+    case 'sticky':       return <StickyNote data={obj.data} />
+    case 'photoprint':   return <PhotoPrint data={obj.data} />
+    case 'snapshot':     return <Snapshot data={obj.data} />
+    case 'photo-teaser': return <PhotographyTeaser data={obj.data} />
+    case 'bilingual':    return <BilingualCard data={obj.data} />
     default: return null
   }
 }

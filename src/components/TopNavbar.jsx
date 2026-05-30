@@ -9,11 +9,10 @@ const RESUME_COLOR = '#FF8A1F'      // warm coral / orange
 const LINKEDIN_BLUE = '#0A66C2'     // LinkedIn brand blue
 
 const LINKS = [
-  { to: '/',            label: 'Home' },
-  { to: '/projects',    label: 'Projects' },
-  { to: '/about',       label: 'About Me' },
-  { to: '/photography', label: 'Photography' },
-  { to: '/contact',     label: 'Contact' },
+  { to: '/',        label: 'Home' },
+  { to: '/projects', label: 'Work' },
+  { to: '/about',   label: 'About Me' },
+  { to: '/hobbies', label: 'Fun' },
 ]
 
 function LinkedinGlyph({ size = 14 }) {
@@ -28,71 +27,90 @@ function Divider() {
   return <span style={{ width: 1, height: 22, background: 'var(--line)', margin: '0 4px' }} />
 }
 
+const groupStyle = {
+  display: 'flex', alignItems: 'center', gap: 2,
+  background: 'var(--surface)', border: 'var(--border-card)',
+  borderRadius: 'var(--radius-pill)', padding: 5,
+  boxShadow: 'var(--shadow-card)',
+}
+
 export default function TopNavbar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  const navBtn = (active) => ({
+    height: 34, padding: '0 0.85rem',
+    borderRadius: 'calc(var(--radius-pill) - 2px)',
+    background: active ? 'var(--accent)' : 'transparent',
+    color: active ? '#fff' : 'var(--ink-soft)',
+    border: 'none', cursor: 'none',
+    fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
+    whiteSpace: 'nowrap', flexShrink: 0,
+    transition: 'background 0.15s, color 0.15s',
+  })
+
   return (
-    <nav
+    <div
       style={{
         position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)',
         zIndex: 9500,
-        display: 'flex', alignItems: 'center', gap: 2,
-        background: 'var(--surface)', border: 'var(--border-card)',
-        borderRadius: 'var(--radius-pill)', padding: 5,
-        boxShadow: 'var(--shadow-card)',
+        display: 'flex', alignItems: 'center', gap: 10,
         animation: 'fade-in 0.5s var(--ease) both',
         maxWidth: 'calc(100vw - 32px)',
       }}
     >
-      {LINKS.map(({ to, label }) => {
-        const active = pathname === to
-        return (
-          <button
-            key={to}
-            onClick={() => navigate(to)}
-            style={{
-              height: 34, padding: '0 0.85rem',
-              borderRadius: 'calc(var(--radius-pill) - 2px)',
-              background: active ? 'var(--accent)' : 'transparent',
-              color: active ? '#fff' : 'var(--ink-soft)',
-              border: 'none', cursor: 'none',
-              fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 500,
-              whiteSpace: 'nowrap', flexShrink: 0,
-              transition: 'background 0.15s, color 0.15s',
-            }}
-            onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
-            onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' } }}
-          >
-            {label}
-          </button>
-        )
-      })}
+      {/* Group 1 — section navigation */}
+      <nav style={groupStyle}>
+        {LINKS.map(({ to, label }) => {
+          const active = pathname === to
+          return (
+            <button
+              key={to}
+              onClick={() => navigate(to)}
+              style={navBtn(active)}
+              onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
+              onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' } }}
+            >
+              {label}
+            </button>
+          )
+        })}
+      </nav>
 
-      <Divider />
+      {/* Group 2 — résumé + LinkedIn */}
+      <nav style={groupStyle}>
+        <a
+          href={RESUME_URL} target="_blank" rel="noopener noreferrer"
+          title="Open résumé (Google Drive PDF)"
+          style={outlineBtn(RESUME_COLOR, 600)}
+          onMouseEnter={fillOnHover(RESUME_COLOR)}
+          onMouseLeave={restoreOutline(RESUME_COLOR)}
+        >
+          <FileText size={13} /> Resume
+        </a>
 
-      {/* Résumé, outline style in coral/orange */}
-      <a
-        href={RESUME_URL} target="_blank" rel="noopener noreferrer"
-        title="Open résumé (Google Drive PDF)"
-        style={outlineBtn(RESUME_COLOR, 600)}
-        onMouseEnter={fillOnHover(RESUME_COLOR)}
-        onMouseLeave={restoreOutline(RESUME_COLOR)}
-      >
-        <FileText size={13} /> résumé
-      </a>
+        <a
+          href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
+          title="LinkedIn" aria-label="LinkedIn"
+          style={outlineBtn(LINKEDIN_BLUE)}
+          onMouseEnter={fillOnHover(LINKEDIN_BLUE)}
+          onMouseLeave={restoreOutline(LINKEDIN_BLUE)}
+        >
+          <LinkedinGlyph size={14} /> LinkedIn
+        </a>
 
-      {/* LinkedIn, outline style in LinkedIn brand blue */}
-      <a
-        href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
-        title="LinkedIn" aria-label="LinkedIn"
-        style={outlineBtn(LINKEDIN_BLUE)}
-        onMouseEnter={fillOnHover(LINKEDIN_BLUE)}
-        onMouseLeave={restoreOutline(LINKEDIN_BLUE)}
-      >
-        <LinkedinGlyph size={14} /> LinkedIn
-      </a>
-    </nav>
+        <Divider />
+
+        <button
+          onClick={() => navigate('/contact')}
+          style={navBtn(pathname === '/contact')}
+          onMouseEnter={e => { if (pathname !== '/contact') { e.currentTarget.style.background = 'var(--canvas)'; e.currentTarget.style.color = 'var(--ink)' } }}
+          onMouseLeave={e => { if (pathname !== '/contact') { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-soft)' } }}
+        >
+          Contact
+        </button>
+      </nav>
+    </div>
   )
 }
 

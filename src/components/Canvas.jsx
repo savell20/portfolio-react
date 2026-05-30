@@ -6,9 +6,8 @@ import EditableSticky from './EditableSticky'
 import Polaroid from './Polaroid'
 import PhotoBooth from './PhotoBooth'
 import { playPop } from '../lib/sound'
+import { KEEP_X, KEEP_Y, MIN_SCALE as MIN, MAX_SCALE as MAX, MIN_SCALE_FACTOR, LOST_THRESHOLD } from '../lib/canvasBounds'
 
-const MIN = 0.4
-const MAX = 2.2
 const GRID_UNIT = 26
 const STICKY_KEY = 'canvas-stickies-v1'
 const STROKE_KEY = 'canvas-strokes-v1'
@@ -65,6 +64,10 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   })
   const [polaroids, setPolaroids] = useState(() => load(POLAROID_KEY, []))
   const [view, setView] = useState(initialView || { x: 0, y: 0, scale: 1 })
+
+  // Keep zoom-out close to the opening view — allow a little breathing
+  // room below it, but not enough to drift into empty canvas.
+  const minScale = (initialView && initialView.scale * MIN_SCALE_FACTOR) || MIN
   const [mode, setMode] = useState('select') // select | sticky | draw
   const [drawColor, setDrawColor] = useState(DRAW_COLORS[0])
   const [editingId, setEditingId] = useState(null)
@@ -94,7 +97,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
       if (e.ctrlKey || e.metaKey) {
         setView(v => {
           const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.012)))
-          const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
+          const ns = Math.min(MAX, Math.max(minScale, v.scale * factor))
           const k = ns / v.scale
           return clampView({
             scale: ns,
@@ -250,7 +253,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   const clearDrawing = () => { setStrokes([]); save(STROKE_KEY, []) }
 
   const zoomBy = (factor) => setView(v => {
-    const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
+    const ns = Math.min(MAX, Math.max(minScale, v.scale * factor))
     const k = ns / v.scale
     const cx = window.innerWidth / 2
     const cy = window.innerHeight / 2
@@ -276,12 +279,11 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
   // on screen. Prevents panning into an empty void.
   const clampView = useCallback((v) => {
     if (!contentBounds) return v
-    const KEEP = 160
     const vw = window.innerWidth, vh = window.innerHeight
-    const lowerX = KEEP - contentBounds.maxX * v.scale
-    const upperX = vw - KEEP - contentBounds.minX * v.scale
-    const lowerY = KEEP - contentBounds.maxY * v.scale
-    const upperY = vh - KEEP - contentBounds.minY * v.scale
+    const lowerX = KEEP_X - contentBounds.maxX * v.scale
+    const upperX = vw - KEEP_X - contentBounds.minX * v.scale
+    const lowerY = KEEP_Y - contentBounds.maxY * v.scale
+    const upperY = vh - KEEP_Y - contentBounds.minY * v.scale
     return {
       ...v,
       x: Math.min(Math.max(v.x, lowerX), upperX),
@@ -299,7 +301,7 @@ export default function Canvas({ initialObjects, connectors = [], initialView, r
     const bottom = contentBounds.maxY * view.scale + view.y
     const visW = Math.min(right, vw) - Math.max(left, 0)
     const visH = Math.min(bottom, vh) - Math.max(top, 0)
-    return visW < 140 || visH < 140
+    return visW < LOST_THRESHOLD || visH < LOST_THRESHOLD
   }, [contentBounds, view])
 
   const byId = {}

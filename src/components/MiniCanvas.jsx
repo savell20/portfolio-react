@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import Connector from './Connector'
 import CanvasObject from './CanvasObject'
 import Toolbar from './Toolbar'
+import { KEEP_X, KEEP_Y, MIN_SCALE as MIN, MAX_SCALE as MAX, MIN_SCALE_FACTOR, LOST_THRESHOLD } from '../lib/canvasBounds'
 
-const MIN = 0.4
-const MAX = 2.2
 const GRID_UNIT = 26
 
 function anchor(side, x, y, w, h, tx, ty) {
@@ -26,6 +25,9 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
   const viewRef = useRef(view)
   viewRef.current = view
 
+  // Don't let the user zoom out past (a little below) the opening view.
+  const minScale = (initialView && initialView.scale * MIN_SCALE_FACTOR) || MIN
+
   const onObjMove = (id, x, y) => {
     setObjects(objs => objs.map(o => (o.id === id ? { ...o, x, y } : o)))
   }
@@ -35,6 +37,47 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
     setObjects(objs => objs.map(o => (o.id === id ? { ...o, z } : o)))
   }
 
+  // Bounding box of all content — for soft pan bounds + "lost" detection.
+  const contentBounds = useMemo(() => {
+    if (!objects.length) return null
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    objects.forEach(o => {
+      minX = Math.min(minX, o.x)
+      minY = Math.min(minY, o.y)
+      maxX = Math.max(maxX, o.x + (o.w || 0))
+      maxY = Math.max(maxY, o.y + (o.h || 200))
+    })
+    return { minX, minY, maxX, maxY }
+  }, [objects])
+
+  // Soft border: keep KEEP px of content on screen so panning can't drift
+  // into an empty void. Horizontal is tighter than vertical.
+  const clampView = useCallback((v) => {
+    if (!contentBounds) return v
+    const vw = window.innerWidth, vh = window.innerHeight
+    const lowerX = KEEP_X - contentBounds.maxX * v.scale
+    const upperX = vw - KEEP_X - contentBounds.minX * v.scale
+    const lowerY = KEEP_Y - contentBounds.maxY * v.scale
+    const upperY = vh - KEEP_Y - contentBounds.minY * v.scale
+    return {
+      ...v,
+      x: Math.min(Math.max(v.x, lowerX), upperX),
+      y: Math.min(Math.max(v.y, lowerY), upperY),
+    }
+  }, [contentBounds])
+
+  const lost = useMemo(() => {
+    if (!contentBounds) return false
+    const vw = window.innerWidth, vh = window.innerHeight
+    const left = contentBounds.minX * view.scale + view.x
+    const top = contentBounds.minY * view.scale + view.y
+    const right = contentBounds.maxX * view.scale + view.x
+    const bottom = contentBounds.maxY * view.scale + view.y
+    const visW = Math.min(right, vw) - Math.max(left, 0)
+    const visH = Math.min(bottom, vh) - Math.max(top, 0)
+    return visW < LOST_THRESHOLD || visH < LOST_THRESHOLD
+  }, [contentBounds, view])
+
   useEffect(() => {
     const el = rootRef.current
     if (!el) return
@@ -43,27 +86,28 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
       if (e.ctrlKey || e.metaKey) {
         setView(v => {
           const factor = Math.min(1.4, Math.max(0.7, Math.exp(-e.deltaY * 0.012)))
-          const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
+          const ns = Math.min(MAX, Math.max(minScale, v.scale * factor))
           const k = ns / v.scale
-          return {
+          return clampView({
             scale: ns,
             x: e.clientX - (e.clientX - v.x) * k,
             y: e.clientY - (e.clientY - v.y) * k,
-          }
+          })
         })
       } else {
-        setView(v => ({ ...v, x: v.x - e.deltaX, y: v.y - e.deltaY }))
+        setView(v => clampView({ ...v, x: v.x - e.deltaX, y: v.y - e.deltaY }))
       }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     const onMove = (e) => {
       if (!pan.current) return
       const p = pan.current
-      setView(v => ({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
+      setView(v => clampView({ ...v, x: p.ox + (e.clientX - p.sx), y: p.oy + (e.clientY - p.sy) }))
     }
     const onUp = () => { pan.current = null }
     window.addEventListener('pointermove', onMove)
@@ -72,6 +116,7 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onRootDown = (e) => {
@@ -80,11 +125,11 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
   }
 
   const zoomBy = (factor) => setView(v => {
-    const ns = Math.min(MAX, Math.max(MIN, v.scale * factor))
+    const ns = Math.min(MAX, Math.max(minScale, v.scale * factor))
     const k = ns / v.scale
     const cx = window.innerWidth / 2
     const cy = window.innerHeight / 2
-    return { scale: ns, x: cx - (cx - v.x) * k, y: cy - (cy - v.y) * k }
+    return clampView({ scale: ns, x: cx - (cx - v.x) * k, y: cy - (cy - v.y) * k })
   })
   const reset = () => setView(initialView || { x: 0, y: 0, scale: 1 })
 
@@ -143,6 +188,49 @@ export default function MiniCanvas({ objects: initialObjects, connectors = [], i
         onZoomOut={() => zoomBy(1 / 1.2)}
         onReset={reset}
       />
+
+      {/* "Feeling lost?" nudge — appears when almost no content is on screen. */}
+      {lost && (
+        <div
+          onPointerDown={(e) => e.stopPropagation()}
+          style={{
+            position: 'fixed', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)', zIndex: 9100,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+            background: 'var(--surface)', border: 'var(--border-card)',
+            borderRadius: 16, padding: '1.6rem 1.8rem',
+            boxShadow: '0 24px 60px rgba(24,24,26,0.22)',
+            animation: 'pop-in 0.25s var(--ease) both',
+            textAlign: 'center', maxWidth: 320,
+          }}
+        >
+          <span style={{ fontSize: '2rem', lineHeight: 1 }}>🧭</span>
+          <p style={{
+            fontFamily: 'var(--font-display)', fontWeight: 800,
+            fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--ink)', lineHeight: 1.2,
+          }}>
+            Feeling lost?
+          </p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', lineHeight: 1.5, marginTop: -4 }}>
+            You’ve wandered off the page. Jump back to where everything is.
+          </p>
+          <button
+            onClick={reset}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'var(--accent)', color: '#fff',
+              border: 'none', borderRadius: 'var(--radius-pill)',
+              boxShadow: 'var(--shadow-card)', cursor: 'none',
+              fontFamily: 'var(--font-mono)', fontSize: '0.74rem', fontWeight: 600,
+              padding: '0.7rem 1.2rem', marginTop: 4,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)' }}
+          >
+            ← Back to the top
+          </button>
+        </div>
+      )}
     </div>
   )
 }

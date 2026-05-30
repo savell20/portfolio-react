@@ -3,7 +3,10 @@ import {
   X, Play, Pause, SkipBack, SkipForward, Volume2,
 } from 'lucide-react'
 
-const LS_VOL = 'music-volume-v1'
+// The player's internal volume stays pinned at max, so the user's actual
+// loudness is governed entirely by their computer's system volume — one
+// instinctive control, no competing in-app slider.
+const FULL_VOL = 100
 
 /* Santiago's favorite-music playlist (YouTube). The only source of truth. */
 const PLAYLIST_ID = 'PLBFuW0T9rxlTyIxvrXFyIHdpMb-3rBQPE'
@@ -85,10 +88,6 @@ export default function MusicPlayer() {
   const [playing, setPlaying] = useState(false)
   const [title, setTitle] = useState('')
   const [videoId, setVideoId] = useState(FIRST_VIDEO_ID)
-  const [volume, setVolume] = useState(() => {
-    const v = Number(localStorage.getItem(LS_VOL))
-    return Number.isFinite(v) && v >= 0 && v <= 100 ? v : 70
-  })
 
   const ytHostRef = useRef(null)
   const playerRef = useRef(null)
@@ -109,7 +108,7 @@ export default function MusicPlayer() {
           if (d.video_id) setVideoId(d.video_id)
           if (d.title) setTitle(d.title)
         }
-        try { p.unMute(); p.setVolume(volume) } catch { /* */ }
+        try { p.unMute(); p.setVolume(FULL_VOL) } catch { /* */ }
       }
       playerRef.current = new YT.Player(inner, {
         width: '100%', height: '100%',
@@ -128,19 +127,12 @@ export default function MusicPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /* Persist + apply volume. */
-  useEffect(() => {
-    localStorage.setItem(LS_VOL, String(volume))
-    const p = playerRef.current
-    if (p && p.setVolume) { try { p.setVolume(volume) } catch { /* */ } }
-  }, [volume])
-
   const togglePlay = () => {
     const p = playerRef.current; if (!p) return
     if (playing) {
       p.pauseVideo()
     } else {
-      try { p.unMute(); p.setVolume(volume) } catch { /* */ }
+      try { p.unMute(); p.setVolume(FULL_VOL) } catch { /* */ }
       p.playVideo()
     }
   }
@@ -164,7 +156,7 @@ export default function MusicPlayer() {
   )
 
   const panelStyle = {
-    position: 'fixed', bottom: 90, left: 16, zIndex: 9500,
+    position: 'fixed', top: 116, left: 16, zIndex: 9500,
     width: 308, padding: '0.95rem 1rem 0.85rem',
     background: 'var(--surface)', border: 'var(--border-card)',
     borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-card)',
@@ -178,12 +170,34 @@ export default function MusicPlayer() {
 
   return (
     <>
-      {/* Vinyl, always visible (bottom-left, compact) */}
+      {/* Vinyl + sign, always visible (top-left) */}
       <div style={{
-        position: 'fixed', bottom: 16, left: 16, zIndex: 9500,
+        position: 'fixed', top: 16, left: 16, zIndex: 9500,
+        display: 'flex', alignItems: 'center', gap: 12,
         animation: 'fade-in 0.5s var(--ease) both', animationDelay: '0.2s',
       }}>
-        <Vinyl cover={cover} playing={playing} size={62} onClick={() => setExpanded(e => !e)} />
+        <Vinyl cover={cover} playing={playing} size={84} onClick={() => setExpanded(e => !e)} />
+        <div style={{
+          maxWidth: 180,
+          background: 'var(--surface)', border: 'var(--border-card)',
+          borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-card)',
+          padding: '0.6rem 0.8rem',
+          position: 'relative',
+        }}>
+          {/* little speech-bubble tail pointing at the vinyl */}
+          <span style={{
+            position: 'absolute', left: -6, top: '50%', marginTop: -6,
+            width: 12, height: 12, background: 'var(--surface)',
+            borderLeft: 'var(--border-card)', borderBottom: 'var(--border-card)',
+            transform: 'rotate(45deg)',
+          }} />
+          <p style={{
+            fontFamily: 'var(--font-hand)', fontSize: '1.05rem',
+            color: 'var(--ink)', lineHeight: 1.25, position: 'relative',
+          }}>
+Play my favorite music, while you check my work!
+          </p>
+        </div>
       </div>
 
       {hiddenYtHost}
@@ -199,7 +213,7 @@ export default function MusicPlayer() {
                 color: 'var(--accent)', letterSpacing: '0.14em',
                 textTransform: 'uppercase', marginBottom: 3,
               }}>
-                # my favorite music
+                my favorite music
               </p>
               <p style={{
                 fontFamily: 'var(--font-display)', fontWeight: 600,
@@ -232,21 +246,14 @@ export default function MusicPlayer() {
             <button onClick={next} title="Next" style={{ ...iconBtn, width: 34, height: 34 }}><SkipForward size={17} /></button>
           </div>
 
-          {/* Volume */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.7rem' }}>
-            <Volume2 size={13} style={{ color: 'var(--ink-faint)', flexShrink: 0 }} />
-            <input
-              type="range" min={0} max={100} value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              style={{ flex: 1, accentColor: 'var(--accent)' }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--ink-faint)',
-              minWidth: 22, textAlign: 'right',
-            }}>
-              {volume}
-            </span>
-          </div>
+          {/* Volume is controlled by your computer — one instinctive knob. */}
+          <p style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+            color: 'var(--ink-faint)', letterSpacing: '0.02em',
+          }}>
+            <Volume2 size={12} /> use your computer’s volume keys
+          </p>
 
         </div>
       )}

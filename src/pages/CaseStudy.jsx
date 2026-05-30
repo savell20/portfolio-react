@@ -435,12 +435,6 @@ export default function CaseStudy() {
           >
             <ArrowLeft size={12} /> back to canvas
           </button>
-          <span style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-            color: 'var(--ink-faint)', letterSpacing: '0.04em',
-          }}>
-            ▸ {data.frame}
-          </span>
         </div>
 
         {/* Cover — real image if provided, otherwise gradient + monogram */}
