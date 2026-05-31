@@ -10,8 +10,8 @@ import { PAGE, FIRST_MODULE_Y, labelYAfter, moduleYAfterLabel, pageInitialView }
 
 /* About, uses the shared design-system tokens for spacing. */
 const PCARD_W = (PAGE.W - PAGE.COL_GAP * 2) / 3
-const EDU_H = 96    // resume row, no bullets
-const EXP_H = 200   // resume row with 3 bullets
+const EDU_H = 120   // resume row, no bullets
+const EXP_H = 280   // resume row with 3 bullets
 const P_H = 200
 const SKILLS_H = 260
 const AWARD_H = 130

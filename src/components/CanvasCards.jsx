@@ -528,39 +528,39 @@ export function ResumeEntry({ data }) {
   const hasBullets = Array.isArray(data.bullets) && data.bullets.length > 0
   return (
     <div style={{
-      ...cardBase, padding: '1.05rem 1.2rem',
-      display: 'flex', alignItems: 'flex-start', gap: 14,
+      ...cardBase, padding: '1.15rem 1.3rem',
+      display: 'flex', alignItems: 'flex-start', gap: 16,
     }}>
-      <Logo size={36} />
+      <Logo size={44} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
-          fontSize: '0.98rem', color: 'var(--ink)', letterSpacing: '-0.01em',
-          lineHeight: 1.2,
+          fontSize: '1.26rem', color: 'var(--ink)', letterSpacing: '-0.01em',
+          lineHeight: 1.25,
         }}>
           {data.role} <span style={{ color: 'var(--ink-faint)', fontWeight: 500 }}> @ </span>
           <span style={{ color: 'var(--ink)' }}>{data.company}</span>
         </p>
         <p style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-          color: 'var(--ink-soft)', letterSpacing: '0.04em', marginTop: 3,
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+          color: 'var(--ink-soft)', letterSpacing: '0.04em', marginTop: 5,
         }}>
           {data.dates}{data.location ? ` · ${data.location}` : ''}
         </p>
         {hasBullets && (
           <ul style={{
             listStyle: 'none', padding: 0,
-            margin: '0.7rem 0 0',
-            display: 'flex', flexDirection: 'column', gap: '0.35rem',
+            margin: '0.8rem 0 0',
+            display: 'flex', flexDirection: 'column', gap: '0.5rem',
           }}>
             {data.bullets.map((b, i) => (
               <li key={i} style={{
-                display: 'flex', gap: 8, alignItems: 'flex-start',
-                fontSize: '0.82rem', color: 'var(--ink-soft)', lineHeight: 1.5,
+                display: 'flex', gap: 10, alignItems: 'flex-start',
+                fontSize: '1.04rem', color: 'var(--ink-soft)', lineHeight: 1.55,
               }}>
                 <span style={{
-                  flexShrink: 0, marginTop: 7,
-                  width: 4, height: 4, borderRadius: '50%',
+                  flexShrink: 0, marginTop: 8,
+                  width: 5, height: 5, borderRadius: '50%',
                   background: 'var(--accent)',
                 }} />
                 <span>{b}</span>
